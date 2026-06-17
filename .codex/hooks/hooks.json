@@ -1,0 +1,121 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Task",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/jig-telemetry.sh",
+            "timeout": 5,
+            "statusMessage": "jig: record task telemetry"
+          }
+        ]
+      },
+      {
+        "matcher": "Skill",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/jig-skill-trace.sh",
+            "timeout": 5,
+            "statusMessage": "jig: record skill usage"
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/jig-spec-gate.sh",
+            "timeout": 5,
+            "statusMessage": "jig: enforce spec gate"
+          },
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/jig-secret-scan.sh",
+            "timeout": 5,
+            "statusMessage": "jig: scan for secrets"
+          }
+        ]
+      },
+      {
+        "matcher": "Read",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/jig-context-check.sh",
+            "timeout": 5,
+            "statusMessage": "jig: check context budget"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/jig-post-edit-verify.sh",
+            "timeout": 5,
+            "statusMessage": "jig: verify edit landed"
+          },
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/jig-boundary-change-warn.sh",
+            "timeout": 5,
+            "statusMessage": "jig: warn on boundary changes"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/jig-context-check.sh",
+            "timeout": 5,
+            "statusMessage": "jig: check context budget"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/jig-memory-scan.sh",
+            "timeout": 10,
+            "statusMessage": "jig: scan memory references"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/jig-context-check.sh",
+            "timeout": 5,
+            "statusMessage": "jig: check context budget"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/jig-task-capture.sh",
+            "timeout": 10,
+            "statusMessage": "jig: capture follow-up tasks"
+          }
+        ]
+      }
+    ]
+  }
+}

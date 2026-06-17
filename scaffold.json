@@ -1,0 +1,30 @@
+{
+  "jig_version": "1.12.0",
+  "timestamp": "2026-06-17T18:30:57Z",
+  "project_name": "shaper",
+  "installed_tiers": [
+    "tier-0"
+  ],
+  "installed_skills": [
+    "tier-0/scaffold-init",
+    "tier-0/memory-sync",
+    "tier-0/spec-workflow",
+    "tier-0/independent-review",
+    "tier-0/migrate",
+    "tier-0/vision-elicitation",
+    "tier-0/contracts"
+  ],
+  "scaffold_signals": {
+    "has_llm_agent_files": true,
+    "has_ci": false,
+    "has_tests": false,
+    "is_team": false
+  },
+  "hook_profile": "standard",
+  "offered_tiers": [
+    "tier-2"
+  ],
+  "project_runtime": "python3",
+  "scaffold_mode": "in-repo",
+  "host_renderer": "codex"
+}
