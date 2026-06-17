@@ -27,7 +27,7 @@
 
 ## Code style
 
-> **Deferred — no signal from initial pitch.** Will be filled in as the project
+> **Deferred — no signal from initial scaffold.** Will be filled in as the project
 > encounters style decisions worth recording. Each addition follows the
 > Rule/Why/How format above.
 

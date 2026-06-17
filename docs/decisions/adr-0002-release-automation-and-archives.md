@@ -7,7 +7,7 @@ last_verified: 2026-06-17
 
 ## Status
 
-Proposed (2026-06-17)
+Accepted (2026-06-17)
 
 ## Context
 
@@ -84,6 +84,10 @@ shaper should use the sibling release baseline:
 - Smoke-test every archive before uploading it to the GitHub release.
 - Do not publish to package registries or marketplaces as part of the initial
   release pipeline.
+- Implement release/archive tooling as shaper-specific scripts that preserve
+  the JIG/servo contracts without sharing runtime code.
+- Document branch-protection expectations, but leave actual repository
+  administration outside the plugin codebase.
 
 The release archive contract should be host-explicit:
 
@@ -126,9 +130,7 @@ Release archives live in `dist/` during builds and are not committed.
 
 ## Open questions
 
-- Which exact CI checks belong in the first implementation slice before shaper
-  has meaningful Python test coverage?
-- Should shaper copy JIG's release/archive scripts directly, or write smaller
-  shaper-specific scripts that preserve the same contracts?
-- Should branch protection be documented only, or should it be configured in a
-  follow-up repo administration step outside the plugin codebase?
+None remaining for this decision. Before acceptance, the first CI floor was
+set to spec/status checks where available, manifest validation, host-package
+drift checks after Spec 003, and Python tests/static checks once executable
+code exists.

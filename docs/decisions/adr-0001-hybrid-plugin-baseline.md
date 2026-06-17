@@ -7,7 +7,7 @@ last_verified: 2026-06-17
 
 ## Status
 
-Proposed (2026-06-17)
+Accepted (2026-06-17)
 
 ## Context
 
@@ -32,7 +32,7 @@ records the relevant path:
   packages are worth the duplication because they preserve remote
   one-command install with no local build step.
 
-shaper can adopt that baseline before any `shape-bet` or `cutline`
+shaper can adopt that baseline before any `shape-release` or `cutline`
 implementation begins.
 
 ## Decision Options Considered
@@ -86,7 +86,8 @@ repo root/
 ```
 
 The first implementation spec should establish this baseline before building
-the `shape-bet`, `cutline`, roadmap, release-readiness, or scope-audit skills.
+the `shape-release`, `cutline`, `release-slate`, `release-check`, or `scope-audit`
+skills.
 
 Implementation must preserve these constraints:
 
@@ -100,6 +101,9 @@ Implementation must preserve these constraints:
 - Do add a drift guard so committed host packages cannot silently diverge from
   source.
 - Do leave CI/CD and release zip automation to ADR-0002 and Spec 004.
+- Do use shaper-specific minimal builders that preserve JIG's host-package
+  contracts without copying JIG as a shared runtime dependency.
+- Do defer custom agents until a concrete shaper role emerges.
 
 ## Consequences
 
@@ -108,8 +112,8 @@ Implementation must preserve these constraints:
 - shaper starts with equal respect for Codex and Claude Code.
 - Future release and install docs can follow JIG's already-tested package
   shape.
-- MVP skills can be written against a stable plugin layout instead of moving
-  during implementation.
+- product skills can be written against a stable plugin layout instead of
+  moving during implementation.
 
 **Becomes harder:**
 
@@ -121,7 +125,6 @@ Implementation must preserve these constraints:
 
 ## Open questions
 
-- How much of JIG's host-package builder should shaper copy directly versus
-  shrinking for shaper's smaller surface?
-- Should shaper define any custom agents in the first baseline, or defer agents
-  until a concrete role emerges?
+None remaining for this decision. Builder size and custom-agent deferral were
+resolved before acceptance by choosing shaper-specific minimal builders and no
+custom agents in the baseline slice.

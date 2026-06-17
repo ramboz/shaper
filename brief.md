@@ -26,6 +26,6 @@ See [docs/refinement-todo.md](docs/refinement-todo.md) for the full list of item
 
 ## Immediate next steps
 
-1. Use [docs/specs/002-shaper-mvp/spec.md](docs/specs/002-shaper-mvp/spec.md) as the first implementation spec.
-2. Implement [slice 002-01](docs/specs/002-shaper-mvp/slice-01-mvp-release-shaping-loop.md): shaped-bet template, `shape-bet`, `cutline`, and the non-duplicating `docs/bets/` overlay.
+1. Use [docs/specs/002-release-plan-handoff/spec.md](docs/specs/002-release-plan-handoff/spec.md) as the first product workflow spec.
+2. After it completes the normal spec lifecycle, implement [slice 002-01](docs/specs/002-release-plan-handoff/slice-01-release-plan-handoff.md): release-plan template, `shape-release`, `cutline`, and the non-duplicating `docs/releases/` release slate.
 3. Review the Tier 2 offer in `scaffold.json` if shaper later needs those jig skills.

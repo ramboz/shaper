@@ -9,7 +9,7 @@ code_health_review: true
 ## Slice 003-01 - hybrid-plugin-baseline
 
 **Goal:** Establish shaper's Codex / Claude Code hybrid plugin baseline without
-implementing product skills, so future slices can add `shape-bet` and
+implementing product skills, so future slices can add `shape-release` and
 `cutline` against the correct package layout.
 
 **DoR:**
@@ -40,9 +40,9 @@ implementing product skills, so future slices can add `shape-bet` and
 6. **Docs explain the baseline.** README or equivalent docs explain root
    source, committed host packages, Codex marketplace install semantics, and
    Claude Code install semantics.
-7. **Product skills remain deferred.** `shape-bet`, `cutline`, roadmap,
-   release-readiness, and scope-audit implementation remain out of scope for
-   this slice.
+7. **Product skills remain deferred.** `shape-release`, `cutline`,
+   `release-slate`, `release-check`, and `scope-audit` implementation remain out
+   of scope for this slice.
 8. **Release automation remains deferred.** CI/CD workflows, release-please,
    and release zip generation remain out of scope for this slice and are
    covered by Spec 004.
@@ -54,8 +54,8 @@ implementing product skills, so future slices can add `shape-bet` and
 - [ ] Any builder tests or smoke checks pass.
 - [ ] `docs/architecture.md` is reconciled with the final package layout.
 - [ ] `docs/refinement-todo.md` is reconciled for resolved packaging questions.
-- [ ] `docs/specs/002-shaper-mvp` is updated only to depend on the baseline,
-      not to absorb baseline implementation details.
+- [ ] `docs/specs/002-release-plan-handoff` is updated only to depend on the
+      baseline, not to absorb baseline implementation details.
 - [ ] Reviewed by `reviewer` subagent. Reviewer prompt built by `review.py`.
 - [ ] Implementation review passed.
 - [ ] Deviation log produced under this slice heading.

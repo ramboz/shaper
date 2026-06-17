@@ -1,6 +1,6 @@
 ---
 status: DRAFT
-dependencies: [003-01, adr-0001, adr-0002]
+dependencies: [003-01, 002-01, adr-0001, adr-0002]
 last_verified:
 arch_review: true
 code_health_review: true
@@ -17,6 +17,7 @@ release-please.
 - [ ] ADR-0001 is accepted.
 - [ ] ADR-0002 is accepted.
 - [ ] Spec 003 has established the hybrid plugin baseline.
+- [ ] Spec 002 has delivered the first release-plan-to-JIG product loop.
 - [ ] The implementer has rechecked JIG `origin/v2` Spec 013 and Servo Spec
       010 for the current workflow shape.
 - [ ] The implementer confirms which checks are meaningful for shaper's code at

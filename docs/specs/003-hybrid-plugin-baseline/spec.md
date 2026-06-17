@@ -11,7 +11,7 @@ last_verified:
 
 ## Overview
 
-Before implementing `shape-bet`, `cutline`, or roadmap behavior, shaper
+Before implementing `shape-release`, `cutline`, or release-slate behavior, shaper
 should establish itself as a Codex / Claude Code hybrid plugin using the
 baseline proven by JIG's `v2` branch.
 
@@ -45,10 +45,10 @@ host packages, and drift guard. It does not implement the skills themselves.
 
 ## Non-goals
 
-- No `shape-bet` implementation.
+- No `shape-release` implementation.
 - No `cutline` implementation.
-- No roadmap automation.
-- No release-readiness or scope-audit automation.
+- No release-slate automation.
+- No release-check or scope-audit automation.
 - No servo signal consumption.
 - No CI/CD workflows or release zips. Spec 004 owns release automation and
   archive distribution.

@@ -20,8 +20,8 @@ for the full slice shape — Goal, DoR, Acceptance Criteria, DoD,
 anti-horizontal-phasing check, and a short real deviation log — and use
 it as the template for your own slices.
 
-The next spec, [002-shaper-mvp](../002-shaper-mvp/spec.md), is a `DRAFT`
-spec for shaper's first real piece of work.
+The next spec, [002-release-plan-handoff](../002-release-plan-handoff/spec.md),
+is a `DRAFT` spec for shaper's first real product workflow.
 
 ## Decomposition
 

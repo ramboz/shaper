@@ -13,8 +13,12 @@
 | Spec | Slice | Status | Notes |
 |------|-------|--------|-------|
 | [001-adopt-jig](001-adopt-jig/spec.md) | 001-01 — bootstrap | **DONE** |  |
-| [002-shaper-mvp](002-shaper-mvp/spec.md) | 002-01 - mvp-release-shaping-loop | DRAFT |  |
+| [002-release-plan-handoff](002-release-plan-handoff/spec.md) | 002-01 - release-plan handoff | DRAFT |  |
 | [003-hybrid-plugin-baseline](003-hybrid-plugin-baseline/spec.md) | 003-01 - hybrid-plugin-baseline | DRAFT |  |
 | [004-release-automation](004-release-automation/spec.md) | 004-01 - ci-and-conventional-commit-gate | DRAFT |  |
 | [004-release-automation](004-release-automation/spec.md) | 004-02 - release-please-pipeline | DRAFT |  |
 | [004-release-automation](004-release-automation/spec.md) | 004-03 - host-explicit-release-zips | DRAFT |  |
+| [005-release-slate](005-release-slate/spec.md) | 005-01 - release slate | DRAFT |  |
+| [006-scope-audit](006-scope-audit/spec.md) | 006-01 - scope-audit-and-hammering | DRAFT |  |
+| [007-release-check](007-release-check/spec.md) | 007-01 - JIG-only release check | DRAFT |  |
+| [007-release-check](007-release-check/spec.md) | 007-02 - optional servo signal read | DRAFT |  |

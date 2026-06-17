@@ -11,10 +11,10 @@ last_verified:
 
 ## Overview
 
-After the hybrid plugin baseline exists, shaper should adopt the release model
-already proven by JIG and servo: conventional commit PR titles, CI gates,
-release-please-managed versions and changelog, and smoke-tested release
-archives uploaded to GitHub releases.
+After the hybrid plugin baseline and first release-plan-to-JIG product loop exist,
+shaper should adopt the release model already proven by JIG and servo:
+conventional commit PR titles, CI gates, release-please-managed versions and
+changelog, and smoke-tested release archives uploaded to GitHub releases.
 
 This spec is planning-only until ADR-0002 is accepted. It does not implement
 workflows, builders, or archives yet.
@@ -47,7 +47,7 @@ workflows, builders, or archives yet.
 - No package registry publishing.
 - No release signing or notarization.
 - No web UI or hosted deployment.
-- No changes to `shape-bet`, `cutline`, roadmap, release-readiness, or
+- No changes to `shape-release`, `cutline`, release-slate, release-check, or
   scope-audit behavior.
 - No silent mutation of JIG spec state.
 
@@ -75,6 +75,7 @@ from the host package baseline.
 - [ADR-0001: Hybrid plugin baseline](../../decisions/adr-0001-hybrid-plugin-baseline.md)
 - [ADR-0002: Release automation and host-explicit archives](../../decisions/adr-0002-release-automation-and-archives.md)
 - [Spec 003: Hybrid plugin baseline](../003-hybrid-plugin-baseline/spec.md)
+- [Spec 002: First release-plan-to-JIG handoff loop](../002-release-plan-handoff/spec.md)
 
 ## Slices
 

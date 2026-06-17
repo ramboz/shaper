@@ -6,8 +6,8 @@
 ## What this project does
 
 shaper is a small sibling plugin to JIG and servo. It brings Shape Up-style
-release shaping to AI-native projects: appetite, shaped bets, release cutlines,
-MVP/v1/v2 boundaries, risk retirement, and roadmap overlays.
+release shaping to AI-native projects: appetite, release cutlines, explicit
+no-gos, risk retirement, release slates, and release checks.
 
 See [docs/product-vision.md](docs/product-vision.md) for the project's vision,
 target users, and design principles.
@@ -19,23 +19,23 @@ Update via `/jig:memory-sync` or when `jig-memory-scan` surfaces an unknown refe
 
 ### Project codenames / active work
 - **shaper** - release shaping before implementation starts; shapes raw product
-  intent into bounded release bets, then hands implementation-ready work to JIG.
+  intent into bounded release plans, then hands implementation-ready work to JIG.
 - **JIG** - supervised spec-driven development; source of truth for spec
   lifecycle state.
 - **servo** - eval-driven and unattended agent loops; optional future source of
-  release-readiness signals.
+  release-check signals.
 
 ### Key terms
 - **Appetite before backlog** - fixed time / variable scope bias inspired by
   Shape Up.
-- **Cutline** - shaper's include/defer recommendation across MVP/v1/v2; advisory
-  and non-mutating.
-- **Non-duplicating overlay** - roadmap or bet artifact that links to JIG specs
-  without restating JIG lifecycle status.
+- **Cutline** - shaper's include/defer/split/risk-first recommendation for a
+  release plan; advisory and non-mutating.
+- **Release slate** - compact `docs/releases/README.md` overlay that links to
+  release plans and JIG specs without restating JIG lifecycle status.
 
 ### Active specs
-- [002-shaper-mvp](docs/specs/002-shaper-mvp/spec.md) - first useful vertical
-  release-shaping loop.
+- [002-release-plan-handoff](docs/specs/002-release-plan-handoff/spec.md) -
+  first useful release-plan-to-JIG handoff loop.
 
 ### Deferred decisions
 See docs/refinement-todo.md
@@ -63,8 +63,9 @@ See docs/refinement-todo.md
 
 ## Current Sprint Focus
 
-Draft and implement the MVP release-shaping loop: shaped-bet template,
-`shape-bet`, `cutline`, and a non-duplicating `docs/bets/` overlay.
+Draft the release-plan-to-JIG handoff loop: `shape-release`, `cutline`, and a
+non-duplicating `docs/releases/` release slate. Implementation should wait for
+the relevant specs to move through the normal lifecycle.
 
 ## Development Constraints
 

@@ -29,12 +29,12 @@ for the spec-driven loop from turn one.
    above without claiming work that has not happened.
 3. **The status board is populated.** `docs/specs/README.md` contains a
    real row for `001-01 — bootstrap` marked `DONE`.
-4. **A next step exists.** `docs/specs/002-shaper-mvp/spec.md` is present
-   as a `DRAFT` spec for shaper's first real implementation work.
+4. **A next step exists.** `docs/specs/002-release-plan-handoff/spec.md` is
+   present as a `DRAFT` spec for shaper's first real product workflow.
 5. **The seed is well-formed.** The emitted `001-adopt-jig` and
-   `002-shaper-mvp` specs follow jig's spec/slice structure and validated
-   clean when scaffolded. (Structural linting runs in jig's own dev/CI
-   environment — the scaffolded project does not ship `spec_lint.py`.)
+   `002-release-plan-handoff` specs follow jig's spec/slice structure and
+   validated clean when scaffolded. (Structural linting runs in jig's own
+   dev/CI environment — the scaffolded project does not ship `spec_lint.py`.)
 
 **DoD:**
 - [x] All ACs pass — Verified by scaffold-completion check (deterministic
