@@ -21,8 +21,12 @@
 **Resolution trigger:** First slice that reads JIG status or optional servo quality signals.
 
 ### Decision: Plugin packaging and host layout
-**Deferred:** shaper should be cross-host from the start, supporting both Claude Code and Codex plugin surfaces where practical. Exact plugin packaging and source layout remain open.
-**Resolution trigger:** First slice that creates `skills/`, templates, or plugin manifests.
+**Deferred:** shaper should be cross-host from the start, supporting both Claude Code and Codex plugin surfaces where practical. ADR-0001 proposes adopting JIG `v2`'s committed host-package baseline before product skills are implemented.
+**Resolution trigger:** ADR-0001 accepted and Spec 003 reconciled.
+
+### Decision: Release archive shape
+**Deferred:** shaper should reuse the JIG/servo release lessons, but the exact archive contract should be explicit before implementation. ADR-0002 proposes host-explicit Claude and Codex zips rather than a single host-neutral archive.
+**Resolution trigger:** ADR-0002 accepted and Spec 004 reconciled.
 
 ## Conventions
 
@@ -37,5 +41,5 @@
 ## Operations
 
 ### Decision: CI/CD setup
-**Deferred:** No CI is configured for the clean new project.
-**Resolution trigger:** First spec that crosses a release or deploy boundary.
+**Deferred:** No CI is configured for the clean new project. ADR-0002 and Spec 004 propose the release baseline: conventional commit PR-title gate, CI, release-please, and host-explicit release archives.
+**Resolution trigger:** ADR-0002 accepted and Spec 004 reconciled.

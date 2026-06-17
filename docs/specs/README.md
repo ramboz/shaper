@@ -14,3 +14,7 @@
 |------|-------|--------|-------|
 | [001-adopt-jig](001-adopt-jig/spec.md) | 001-01 — bootstrap | **DONE** |  |
 | [002-shaper-mvp](002-shaper-mvp/spec.md) | 002-01 - mvp-release-shaping-loop | DRAFT |  |
+| [003-hybrid-plugin-baseline](003-hybrid-plugin-baseline/spec.md) | 003-01 - hybrid-plugin-baseline | DRAFT |  |
+| [004-release-automation](004-release-automation/spec.md) | 004-01 - ci-and-conventional-commit-gate | DRAFT |  |
+| [004-release-automation](004-release-automation/spec.md) | 004-02 - release-please-pipeline | DRAFT |  |
+| [004-release-automation](004-release-automation/spec.md) | 004-03 - host-explicit-release-zips | DRAFT |  |

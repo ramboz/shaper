@@ -7,7 +7,8 @@
 
 ## Index
 
-_No ADRs yet. First ADR will be written when the first architectural decision is made._
+- [ADR-0001: Hybrid plugin baseline](adr-0001-hybrid-plugin-baseline.md) — shaper should start as a Codex / Claude Code hybrid plugin, not as a single-host scaffold that later gets ported. (Proposed 2026-06-17)
+- [ADR-0002: Release automation and host-explicit archives](adr-0002-release-automation-and-archives.md) — shaper should adopt the JIG/servo release automation model with separate Claude and Codex release zips. (Proposed 2026-06-17)
 
 ## Format
 

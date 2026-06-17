@@ -18,6 +18,14 @@ The MVP is not a complete agile system. It should create just enough repo-native
 - shaper sits before and above JIG specs: it shapes raw product intent into bounded release bets, then hands implementation-ready work to JIG.
 - shaper may consume servo signals in later release-readiness work, but this MVP must not run loops or define quality oracles.
 
+## Dependency on hybrid plugin baseline
+
+This MVP should not implement plugin packaging itself. It depends on
+[Spec 003: Hybrid plugin baseline](../003-hybrid-plugin-baseline/spec.md) and
+[ADR-0001: Hybrid plugin baseline](../../decisions/adr-0001-hybrid-plugin-baseline.md).
+The product-skill slice should start only after shaper has a Codex / Claude
+Code package layout to build against.
+
 ## MVP scope
 
 In scope:

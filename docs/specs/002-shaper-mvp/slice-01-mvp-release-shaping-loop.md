@@ -1,6 +1,6 @@
 ---
 status: DRAFT
-dependencies: []
+dependencies: [003-01, adr-0001]
 last_verified:
 arch_review: true
 ---
@@ -13,6 +13,8 @@ arch_review: true
 - [x] `docs/product-vision.md` captures shaper's relationship to JIG and servo.
 - [x] `docs/architecture.md` names the initial artifact model and boundaries.
 - [x] JIG scaffold artifacts exist in `docs/specs/`.
+- [ ] Spec 003 establishes the hybrid Codex / Claude Code plugin baseline.
+- [ ] ADR-0001 is accepted.
 - [ ] The implementer confirms the exact bet file path for the slice, defaulting to `docs/bets/mvp.md` unless implementation finds a simpler repo-native shape.
 
 **Acceptance Criteria:**
