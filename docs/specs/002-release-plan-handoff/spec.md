@@ -1,5 +1,5 @@
 ---
-status: IN_PROGRESS
+status: DONE
 adr_required: true
 adr: ../../decisions/adr-0003-release-plan-no-backlog-slate.md
 last_verified:

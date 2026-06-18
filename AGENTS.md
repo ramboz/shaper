@@ -34,8 +34,9 @@ Update via `/jig:memory-sync` or when `jig-memory-scan` surfaces an unknown refe
   release plans and JIG specs without restating JIG lifecycle status.
 
 ### Active specs
-- [002-release-plan-handoff](docs/specs/002-release-plan-handoff/spec.md) -
-  first useful release-plan-to-JIG handoff loop.
+- No active implementation spec. Pick the next `READY_FOR_IMPLEMENTATION` slice
+  from [docs/specs/README.md](docs/specs/README.md), or promote the next DRAFT
+  slice through the normal lifecycle before implementation.
 
 ### Deferred decisions
 See docs/refinement-todo.md
