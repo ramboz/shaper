@@ -35,8 +35,8 @@ Update via `/jig:memory-sync` or when `jig-memory-scan` surfaces an unknown refe
 
 ### Active specs
 - [004-release-automation](docs/specs/004-release-automation/spec.md) /
-  `004-01` - CI and conventional-commit gate is in progress on
-  `codex/spec-004-01`.
+  `004-01` - CI and conventional-commit gate is DONE; `004-02` release-please
+  pipeline is the next draft release-automation slice.
 
 ### Deferred decisions
 See docs/refinement-todo.md
