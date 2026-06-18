@@ -37,7 +37,7 @@ shaper/
 ├── scripts/                     # package builders, drift guards, manifest checks
 ├── tests/                       # unittest coverage for package contracts
 ├── dist/                        # generated release zips; ignored by git
-├── .github/                     # CI and PR-title workflows; release workflows later
+├── .github/                     # CI, PR-title, and release-please workflows
 └── .codex/                      # project-local jig runtime from scaffold-init
 ```
 
@@ -66,7 +66,8 @@ not a backlog or second status board.
 - **CI/CD and releases:** accepted via ADR-0002 and implemented progressively
   in Spec 004. The first gate adds conventional commit PR-title validation,
   pull-request / `main` CI, manifest validation, host-package drift checks, and
-  a spec status-board drift check. Later slices add release-please and
+  a spec status-board drift check. The release-please slice adds version,
+  changelog, tag, and GitHub-release ownership. A later slice adds
   host-explicit release zips.
 - **Package manager:** deferred until implementation needs packaging.
 - **Database / state:** no database; repo-native Markdown first.
@@ -75,8 +76,8 @@ not a backlog or second status board.
 - **Locked-in decisions:** repo-native Markdown first; soft coupling to JIG and
   servo; no web UI; hybrid plugin baseline; host-explicit release archives;
   release-plan/no-backlog-slate artifact model.
-- **Still open:** release-please wiring, host-explicit release archive builders,
-  and the later JIG/servo read boundary for `release-check`.
+- **Still open:** host-explicit release archive builders and the later JIG/servo
+  read boundary for `release-check`.
 - **Testing/static checks:** the first builder tests use standard-library
   `unittest` through `.jig/test-command`; the first code-health check compiles
   owned Python through `.jig/lint-command`. Both avoid a package-manager
@@ -133,9 +134,9 @@ not a backlog or second status board.
   shippable using JIG status and optional servo quality signals.
 - **Host adapters:** keep Claude Code and Codex plugin surfaces aligned where
   practical.
-- **Release automation:** operational layer that validates changes now, then
-  later delegates versioning/releases to release-please and builds
-  host-explicit archives from committed host packages.
+- **Release automation:** operational layer that validates changes, delegates
+  versioning/changelog/tag/GitHub-release ownership to release-please, and later
+  builds host-explicit archives from committed host packages.
 
 JIG remains the source of truth for spec lifecycle state. shaper can recommend
 transitions and generate patch-ready instructions, but it must not silently
@@ -183,6 +184,13 @@ mutate JIG spec states.
   requests and `main` run the unit suite, Python syntax check, manifest
   validation, host-package drift guard, and status-board drift check; PR titles
   must be scoped conventional commits.
+- **Release-please gate** (`.github/workflows/release.yml`,
+  `.github/release-please-config.json`,
+  `.github/.release-please-manifest.json`, `CHANGELOG.md`) - pushes to `main`
+  let release-please open or update a release PR that bumps all versioned plugin
+  manifests, updates the changelog and manifest, and creates the tag/GitHub
+  release when merged. Archive upload is intentionally deferred to the
+  host-explicit zip slice.
 - **Plugin install contract** (`.claude-plugin/plugin.json`,
   `.claude-plugin/marketplace.json`, `.codex-plugin/plugin.json`,
   `hosts/claude/`, `hosts/codex/`) - root manifests are canonical source,

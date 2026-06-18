@@ -91,7 +91,7 @@ hybrid plugin baseline, and now includes the first release-plan handoff assets:
 | Surface | Role | Status |
 |---|---|---|
 | Hybrid plugin baseline | Codex and Claude Code host package layout | Root manifests, committed host packages, and drift guard in Spec 003 |
-| Release automation | CI, release-please, host-explicit zips | CI and PR-title gate in Spec 004; release-please and zips planned |
+| Release automation | CI, release-please, host-explicit zips | CI, PR-title gate, and release-please in Spec 004; zips planned |
 | Release plan and slate artifacts | `docs/releases/<slug>.md` and compact slate | ADR-0003 accepted; first template and slate added by Spec 002 |
 | `shape-release` and `cutline` | First release-plan-to-SDD handoff loop | Implemented by Spec 002 |
 | `scope-audit` | Scope check against appetite and cutline | Spec 006 draft |
@@ -107,7 +107,8 @@ ADR-0001 and ADR-0002 align shaper with the sibling plugin release model:
 - canonical source at the repository root;
 - committed host packages under `hosts/claude/` and `hosts/codex/`;
 - a drift guard so host packages stay generated from source;
-- release-please-managed versions and GitHub releases;
+- release-please-managed versions, changelog entries, tags, and GitHub
+  releases;
 - host-explicit release archives:
   - `shaper-claude-vX.Y.Z.zip`
   - `shaper-codex-vX.Y.Z.zip`
@@ -137,6 +138,39 @@ Check for package drift without mutating `hosts/`:
 
 ```bash
 python3 scripts/build_host_packages.py --check
+```
+
+### Release flow
+
+Release decisions are automated through
+[`.github/workflows/release.yml`](.github/workflows/release.yml). On every
+push to `main`, release-please reads the squash-merged conventional commit
+subjects and opens or updates a release PR when the commits warrant a version
+bump.
+
+The release PR updates these files together:
+
+- all versioned plugin manifests listed in
+  [`.github/release-please-config.json`](.github/release-please-config.json);
+- [`CHANGELOG.md`](CHANGELOG.md);
+- [`.github/.release-please-manifest.json`](.github/.release-please-manifest.json).
+
+Merging that release PR creates the `vX.Y.Z` tag and GitHub release. Release
+archive upload is still deferred to the host-explicit zip slice.
+
+Do not hand-edit plugin manifest versions. They are release-managed so the
+root Claude and Codex manifests and committed host-package manifests stay in
+lockstep with the changelog and tag.
+
+Dry-run the next release PR locally when changing the release configuration:
+
+```bash
+npx release-please release-pr \
+  --token=$GITHUB_TOKEN \
+  --repo-url=ramboz/shaper \
+  --config-file=.github/release-please-config.json \
+  --manifest-file=.github/.release-please-manifest.json \
+  --dry-run
 ```
 
 ## Still deferred
@@ -215,3 +249,9 @@ Supported PR title types are:
 
 Scopes are required. Subjects should start lowercase and should not end with a
 period.
+
+Release-please only creates a release PR for commit types that imply a
+published change: `feat` creates a minor bump, `fix` and `perf` create patch
+bumps, and a breaking-change marker creates a major bump. `docs`, `chore`,
+`refactor`, `test`, `build`, and `ci` keep the changelog signal clean but do
+not publish a new version by themselves.

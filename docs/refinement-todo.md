@@ -54,5 +54,6 @@
 
 ### Decision: CI/CD setup
 **Resolved for first gate:** Spec 004 slice 004-01 adds pull-request / `main` CI and a conventional-commit PR-title gate. CI runs the unittest suite, Python syntax check, manifest validation, host-package drift guard, and status-board drift check.
-**Still deferred:** release-please and host-explicit release archives remain in later Spec 004 slices.
-**Resolution:** [Spec 004 slice 004-01](specs/004-release-automation/slice-01-ci-and-conventional-commit-gate.md).
+**Resolved for release-please:** Spec 004 slice 004-02 adds release-please config, the release workflow, a seeded changelog, and a dry-run/documented release PR flow. Release-please updates all versioned root and committed host-package plugin manifests together.
+**Still deferred:** host-explicit release archives remain in Spec 004 slice 004-03.
+**Resolution:** [Spec 004 slice 004-01](specs/004-release-automation/slice-01-ci-and-conventional-commit-gate.md) and [Spec 004 slice 004-02](specs/004-release-automation/slice-02-release-please-pipeline.md).

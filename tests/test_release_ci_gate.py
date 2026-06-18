@@ -13,6 +13,16 @@ SCRIPTS = ROOT / "scripts"
 if str(SCRIPTS) not in sys.path:
     sys.path.insert(0, str(SCRIPTS))
 
+RELEASE_PLEASE_CONFIG = ROOT / ".github" / "release-please-config.json"
+RELEASE_PLEASE_MANIFEST = ROOT / ".github" / ".release-please-manifest.json"
+RELEASE_WORKFLOW = ROOT / ".github" / "workflows" / "release.yml"
+VERSIONED_MANIFESTS = (
+    ".claude-plugin/plugin.json",
+    ".codex-plugin/plugin.json",
+    "hosts/claude/.claude-plugin/plugin.json",
+    "hosts/codex/plugins/shaper/.codex-plugin/plugin.json",
+)
+
 PR_TITLE_TYPES = {
     "feat",
     "fix",
@@ -96,6 +106,69 @@ class WorkflowFileTests(unittest.TestCase):
 
         self.assertTrue(_valid_pr_title(passing, text), passing)
         self.assertFalse(_valid_pr_title(failing, text), failing)
+
+
+class ReleasePleasePipelineTests(unittest.TestCase):
+    def test_release_workflow_runs_release_please_only(self):
+        text = RELEASE_WORKFLOW.read_text(encoding="utf-8")
+
+        self.assertIn("push:", text)
+        self.assertIn("branches: [main]", text)
+        self.assertIn("workflow_dispatch:", text)
+        self.assertIn("contents: write", text)
+        self.assertIn("pull-requests: write", text)
+        self.assertIn("release_created: ${{ steps.release.outputs.release_created }}", text)
+        self.assertIn("tag_name: ${{ steps.release.outputs.tag_name }}", text)
+        self.assertIn("version: ${{ steps.release.outputs.version }}", text)
+        self.assertIn("googleapis/release-please-action@v4", text)
+        self.assertIn("config-file: .github/release-please-config.json", text)
+        self.assertIn("manifest-file: .github/.release-please-manifest.json", text)
+        self.assertNotIn("gh release upload", text)
+        self.assertNotIn("build_host_packages.py", text)
+
+    def test_release_please_config_updates_all_versioned_manifests(self):
+        config = json.loads(RELEASE_PLEASE_CONFIG.read_text(encoding="utf-8"))
+
+        self.assertEqual(config.get("release-type"), "simple")
+        self.assertIs(config.get("include-v-in-tag"), True)
+        self.assertIs(config.get("include-component-in-tag"), False)
+
+        package = config.get("packages", {}).get(".")
+        self.assertIsInstance(package, dict)
+        extra_files = package.get("extra-files", [])
+        version_paths = {
+            entry.get("path")
+            for entry in extra_files
+            if isinstance(entry, dict)
+            and entry.get("type") == "json"
+            and entry.get("jsonpath") == "$.version"
+        }
+        self.assertEqual(version_paths, set(VERSIONED_MANIFESTS))
+
+    def test_release_please_manifest_is_seeded_to_current_version(self):
+        manifest = json.loads(RELEASE_PLEASE_MANIFEST.read_text(encoding="utf-8"))
+        versions = {
+            json.loads((ROOT / path).read_text(encoding="utf-8"))["version"]
+            for path in VERSIONED_MANIFESTS
+        }
+
+        self.assertEqual(len(versions), 1)
+        self.assertEqual(manifest, {".": versions.pop()})
+
+    def test_release_changelog_seed_exists(self):
+        changelog = ROOT / "CHANGELOG.md"
+        text = changelog.read_text(encoding="utf-8")
+
+        self.assertTrue(text.startswith("# Changelog\n"))
+
+    def test_docs_explain_release_pr_flow_and_dry_run(self):
+        readme = (ROOT / "README.md").read_text(encoding="utf-8")
+
+        self.assertIn("release PR", readme)
+        self.assertIn("Do not hand-edit", readme)
+        self.assertIn(".github/release-please-config.json", readme)
+        self.assertIn("npx release-please release-pr", readme)
+        self.assertIn("squash", readme.lower())
 
 
 class ManifestValidatorTests(unittest.TestCase):
