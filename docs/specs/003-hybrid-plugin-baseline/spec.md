@@ -1,5 +1,5 @@
 ---
-status: IN_PROGRESS
+status: DONE
 skill: release-pipeline
 tier: host-adapter
 adr_required: true
