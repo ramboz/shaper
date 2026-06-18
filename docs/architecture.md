@@ -15,8 +15,8 @@
 <!-- elicited: 2026-06-17 / status: filled -->
 
 Current product/plugin layout after
-[Spec 003: Hybrid plugin baseline](specs/003-hybrid-plugin-baseline/spec.md),
-with product skills still deferred:
+[Spec 003: Hybrid plugin baseline](specs/003-hybrid-plugin-baseline/spec.md)
+and the first release-plan handoff slice:
 
 ```text
 shaper/
@@ -32,8 +32,8 @@ shaper/
 ├── hosts/
 │   ├── claude/                  # committed Claude Code plugin package
 │   └── codex/                   # committed Codex marketplace package
-├── skills/                      # future product skills, added by later specs
-├── templates/                   # future release-plan/slate templates
+├── skills/                      # product skill instructions
+├── templates/                   # release-plan template
 ├── scripts/                     # package builders and drift guards
 ├── tests/                       # unittest coverage for package contracts
 ├── dist/                        # generated release zips; ignored by git
@@ -44,8 +44,9 @@ shaper/
 The `.codex/` directory is the project-local JIG scaffold runtime, not
 shaper's canonical plugin source. The `hosts/<host>/` packages are generated
 from root source and committed, following JIG `v2` ADR-0018. For now they carry
-valid plugin metadata and README content; `shape-release`, `cutline`, and other
-product skills are added by later specs.
+valid plugin metadata, README content, the first product skills, and the
+release-plan template. Later specs add `release-slate`, `scope-audit`, and
+`release-check` automation.
 
 The `docs/releases/` shape follows ADR-0003. Each `docs/releases/<slug>.md`
 file is a release plan. `docs/releases/README.md` is a compact release slate,
@@ -163,8 +164,8 @@ mutate JIG spec states.
 <!-- elicited: 2026-06-17 / status: filled -->
 
 - **Markdown artifact shapes** (templates under `templates/` and examples under
-  `docs/releases/`) - release plans and the release slate are shaper's primary
-  caller-facing contracts.
+  `docs/releases/`) - release plans and the compact release slate are shaper's
+  primary caller-facing contracts.
 - **Skill invocation behavior** (`skills/<name>/SKILL.md`) - skills define how
   agents elicit, read, and update repo-native Markdown.
 - **JIG read surfaces** (JIG's existing `docs/specs/README.md` and

@@ -13,7 +13,7 @@
 | Spec | Slice | Status | Notes |
 |------|-------|--------|-------|
 | [001-adopt-jig](001-adopt-jig/spec.md) | 001-01 — bootstrap | **DONE** |  |
-| [002-release-plan-handoff](002-release-plan-handoff/spec.md) | 002-01 - release-plan handoff | DRAFT |  |
+| [002-release-plan-handoff](002-release-plan-handoff/spec.md) | 002-01 - release-plan handoff | RECONCILED |  |
 | [003-hybrid-plugin-baseline](003-hybrid-plugin-baseline/spec.md) | 003-01 - hybrid-plugin-baseline | **DONE** |  |
 | [004-release-automation](004-release-automation/spec.md) | 004-01 - ci-and-conventional-commit-gate | DRAFT |  |
 | [004-release-automation](004-release-automation/spec.md) | 004-02 - release-please-pipeline | DRAFT |  |

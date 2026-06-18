@@ -1,7 +1,7 @@
 ---
-status: DRAFT
+status: RECONCILED
 dependencies: [003-01, adr-0001, adr-0003]
-last_verified:
+last_verified: 2026-06-18
 arch_review: true
 ---
 
@@ -53,24 +53,24 @@ shipping, shipped, or dropped.
 
 **DoD:**
 
-- [ ] All ACs pass.
-- [ ] Verification covers the happy path with at least one fixture or
+- [x] All ACs pass.
+- [x] Verification covers the happy path with at least one fixture or
       transcript: raw intent -> release plan -> JIG cutline recommendation ->
       compact release slate.
-- [ ] Verification covers the no-JIG-specs path and confirms no JIG lifecycle
+- [x] Verification covers the no-JIG-specs path and confirms no JIG lifecycle
       state is mutated.
-- [ ] Verification covers the no-backlog path and confirms dropped/deferred
+- [x] Verification covers the no-backlog path and confirms dropped/deferred
       ideas do not accumulate into an evergreen roadmap.
-- [ ] `docs/architecture.md` is reconciled if implementation changes the
+- [x] `docs/architecture.md` is reconciled if implementation changes the
       artifact model or module boundaries.
-- [ ] `docs/refinement-todo.md` is reconciled: resolved questions are removed
+- [x] `docs/refinement-todo.md` is reconciled: resolved questions are removed
       or linked to the artifact/spec that resolved them.
-- [ ] No additional ADR is written unless implementation makes a new
+- [x] No additional ADR is written unless implementation makes a new
       hard-to-reverse decision.
-- [ ] Reviewed by `reviewer` subagent. Reviewer prompt built by `review.py`.
-- [ ] Implementation review passed.
-- [ ] Deviation log produced under this slice heading.
-- [ ] Reconciliation review passed.
+- [x] Reviewed by `reviewer` subagent. Reviewer prompt built by `review.py`.
+- [x] Implementation review passed.
+- [x] Deviation log produced under this slice heading.
+- [x] Reconciliation review passed.
 
 **Anti-horizontal-phasing check:** After this slice lands, a maintainer can
 perform the core shaper workflow end to end. They can shape raw intent into a
@@ -80,4 +80,31 @@ board.
 
 ### Deviation log (after reconciliation)
 
-_(Filled during reconciliation.)_
+- Implemented the first product loop as repo-native Markdown plus two product
+  skills: `shape-release` and `cutline`. Added
+  `templates/release-plan.md`, `docs/releases/README.md`, root skill
+  instructions, standard-library helper scripts, and committed host-package
+  copies for Claude Code and Codex.
+- Kept `release-slate` automation, `scope-audit`, `release-check`, servo signal
+  consumption, web UI, task boards, sprint planning, estimation, backlog
+  grooming, and issue-system replacement out of scope. README and
+  `docs/refinement-todo.md` now distinguish the shipped `shape-release` /
+  `cutline` skills from planned later skills.
+- The deterministic `cutline.py` helper intentionally remains a shallow first
+  pass: it reads the release plan, the JIG status board, and linked spec files
+  constrained under `docs/specs/`, but recommendations are based on status-board
+  rows plus simple release-plan no-go / risk word matches. Richer semantic
+  cutline analysis remains future work.
+- Preserved the release-plan template contract during `shape-release` helper
+  output: create/refine operations keep the `Cutline` include/defer/split /
+  risk-first structure, append supplied refinement text instead of replacing
+  prior user wording, and preserve existing release status unless explicitly
+  changed.
+- Host packages still copy the root README exactly. That leaves repo-relative
+  documentation links in installed host READMEs, but the root README now
+  accurately describes the shipped host-neutral product skills. Host-specific
+  README rewriting remains deferred until host-specific runtime prose or install
+  verification needs it.
+- No new ADR was written. ADR-0003 already covers the release-plan and
+  no-backlog slate artifact model; the new helper behavior is reversible
+  implementation detail captured in this slice and refinement notes.

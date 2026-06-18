@@ -45,21 +45,22 @@ shaper is designed around repo-native Markdown artifacts and small agent skills:
   include/defer/split/risk-first moves without mutating lifecycle state.
 - **Release slate** - `docs/releases/README.md` stays compact and current
   without becoming a backlog or second status board.
-- **`scope-audit`** - checks whether active work is leaking past the appetite
-  or cutline.
-- **`release-check`** - gives advisory ship/cut-scope/stop/re-shape guidance
-  from implementation status and, later, optional quality signals.
+- **Planned `scope-audit`** - will check whether active work is leaking past
+  the appetite or cutline.
+- **Planned `release-check`** - will give advisory
+  ship/cut-scope/stop/re-shape guidance from implementation status and, later,
+  optional quality signals.
 
 ## Relationship to jig and servo
 
 shaper is a sibling plugin, not a replacement for either project.
 
-- **[jig](https://github.com/ramboz/jig)** is a natural SDD partner for
-  shaper: it owns supervised implementation through specs, vertical slices,
-  lifecycle state, review evidence, reconciliation, and landing.
-- **[servo](https://github.com/ramboz/servo)** owns eval-driven and unattended
-  loops: oracles, quality gates, hooks, variant races, and scheduled discovery.
-- **shaper** owns the release-shaping layer before implementation: release
+- **[jig](https://github.com/ramboz/jig)** owns implementation workflow and
+  spec lifecycle: specs, vertical slices, lifecycle state, review evidence,
+  reconciliation, and landing.
+- **[servo](https://github.com/ramboz/servo)** owns eval/oracle loops:
+  oracles, quality gates, hooks, variant races, and scheduled discovery.
+- **shaper** owns release shaping before implementation starts: release
   boundaries, no-gos, risk retirement, cutlines, and release readiness checks.
 
 The coupling is intentionally soft. shaper should hand off to SDD generally,
@@ -81,16 +82,18 @@ duplicate implementation board.
 
 ## Current status
 
-shaper is currently in the scaffold and specification phase. The project has
-accepted the major architecture decisions and has a minimal hybrid plugin
-baseline; product skills are not yet implemented.
+shaper is currently moving from scaffolded baseline into the first product
+loop. The project has accepted the major architecture decisions, has a minimal
+hybrid plugin baseline, and now includes the first release-plan handoff assets:
+`shape-release`, `cutline`, `templates/release-plan.md`, and a compact
+`docs/releases/README.md` slate.
 
 | Surface | Role | Status |
 |---|---|---|
 | Hybrid plugin baseline | Codex and Claude Code host package layout | Root manifests, committed host packages, and drift guard in Spec 003 |
 | Release automation | CI, release-please, host-explicit zips | ADR-0002 accepted, Spec 004 draft |
-| Release plan and slate artifacts | `docs/releases/<slug>.md` and compact slate | ADR-0003 accepted, Specs 002 and 005 draft |
-| `shape-release` and `cutline` | First release-plan-to-SDD handoff loop | Spec 002 draft |
+| Release plan and slate artifacts | `docs/releases/<slug>.md` and compact slate | ADR-0003 accepted; first template and slate added by Spec 002 |
+| `shape-release` and `cutline` | First release-plan-to-SDD handoff loop | Implemented by Spec 002 |
 | `scope-audit` | Scope check against appetite and cutline | Spec 006 draft |
 | `release-check` | Advisory release readiness check | Spec 007 draft |
 
@@ -109,9 +112,9 @@ ADR-0001 and ADR-0002 align shaper with the sibling plugin release model:
   - `shaper-claude-vX.Y.Z.zip`
   - `shaper-codex-vX.Y.Z.zip`
 
-The baseline install surfaces are present, but they are intentionally minimal:
-they package metadata and README content only. Product skills land in later
-specs, and release archives remain owned by Spec 004.
+The install surfaces package metadata, README content, the first product
+skills, and the release-plan template. Release archives remain owned by
+Spec 004.
 
 Current host install semantics:
 
@@ -136,6 +139,13 @@ Check for package drift without mutating `hosts/`:
 python3 scripts/build_host_packages.py --check
 ```
 
+## Still deferred
+
+The first product loop is intentionally narrow. release-slate automation,
+scope-audit automation, release-check automation, servo signal consumption, web
+UI, task boards, sprint planning, estimation, backlog grooming, and
+issue-system replacement remain out of scope for this handoff slice.
+
 ## Start here
 
 If you are reading shaper as a user or contributor:
@@ -148,7 +158,7 @@ If you are reading shaper as a user or contributor:
 
 ## Repository structure
 
-The current product layout, with future product skills still deferred:
+The current product layout:
 
 ```text
 shaper/
@@ -163,14 +173,15 @@ shaper/
 |   `-- codex/                   # Committed Codex marketplace package
 |-- skills/
 |   |-- shape-release/
-|   |-- cutline/
-|   |-- release-slate/
-|   |-- scope-audit/
-|   `-- release-check/
-|-- templates/                   # Release-plan and slate templates
+|   `-- cutline/
+|-- templates/                   # Release-plan template
 |-- scripts/                     # Builders, drift guards, release checks
 `-- dist/                        # Generated release zips; ignored by git
 ```
+
+Later specs add `release-slate`, `scope-audit`, and `release-check`
+automation; this slice ships only `shape-release`, `cutline`, the release-plan
+template, and the compact release slate file.
 
 ## Contributing
 

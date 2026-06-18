@@ -15,3 +15,9 @@ Spec 003 established committed Claude/Codex host packages with root manifests an
 
 ## Initial Python checks avoid package-manager commitments
 Spec 003 introduced standard-library unittest via .jig/test-command and an AST syntax check via .jig/lint-command. This keeps the first builder test/lint loop deterministic without choosing pytest, ruff config, or a package manager yet.
+
+## First cutline helper is intentionally shallow
+Spec 002 introduced cutline.py as a deterministic first pass: it reads the release plan, JIG status board, and linked specs constrained under docs/specs, but classifies from board rows plus simple release-plan no-go/risk word matches. Richer semantic cutline analysis remains future work.
+
+## Host README exact-copy remains host-neutral
+Spec 002 kept host package README generation as an exact root README copy while adding host-neutral product skills. Root README wording must stay accurate for installed host packages; host-specific README rewriting remains deferred until host-specific runtime prose or install verification needs it.
