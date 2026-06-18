@@ -25,8 +25,8 @@
 **Resolution:** [Spec 003: Hybrid plugin baseline](specs/003-hybrid-plugin-baseline/spec.md) / [ADR-0001: Hybrid plugin baseline](decisions/adr-0001-hybrid-plugin-baseline.md) / [Spec 002 slice 002-01](specs/002-release-plan-handoff/slice-01-release-plan-handoff.md).
 
 ### Decision: Release archive shape
-**Deferred:** shaper should reuse the JIG/servo release lessons, but the exact archive contract should be explicit before implementation. ADR-0002 proposes host-explicit Claude and Codex zips rather than a single host-neutral archive.
-**Resolution trigger:** ADR-0002 accepted and Spec 004 reconciled.
+**Resolved:** shaper uses host-explicit release archives built from the committed host packages: `shaper-claude-vX.Y.Z.zip` is a flat Claude Code plugin package, and `shaper-codex-vX.Y.Z.zip` is an extract-then-add Codex marketplace bundle.
+**Resolution:** [ADR-0002: Release automation and host-explicit archives](decisions/adr-0002-release-automation-and-archives.md) and [Spec 004 slice 004-03](specs/004-release-automation/slice-03-host-explicit-release-zips.md).
 
 ### Decision: Host-package README rewriting
 **Resolved for first product skills:** Spec 002 keeps host README generation as an exact root README copy, but updates the root README so host packages accurately describe the shipped `shape-release` / `cutline` skills and deferred product skills. Host-specific link rewriting is still deferred because this slice adds host-neutral skills, not host-specific runtime prose or install verification.
@@ -55,5 +55,5 @@
 ### Decision: CI/CD setup
 **Resolved for first gate:** Spec 004 slice 004-01 adds pull-request / `main` CI and a conventional-commit PR-title gate. CI runs the unittest suite, Python syntax check, manifest validation, host-package drift guard, and status-board drift check.
 **Resolved for release-please:** Spec 004 slice 004-02 adds release-please config, the release workflow, a seeded changelog, and a dry-run/documented release PR flow. Release-please updates all versioned root and committed host-package plugin manifests together.
-**Still deferred:** host-explicit release archives remain in Spec 004 slice 004-03.
-**Resolution:** [Spec 004 slice 004-01](specs/004-release-automation/slice-01-ci-and-conventional-commit-gate.md) and [Spec 004 slice 004-02](specs/004-release-automation/slice-02-release-please-pipeline.md).
+**Resolved for archives:** Spec 004 slice 004-03 adds a release-created package job that checks host-package drift, builds and smoke-tests both host-explicit zips, uploads them to the GitHub release, and appends install-artifact notes.
+**Resolution:** [Spec 004 slice 004-01](specs/004-release-automation/slice-01-ci-and-conventional-commit-gate.md), [Spec 004 slice 004-02](specs/004-release-automation/slice-02-release-please-pipeline.md), and [Spec 004 slice 004-03](specs/004-release-automation/slice-03-host-explicit-release-zips.md).

@@ -6,12 +6,14 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
 
 jobs:
   release-please:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     outputs:
       release_created: ${{ steps.release.outputs.release_created }}
       tag_name: ${{ steps.release.outputs.tag_name }}
@@ -23,3 +25,83 @@ jobs:
         with:
           config-file: .github/release-please-config.json
           manifest-file: .github/.release-please-manifest.json
+
+  package:
+    needs: release-please
+    if: needs.release-please.outputs.release_created == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.release-please.outputs.tag_name }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Verify committed host packages
+        run: python3 scripts/build_host_packages.py --check
+
+      - name: Build Claude release zip
+        run: |
+          python3 scripts/build_release_zip.py \
+            --host claude \
+            --version "${{ needs.release-please.outputs.version }}" \
+            --output "dist/shaper-claude-v${{ needs.release-please.outputs.version }}.zip"
+
+      - name: Build Codex release zip
+        run: |
+          python3 scripts/build_release_zip.py \
+            --host codex \
+            --version "${{ needs.release-please.outputs.version }}" \
+            --output "dist/shaper-codex-v${{ needs.release-please.outputs.version }}.zip"
+
+      - name: Smoke-test Claude zip
+        run: |
+          python3 scripts/build_release_zip.py \
+            --host claude \
+            --version "${{ needs.release-please.outputs.version }}" \
+            --smoke-test "dist/shaper-claude-v${{ needs.release-please.outputs.version }}.zip"
+
+      - name: Smoke-test Codex zip
+        run: |
+          python3 scripts/build_release_zip.py \
+            --host codex \
+            --version "${{ needs.release-please.outputs.version }}" \
+            --smoke-test "dist/shaper-codex-v${{ needs.release-please.outputs.version }}.zip"
+
+      - name: Upload zips to release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release upload \
+            "${{ needs.release-please.outputs.tag_name }}" \
+            "dist/shaper-claude-v${{ needs.release-please.outputs.version }}.zip" \
+            "dist/shaper-codex-v${{ needs.release-please.outputs.version }}.zip" \
+            --clobber
+
+      - name: Append install-artifacts note to release body
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ needs.release-please.outputs.tag_name }}
+          VERSION: ${{ needs.release-please.outputs.version }}
+        run: |
+          existing="$(gh release view "$TAG" --json body -q .body)"
+          if printf "%s\n" "$existing" | grep -q "^## Install artifacts$"; then
+            echo "Install artifacts note already present; leaving release body unchanged."
+            exit 0
+          fi
+          note="$(cat <<EOF
+
+          ## Install artifacts
+
+          - \`shaper-claude-v${VERSION}.zip\` is a flat Claude Code plugin
+            archive with \`.claude-plugin/plugin.json\` at the zip root.
+          - \`shaper-codex-v${VERSION}.zip\` is an extract-then-add Codex marketplace bundle:
+            extract it, then add the extracted marketplace root to Codex.
+          EOF
+          )"
+          gh release edit "$TAG" --notes "${existing}${note}"

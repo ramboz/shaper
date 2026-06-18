@@ -33,10 +33,15 @@ Update via `/jig:memory-sync` or when `jig-memory-scan` surfaces an unknown refe
 - **Release slate** - compact `docs/releases/README.md` overlay that links to
   release plans and JIG specs without restating JIG lifecycle status.
 
+### Working preferences
+- **Subagents approved by default** - the user has approved Codex to spin up
+  reviewer, implementer, explorer, or worker subagents whenever they materially
+  help the task; do not pause for per-use approval.
+
 ### Active specs
 - [004-release-automation](docs/specs/004-release-automation/spec.md) /
-  `004-01` - CI and conventional-commit gate is DONE; `004-02` release-please
-  pipeline is IN_PROGRESS; `004-03` host-explicit release zips remains draft.
+  `004-03` - host-explicit release zips is REVIEWED on
+  `codex/004-03-host-zips`; `004-01` and `004-02` are DONE.
 
 ### Deferred decisions
 See docs/refinement-todo.md

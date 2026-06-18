@@ -67,8 +67,9 @@ not a backlog or second status board.
   in Spec 004. The first gate adds conventional commit PR-title validation,
   pull-request / `main` CI, manifest validation, host-package drift checks, and
   a spec status-board drift check. The release-please slice adds version,
-  changelog, tag, and GitHub-release ownership. A later slice adds
-  host-explicit release zips.
+  changelog, tag, and GitHub-release ownership. The archive slice adds a gated
+  package job that builds, smoke-tests, and uploads host-explicit release zips
+  from the tagged source state.
 - **Package manager:** deferred until implementation needs packaging.
 - **Database / state:** no database; repo-native Markdown first.
 - **Key external services:** JIG docs/specs/status board, optional servo quality
@@ -76,8 +77,7 @@ not a backlog or second status board.
 - **Locked-in decisions:** repo-native Markdown first; soft coupling to JIG and
   servo; no web UI; hybrid plugin baseline; host-explicit release archives;
   release-plan/no-backlog-slate artifact model.
-- **Still open:** host-explicit release archive builders and the later JIG/servo
-  read boundary for `release-check`.
+- **Still open:** the later JIG/servo read boundary for `release-check`.
 - **Testing/static checks:** the first builder tests use standard-library
   `unittest` through `.jig/test-command`; the first code-health check compiles
   owned Python through `.jig/lint-command`. Both avoid a package-manager
@@ -135,7 +135,7 @@ not a backlog or second status board.
 - **Host adapters:** keep Claude Code and Codex plugin surfaces aligned where
   practical.
 - **Release automation:** operational layer that validates changes, delegates
-  versioning/changelog/tag/GitHub-release ownership to release-please, and later
+  versioning/changelog/tag/GitHub-release ownership to release-please, and
   builds host-explicit archives from committed host packages.
 
 JIG remains the source of truth for spec lifecycle state. shaper can recommend
@@ -184,20 +184,23 @@ mutate JIG spec states.
   requests and `main` run the unit suite, Python syntax check, manifest
   validation, host-package drift guard, and status-board drift check; PR titles
   must be scoped conventional commits.
-- **Release-please gate** (`.github/workflows/release.yml`,
+- **Release automation gate** (`.github/workflows/release.yml`,
   `.github/release-please-config.json`,
   `.github/.release-please-manifest.json`, `CHANGELOG.md`) - pushes to `main`
   let release-please open or update a release PR that bumps all versioned plugin
   manifests, updates the changelog and manifest, and creates the tag/GitHub
-  release when merged. Archive upload is intentionally deferred to the
-  host-explicit zip slice.
+  release when merged. When release-please creates a release, the package job
+  checks committed host-package drift, builds `shaper-claude-vX.Y.Z.zip` and
+  `shaper-codex-vX.Y.Z.zip`, smoke-tests both, uploads both, and appends
+  install-artifact notes without overwriting release-please changelog notes.
 - **Plugin install contract** (`.claude-plugin/plugin.json`,
   `.claude-plugin/marketplace.json`, `.codex-plugin/plugin.json`,
   `hosts/claude/`, `hosts/codex/`) - root manifests are canonical source,
   host packages are committed generated payloads, and
   `scripts/build_host_packages.py --check` guards host-package drift. Cross-host
-  version parity is owned by the source manifests plus the drift guard; Spec 004
-  owns future release-bump automation.
+  version parity is owned by release-please-managed manifests plus the drift
+  guard; the release archive builder consumes the committed host packages rather
+  than re-walking repo source.
 
 No HTTP API, event bus, RPC, GraphQL surface, or web UI is planned for the
 initial product.

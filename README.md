@@ -91,7 +91,7 @@ hybrid plugin baseline, and now includes the first release-plan handoff assets:
 | Surface | Role | Status |
 |---|---|---|
 | Hybrid plugin baseline | Codex and Claude Code host package layout | Root manifests, committed host packages, and drift guard in Spec 003 |
-| Release automation | CI, release-please, host-explicit zips | CI, PR-title gate, and release-please in Spec 004; zips planned |
+| Release automation | CI, release-please, host-explicit zips | CI, PR-title gate, release-please, and host-explicit archive upload in Spec 004 |
 | Release plan and slate artifacts | `docs/releases/<slug>.md` and compact slate | ADR-0003 accepted; first template and slate added by Spec 002 |
 | `shape-release` and `cutline` | First release-plan-to-SDD handoff loop | Implemented by Spec 002 |
 | `scope-audit` | Scope check against appetite and cutline | Spec 006 draft |
@@ -114,8 +114,8 @@ ADR-0001 and ADR-0002 align shaper with the sibling plugin release model:
   - `shaper-codex-vX.Y.Z.zip`
 
 The install surfaces package metadata, README content, the first product
-skills, and the release-plan template. Release archives remain owned by
-Spec 004.
+skills, and the release-plan template. Release archives are built from those
+committed host packages by [`scripts/build_release_zip.py`](scripts/build_release_zip.py).
 
 Current host install semantics:
 
@@ -140,6 +140,19 @@ Check for package drift without mutating `hosts/`:
 python3 scripts/build_host_packages.py --check
 ```
 
+Build and smoke-test host-explicit release archives locally:
+
+```bash
+python3 scripts/build_release_zip.py --host claude --version 0.1.0
+python3 scripts/build_release_zip.py --host codex --version 0.1.0
+python3 scripts/build_release_zip.py --host claude --smoke-test dist/shaper-claude-v0.1.0.zip
+python3 scripts/build_release_zip.py --host codex --smoke-test dist/shaper-codex-v0.1.0.zip
+```
+
+The Claude zip is a flat plugin package. The Codex zip is an extract-then-add
+marketplace bundle: extract it first, then add the extracted marketplace root
+to Codex.
+
 ### Release flow
 
 Release decisions are automated through
@@ -155,8 +168,12 @@ The release PR updates these files together:
 - [`CHANGELOG.md`](CHANGELOG.md);
 - [`.github/.release-please-manifest.json`](.github/.release-please-manifest.json).
 
-Merging that release PR creates the `vX.Y.Z` tag and GitHub release. Release
-archive upload is still deferred to the host-explicit zip slice.
+Merging that release PR creates the `vX.Y.Z` tag and GitHub release. When
+release-please reports `release_created == true`, the package job checks host
+package drift from the tagged source state, builds
+`dist/shaper-claude-vX.Y.Z.zip` and `dist/shaper-codex-vX.Y.Z.zip`,
+smoke-tests both archives, uploads them to the GitHub release, and appends a
+short install-artifacts note to the release body.
 
 Do not hand-edit plugin manifest versions. They are release-managed so the
 root Claude and Codex manifests and committed host-package manifests stay in
@@ -214,8 +231,8 @@ shaper/
 ```
 
 Later specs add `release-slate`, `scope-audit`, and `release-check`
-automation; this slice ships only `shape-release`, `cutline`, the release-plan
-template, and the compact release slate file.
+automation; the current product surface ships `shape-release`, `cutline`, the
+release-plan template, the compact release slate file, and release automation.
 
 ## Contributing
 

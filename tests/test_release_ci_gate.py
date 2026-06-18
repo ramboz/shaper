@@ -74,6 +74,7 @@ class WorkflowFileTests(unittest.TestCase):
         self.assertIn("actions/setup-python@v5", text)
         self.assertIn("python3 -m unittest discover -s tests", text)
         self.assertIn("python3 scripts/check_python_syntax.py", text)
+        self.assertIn("scripts/build_release_zip.py", text)
         self.assertIn("python3 scripts/validate_manifests.py", text)
         self.assertIn("python3 scripts/build_host_packages.py --check", text)
         self.assertIn("workflow.py status-board .", text)
@@ -109,7 +110,7 @@ class WorkflowFileTests(unittest.TestCase):
 
 
 class ReleasePleasePipelineTests(unittest.TestCase):
-    def test_release_workflow_runs_release_please_only(self):
+    def test_release_workflow_runs_release_please_and_gated_package_job(self):
         text = RELEASE_WORKFLOW.read_text(encoding="utf-8")
 
         self.assertIn("push:", text)
@@ -123,8 +124,16 @@ class ReleasePleasePipelineTests(unittest.TestCase):
         self.assertIn("googleapis/release-please-action@v4", text)
         self.assertIn("config-file: .github/release-please-config.json", text)
         self.assertIn("manifest-file: .github/.release-please-manifest.json", text)
-        self.assertNotIn("gh release upload", text)
-        self.assertNotIn("build_host_packages.py", text)
+        self.assertIn("package:", text)
+        self.assertIn("needs: release-please", text)
+        self.assertIn("if: needs.release-please.outputs.release_created == 'true'", text)
+        self.assertIn("ref: ${{ needs.release-please.outputs.tag_name }}", text)
+        self.assertRegex(text, r"(?ms)release-please:.*permissions:.*contents: write.*pull-requests: write")
+        self.assertRegex(text, r"(?ms)package:.*permissions:.*contents: write")
+        self.assertIn("python3 scripts/build_host_packages.py --check", text)
+        self.assertIn("python3 scripts/build_release_zip.py", text)
+        self.assertIn("gh release upload", text)
+        self.assertIn("grep -q \"^## Install artifacts$\"", text)
 
     def test_release_please_config_updates_all_versioned_manifests(self):
         config = json.loads(RELEASE_PLEASE_CONFIG.read_text(encoding="utf-8"))
