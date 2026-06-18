@@ -1,5 +1,5 @@
 ---
-status: IN_PROGRESS
+status: DONE
 skill: release-pipeline
 tier: operations
 adr_required: true
@@ -16,8 +16,9 @@ shaper should adopt the release model already proven by JIG and servo:
 conventional commit PR titles, CI gates, release-please-managed versions and
 changelog, and smoke-tested release archives uploaded to GitHub releases.
 
-This spec is planning-only until ADR-0002 is accepted. It does not implement
-workflows, builders, or archives yet.
+ADR-0002 is accepted, and this spec now implements the release automation
+baseline: CI and PR-title gates, release-please ownership of version/tag/release
+state, and host-explicit release archives.
 
 ## Sibling references
 

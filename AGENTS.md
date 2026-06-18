@@ -39,9 +39,9 @@ Update via `/jig:memory-sync` or when `jig-memory-scan` surfaces an unknown refe
   help the task; do not pause for per-use approval.
 
 ### Active specs
-- [004-release-automation](docs/specs/004-release-automation/spec.md) /
-  `004-03` - host-explicit release zips is REVIEWED on
-  `codex/004-03-host-zips`; `004-01` and `004-02` are DONE.
+- No active implementation slice. Check
+  [docs/specs/README.md](docs/specs/README.md) for the next DRAFT or
+  READY_FOR_IMPLEMENTATION candidate.
 
 ### Deferred decisions
 See docs/refinement-todo.md
