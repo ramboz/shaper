@@ -1,5 +1,5 @@
 ---
-status: DRAFT
+status: IN_PROGRESS
 skill: release-pipeline
 tier: operations
 adr_required: true

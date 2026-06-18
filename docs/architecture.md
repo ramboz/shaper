@@ -34,10 +34,10 @@ shaper/
 │   └── codex/                   # committed Codex marketplace package
 ├── skills/                      # product skill instructions
 ├── templates/                   # release-plan template
-├── scripts/                     # package builders and drift guards
+├── scripts/                     # package builders, drift guards, manifest checks
 ├── tests/                       # unittest coverage for package contracts
 ├── dist/                        # generated release zips; ignored by git
-├── .github/                     # CI and release workflows after Spec 004
+├── .github/                     # CI and PR-title workflows; release workflows later
 └── .codex/                      # project-local jig runtime from scaffold-init
 ```
 
@@ -63,9 +63,11 @@ not a backlog or second status board.
   and Codex plugin surfaces where practical. The accepted baseline is JIG
   `v2`'s committed host-package model: root source, `hosts/claude`,
   `hosts/codex`, and drift guard.
-- **CI/CD and releases:** accepted via ADR-0002 and planned in Spec 004:
-  conventional commit PR-title gate, CI, release-please, and host-explicit
-  release zips.
+- **CI/CD and releases:** accepted via ADR-0002 and implemented progressively
+  in Spec 004. The first gate adds conventional commit PR-title validation,
+  pull-request / `main` CI, manifest validation, host-package drift checks, and
+  a spec status-board drift check. Later slices add release-please and
+  host-explicit release zips.
 - **Package manager:** deferred until implementation needs packaging.
 - **Database / state:** no database; repo-native Markdown first.
 - **Key external services:** JIG docs/specs/status board, optional servo quality
@@ -73,8 +75,8 @@ not a backlog or second status board.
 - **Locked-in decisions:** repo-native Markdown first; soft coupling to JIG and
   servo; no web UI; hybrid plugin baseline; host-explicit release archives;
   release-plan/no-backlog-slate artifact model.
-- **Still open:** first CI check implementation details and the later JIG/servo
-  read boundary for `release-check`.
+- **Still open:** release-please wiring, host-explicit release archive builders,
+  and the later JIG/servo read boundary for `release-check`.
 - **Testing/static checks:** the first builder tests use standard-library
   `unittest` through `.jig/test-command`; the first code-health check compiles
   owned Python through `.jig/lint-command`. Both avoid a package-manager
@@ -131,9 +133,9 @@ not a backlog or second status board.
   shippable using JIG status and optional servo quality signals.
 - **Host adapters:** keep Claude Code and Codex plugin surfaces aligned where
   practical.
-- **Release automation:** operational layer that validates changes, delegates
-  versioning/releases to release-please, and builds host-explicit archives from
-  committed host packages.
+- **Release automation:** operational layer that validates changes now, then
+  later delegates versioning/releases to release-please and builds
+  host-explicit archives from committed host packages.
 
 JIG remains the source of truth for spec lifecycle state. shaper can recommend
 transitions and generate patch-ready instructions, but it must not silently
@@ -176,6 +178,11 @@ mutate JIG spec states.
 - **Release archive contract** (Spec 004 builders and smoke tests) - Claude
   archives are flat plugin packages; Codex archives are marketplace bundles
   with extract-then-add install semantics.
+- **Change-quality gate** (`.github/workflows/ci.yml`,
+  `.github/workflows/pr-title.yml`, `scripts/validate_manifests.py`) - pull
+  requests and `main` run the unit suite, Python syntax check, manifest
+  validation, host-package drift guard, and status-board drift check; PR titles
+  must be scoped conventional commits.
 - **Plugin install contract** (`.claude-plugin/plugin.json`,
   `.claude-plugin/marketplace.json`, `.codex-plugin/plugin.json`,
   `hosts/claude/`, `hosts/codex/`) - root manifests are canonical source,

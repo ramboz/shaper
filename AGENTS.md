@@ -34,9 +34,9 @@ Update via `/jig:memory-sync` or when `jig-memory-scan` surfaces an unknown refe
   release plans and JIG specs without restating JIG lifecycle status.
 
 ### Active specs
-- No active implementation spec. Pick the next `READY_FOR_IMPLEMENTATION` slice
-  from [docs/specs/README.md](docs/specs/README.md), or promote the next DRAFT
-  slice through the normal lifecycle before implementation.
+- [004-release-automation](docs/specs/004-release-automation/spec.md) /
+  `004-01` - CI and conventional-commit gate is in progress on
+  `codex/spec-004-01`.
 
 ### Deferred decisions
 See docs/refinement-todo.md

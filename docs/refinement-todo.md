@@ -53,5 +53,6 @@
 ## Operations
 
 ### Decision: CI/CD setup
-**Deferred:** No CI is configured for the clean new project. ADR-0002 and Spec 004 propose the release baseline: conventional commit PR-title gate, CI, release-please, and host-explicit release archives.
-**Resolution trigger:** ADR-0002 accepted and Spec 004 reconciled.
+**Resolved for first gate:** Spec 004 slice 004-01 adds pull-request / `main` CI and a conventional-commit PR-title gate. CI runs the unittest suite, Python syntax check, manifest validation, host-package drift guard, and status-board drift check.
+**Still deferred:** release-please and host-explicit release archives remain in later Spec 004 slices.
+**Resolution:** [Spec 004 slice 004-01](specs/004-release-automation/slice-01-ci-and-conventional-commit-gate.md).

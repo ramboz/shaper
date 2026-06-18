@@ -91,7 +91,7 @@ hybrid plugin baseline, and now includes the first release-plan handoff assets:
 | Surface | Role | Status |
 |---|---|---|
 | Hybrid plugin baseline | Codex and Claude Code host package layout | Root manifests, committed host packages, and drift guard in Spec 003 |
-| Release automation | CI, release-please, host-explicit zips | ADR-0002 accepted, Spec 004 draft |
+| Release automation | CI, release-please, host-explicit zips | CI and PR-title gate in Spec 004; release-please and zips planned |
 | Release plan and slate artifacts | `docs/releases/<slug>.md` and compact slate | ADR-0003 accepted; first template and slate added by Spec 002 |
 | `shape-release` and `cutline` | First release-plan-to-SDD handoff loop | Implemented by Spec 002 |
 | `scope-audit` | Scope check against appetite and cutline | Spec 006 draft |
@@ -195,3 +195,23 @@ DRAFT -> READY_FOR_REVIEW -> READY_FOR_IMPLEMENTATION -> IN_PROGRESS
 
 See [docs/workflow.md](docs/workflow.md) for the full process and
 [docs/conventions.md](docs/conventions.md) before changing project rules.
+
+### PR titles and release notes
+
+Pull requests use conventional-commit titles because squash-merged PR titles
+become the commit subjects that release-please will read on `main`.
+
+Supported PR title types are:
+
+- `feat(scope): subject`
+- `fix(scope): subject`
+- `perf(scope): subject`
+- `docs(scope): subject`
+- `chore(scope): subject`
+- `refactor(scope): subject`
+- `test(scope): subject`
+- `build(scope): subject`
+- `ci(scope): subject`
+
+Scopes are required. Subjects should start lowercase and should not end with a
+period.
