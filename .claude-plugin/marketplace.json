@@ -1,0 +1,17 @@
+{
+  "name": "shaper",
+  "owner": {
+    "name": "ramboz"
+  },
+  "plugins": [
+    {
+      "name": "shaper",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/ramboz/shaper.git",
+        "path": "hosts/claude"
+      },
+      "description": "Release shaping before implementation starts for Claude Code"
+    }
+  ]
+}

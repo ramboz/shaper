@@ -17,3 +17,6 @@ credentials/
 # Local runtime/scratch artifacts
 mcp-server.log
 /~/
+__pycache__/
+*.py[cod]
+.ruff_cache/

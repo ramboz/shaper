@@ -1,0 +1,8 @@
+{
+  "name": "shaper",
+  "description": "Release shaping before implementation starts for Claude Code",
+  "version": "0.1.0",
+  "author": {
+    "name": "ramboz"
+  }
+}

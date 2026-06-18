@@ -14,8 +14,9 @@
 
 <!-- elicited: 2026-06-17 / status: filled -->
 
-Expected product/plugin layout after
-[Spec 003: Hybrid plugin baseline](specs/003-hybrid-plugin-baseline/spec.md):
+Current product/plugin layout after
+[Spec 003: Hybrid plugin baseline](specs/003-hybrid-plugin-baseline/spec.md),
+with product skills still deferred:
 
 ```text
 shaper/
@@ -31,14 +32,10 @@ shaper/
 ├── hosts/
 │   ├── claude/                  # committed Claude Code plugin package
 │   └── codex/                   # committed Codex marketplace package
-├── skills/
-│   ├── shape-release/           # shape raw intent into a release plan
-│   ├── cutline/                 # audit JIG specs/slices against appetite and no-gos
-│   ├── release-slate/           # maintain compact release slate, not a backlog
-│   ├── scope-audit/             # scope hammering against release appetite/cutline
-│   └── release-check/           # advisory ship/cut-scope/stop/re-shape check
-├── templates/                   # Markdown templates for release plans and overlays
+├── skills/                      # future product skills, added by later specs
+├── templates/                   # future release-plan/slate templates
 ├── scripts/                     # package builders and drift guards
+├── tests/                       # unittest coverage for package contracts
 ├── dist/                        # generated release zips; ignored by git
 ├── .github/                     # CI and release workflows after Spec 004
 └── .codex/                      # project-local jig runtime from scaffold-init
@@ -46,7 +43,9 @@ shaper/
 
 The `.codex/` directory is the project-local JIG scaffold runtime, not
 shaper's canonical plugin source. The `hosts/<host>/` packages are generated
-from root source and committed, following JIG `v2` ADR-0018.
+from root source and committed, following JIG `v2` ADR-0018. For now they carry
+valid plugin metadata and README content; `shape-release`, `cutline`, and other
+product skills are added by later specs.
 
 The `docs/releases/` shape follows ADR-0003. Each `docs/releases/<slug>.md`
 file is a release plan. `docs/releases/README.md` is a compact release slate,
@@ -56,8 +55,9 @@ not a backlog or second status board.
 
 <!-- elicited: 2026-06-17 / status: filled -->
 
-- **Runtime / language:** Probably python (python3) as we want this consistent
-  with `/Users/ramboz/Projects/misc/jig` and `/Users/ramboz/Projects/misc/servo`.
+- **Runtime / language:** Python 3 standard-library tooling for repository
+  helpers, consistent with `/Users/ramboz/Projects/misc/jig` and
+  `/Users/ramboz/Projects/misc/servo`.
 - **Platform commitments:** cross-host from the start: support both Claude Code
   and Codex plugin surfaces where practical. The accepted baseline is JIG
   `v2`'s committed host-package model: root source, `hosts/claude`,
@@ -72,8 +72,12 @@ not a backlog or second status board.
 - **Locked-in decisions:** repo-native Markdown first; soft coupling to JIG and
   servo; no web UI; hybrid plugin baseline; host-explicit release archives;
   release-plan/no-backlog-slate artifact model.
-- **Still open:** test framework, first CI check implementation details, and the
-  later JIG/servo read boundary for `release-check`.
+- **Still open:** first CI check implementation details and the later JIG/servo
+  read boundary for `release-check`.
+- **Testing/static checks:** the first builder tests use standard-library
+  `unittest` through `.jig/test-command`; the first code-health check compiles
+  owned Python through `.jig/lint-command`. Both avoid a package-manager
+  decision until the project needs one.
 
 ## Core architecture decisions
 
@@ -90,7 +94,8 @@ not a backlog or second status board.
 - **Mechanics:** ADR-0001 adopts JIG `v2`'s committed host-package baseline:
   root canonical source, `.claude-plugin` and `.codex-plugin` source manifests,
   generated `hosts/claude` and `hosts/codex` packages committed to git, and a
-  drift guard.
+  drift guard. shaper uses a smaller builder than JIG because product skills
+  and host prose rewriting are deferred.
 
 ### Release automation and host-explicit archives
 
@@ -170,6 +175,13 @@ mutate JIG spec states.
 - **Release archive contract** (Spec 004 builders and smoke tests) - Claude
   archives are flat plugin packages; Codex archives are marketplace bundles
   with extract-then-add install semantics.
+- **Plugin install contract** (`.claude-plugin/plugin.json`,
+  `.claude-plugin/marketplace.json`, `.codex-plugin/plugin.json`,
+  `hosts/claude/`, `hosts/codex/`) - root manifests are canonical source,
+  host packages are committed generated payloads, and
+  `scripts/build_host_packages.py --check` guards host-package drift. Cross-host
+  version parity is owned by the source manifests plus the drift guard; Spec 004
+  owns future release-bump automation.
 
 No HTTP API, event bus, RPC, GraphQL surface, or web UI is planned for the
 initial product.

@@ -1,0 +1,36 @@
+{
+  "name": "shaper",
+  "version": "0.1.0",
+  "description": "Release shaping before implementation starts for Codex",
+  "author": {
+    "name": "ramboz"
+  },
+  "homepage": "https://github.com/ramboz/shaper",
+  "repository": "https://github.com/ramboz/shaper",
+  "keywords": [
+    "codex",
+    "release-shaping",
+    "scope",
+    "planning",
+    "specs"
+  ],
+  "interface": {
+    "displayName": "shaper",
+    "shortDescription": "Shape release-sized work before implementation starts",
+    "longDescription": "shaper helps maintainers turn raw intent into bounded release plans, appetite, cutlines, no-gos, and handoff guidance before implementation work moves into specs.",
+    "developerName": "ramboz",
+    "category": "Engineering",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Shape this raw intent into a release plan",
+      "Draw a release cutline across these specs",
+      "Check whether this release is ready"
+    ],
+    "brandColor": "#2F6F5E",
+    "screenshots": []
+  }
+}

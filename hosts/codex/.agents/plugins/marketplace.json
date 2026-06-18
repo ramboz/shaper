@@ -1,0 +1,20 @@
+{
+  "name": "shaper",
+  "interface": {
+    "displayName": "shaper"
+  },
+  "plugins": [
+    {
+      "name": "shaper",
+      "source": {
+        "source": "local",
+        "path": "./plugins/shaper"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Engineering"
+    }
+  ]
+}

@@ -19,7 +19,7 @@ shipping, shipped, or dropped.
 - [x] JIG scaffold artifacts exist in `docs/specs/`.
 - [x] ADR-0001 is accepted.
 - [x] ADR-0003 is accepted.
-- [ ] Spec 003 establishes the hybrid Codex / Claude Code plugin baseline.
+- [x] Spec 003 establishes the hybrid Codex / Claude Code plugin baseline.
 
 **Acceptance Criteria:**
 
