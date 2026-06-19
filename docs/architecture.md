@@ -44,8 +44,8 @@ shaper/
 The `.codex/` directory is the project-local JIG scaffold runtime, not
 shaper's canonical plugin source. The `hosts/<host>/` packages are generated
 from root source and committed, following JIG `v2` ADR-0018. For now they carry
-valid plugin metadata, README content, the first product skills, and the
-release-plan template. Later specs add `release-check` automation.
+valid plugin metadata, README content, the product skills (including the
+JIG-only `release-check`), and the release-plan template.
 
 The `docs/releases/` shape follows ADR-0003. Each `docs/releases/<slug>.md`
 file is a release plan. `docs/releases/README.md` is a compact release slate,
@@ -131,8 +131,10 @@ not a backlog or second status board.
 - **Scope audit:** detects appetite leakage, nice-to-have creep, unresolved
   risks/rabbit holes, no-go conflicts, orphan specs, and JIG work exceeding
   the cutline.
-- **Release check:** later skill that judges whether a release plan is
-  shippable using JIG status and optional servo quality signals.
+- **Release check:** judges whether a release plan is shippable, giving an
+  advisory ship / cut-scope / stop-and-re-shape / extend recommendation. The
+  JIG-only read (Spec 007 slice 007-01) is implemented; optional servo quality
+  signals remain deferred to slice 007-02 behind the future read-boundary ADR.
 - **Host adapters:** keep Claude Code and Codex plugin surfaces aligned where
   practical.
 - **Release automation:** operational layer that validates changes, delegates

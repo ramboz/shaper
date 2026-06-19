@@ -48,9 +48,9 @@ shaper is designed around repo-native Markdown artifacts and small agent skills:
   behavior.
 - **`scope-audit`** - checks whether active JIG work is leaking past a release
   plan's appetite, cutline, no-gos, or unresolved rabbit holes.
-- **Planned `release-check`** - will give advisory
-  ship/cut-scope/stop/re-shape guidance from implementation status and, later,
-  optional quality signals.
+- **`release-check`** - gives an advisory
+  ship/cut-scope/stop-and-re-shape/extend recommendation from release criteria
+  and JIG status. Servo quality signals are not evaluated in this slice.
 
 ## Relationship to jig and servo
 
@@ -97,7 +97,7 @@ hybrid plugin baseline, and now includes the first release-plan handoff assets:
 | `shape-release` and `cutline` | First release-plan-to-SDD handoff loop | Implemented by Spec 002 |
 | `release-slate` | Compact current view of release plans | Implemented by Spec 005 |
 | `scope-audit` | Scope check against appetite and cutline | Implemented by Spec 006 |
-| `release-check` | Advisory release readiness check | Spec 007 draft |
+| `release-check` | Advisory release readiness check | JIG-only check implemented by Spec 007 (slice 007-01); servo signal read deferred to 007-02 |
 
 For live per-slice state, see the
 [spec status board](docs/specs/README.md).
