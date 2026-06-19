@@ -69,9 +69,9 @@ See docs/refinement-todo.md
 
 ## Current Sprint Focus
 
-Draft the release-plan-to-JIG handoff loop: `shape-release`, `cutline`, and a
-non-duplicating `docs/releases/` release slate. Implementation should wait for
-the relevant specs to move through the normal lifecycle.
+The release-plan-to-JIG handoff loop now includes shipped `shape-release`,
+`cutline`, and `release-slate` skills. Next product focus is advancing
+`scope-audit` (Spec 006) through the normal lifecycle before implementation.
 
 ## Development Constraints
 
