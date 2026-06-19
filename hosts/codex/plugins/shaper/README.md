@@ -46,11 +46,11 @@ shaper is designed around repo-native Markdown artifacts and small agent skills:
 - **`release-slate`** - refreshes `docs/releases/README.md` from release
   plans while staying compact and avoiding backlog or second-status-board
   behavior.
-- **`scope-audit`** - checks whether active JIG work is leaking past a release
+- **`scope-audit`** - checks whether active SDD work is leaking past a release
   plan's appetite, cutline, no-gos, or unresolved rabbit holes.
 - **`release-check`** - gives an advisory
   ship/cut-scope/stop-and-re-shape/extend recommendation from release criteria
-  and JIG status. Servo quality signals are not evaluated in this slice.
+  and SDD status.
 
 ## Relationship to jig and servo
 
