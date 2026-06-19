@@ -134,8 +134,9 @@ class ReleasePlanHandoffContractTests(unittest.TestCase):
         refinement = _read(ROOT / "docs" / "refinement-todo.md")
         combined = _squash(f"{readme}\n{refinement}")
 
+        self.assertIn("scope-audit", combined)
+        self.assertIn("implemented by spec 006", combined)
         for deferred in (
-            "scope-audit automation",
             "release-check automation",
             "servo signal consumption",
             "web ui",

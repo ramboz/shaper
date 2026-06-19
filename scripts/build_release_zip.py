@@ -28,6 +28,8 @@ REQUIRED_FILES = {
         "skills/cutline/scripts/cutline.py",
         "skills/release-slate/SKILL.md",
         "skills/release-slate/scripts/release_slate.py",
+        "skills/scope-audit/SKILL.md",
+        "skills/scope-audit/scripts/scope_audit.py",
         "templates/release-plan.md",
     ),
     "codex": (
@@ -40,6 +42,8 @@ REQUIRED_FILES = {
         f"plugins/{PLUGIN_NAME}/skills/cutline/scripts/cutline.py",
         f"plugins/{PLUGIN_NAME}/skills/release-slate/SKILL.md",
         f"plugins/{PLUGIN_NAME}/skills/release-slate/scripts/release_slate.py",
+        f"plugins/{PLUGIN_NAME}/skills/scope-audit/SKILL.md",
+        f"plugins/{PLUGIN_NAME}/skills/scope-audit/scripts/scope_audit.py",
         f"plugins/{PLUGIN_NAME}/templates/release-plan.md",
     ),
 }

@@ -43,8 +43,8 @@
 **Resolution:** [Spec 003: Hybrid plugin baseline](specs/003-hybrid-plugin-baseline/spec.md).
 
 ### Decision: Lint file discovery
-**Deferred:** `.jig/lint-command` explicitly enumerates the Python files introduced by Spec 003. This keeps initial static checking deterministic, but future Python helpers can be missed unless the command is updated.
-**Resolution trigger:** Second slice that adds or moves Python helper files, or first time the explicit list misses a file during review.
+**Resolved for current helper set:** `.jig/lint-command` continues to use an explicit standard-library syntax-check file list, and slices that add Python helpers must update that list alongside focused tests. Spec 006 adds `scope-audit` helper and test coverage to the command.
+**Resolution:** [Spec 006 slice 006-01](specs/006-scope-audit/slice-01-scope-audit-and-hammering.md) and [.jig/lint-command](../.jig/lint-command).
 
 ### Decision: Testing framework
 **Resolved:** The first builder tests use standard-library `unittest` through `.jig/test-command`, and the first code-health check compiles owned Python through `.jig/lint-command`; no package manager or third-party test/lint dependency is introduced.

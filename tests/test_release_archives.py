@@ -79,6 +79,8 @@ class ReleaseArchiveShapeTests(unittest.TestCase):
         self.assertIn("skills/cutline/scripts/cutline.py", names)
         self.assertIn("skills/release-slate/SKILL.md", names)
         self.assertIn("skills/release-slate/scripts/release_slate.py", names)
+        self.assertIn("skills/scope-audit/SKILL.md", names)
+        self.assertIn("skills/scope-audit/scripts/scope_audit.py", names)
         self.assertNotIn("hosts/claude/.claude-plugin/plugin.json", names)
         self.assertFalse(any(name.startswith("hosts/") for name in names))
         self.assertFalse(any(name.startswith("docs/") for name in names))
@@ -101,6 +103,11 @@ class ReleaseArchiveShapeTests(unittest.TestCase):
         self.assertIn("plugins/shaper/skills/release-slate/SKILL.md", names)
         self.assertIn(
             "plugins/shaper/skills/release-slate/scripts/release_slate.py",
+            names,
+        )
+        self.assertIn("plugins/shaper/skills/scope-audit/SKILL.md", names)
+        self.assertIn(
+            "plugins/shaper/skills/scope-audit/scripts/scope_audit.py",
             names,
         )
         self.assertFalse(any(name.startswith("hosts/") for name in names))

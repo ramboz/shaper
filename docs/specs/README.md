@@ -19,6 +19,6 @@
 | [004-release-automation](004-release-automation/spec.md) | 004-02 - release-please-pipeline | **DONE** |  |
 | [004-release-automation](004-release-automation/spec.md) | 004-03 - host-explicit-release-zips | **DONE** |  |
 | [005-release-slate](005-release-slate/spec.md) | 005-01 - release slate | **DONE** |  |
-| [006-scope-audit](006-scope-audit/spec.md) | 006-01 - scope-audit-and-hammering | DRAFT |  |
+| [006-scope-audit](006-scope-audit/spec.md) | 006-01 - scope-audit-and-hammering | RECONCILED |  |
 | [007-release-check](007-release-check/spec.md) | 007-01 - JIG-only release check | DRAFT |  |
 | [007-release-check](007-release-check/spec.md) | 007-02 - optional servo signal read | DRAFT |  |

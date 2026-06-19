@@ -24,3 +24,6 @@ Spec 002 kept host package README generation as an exact root README copy while 
 
 ## Release-plan status parser must ignore allowed-status catalogs
 Spec 005 found that release plans produced by shape-release include an explanatory Allowed statuses sentence listing every possible status. Helpers should parse frontmatter status: or a standalone status line first, not scan the whole Status section for any known status, or committed/shipping/shipped/dropped plans can collapse back to candidate.
+
+## First scope-audit helper is intentionally shallow and advisory-only
+Spec 006 introduced scope_audit.py following cutline's deterministic-first-pass pattern: it reads the release plan, release slate, JIG status board, and linked specs constrained under the repo, and groups advisory findings (appetite leakage, nice-to-have creep, unresolved rabbit holes/no-go conflicts, JIG overreach, orphan specs) from board rows plus simple word matches. It never mutates JIG lifecycle state — output is patch-ready guidance only, guarded by a before/after snapshot test. Richer semantic scope analysis remains future work.
