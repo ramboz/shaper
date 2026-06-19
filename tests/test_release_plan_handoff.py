@@ -135,7 +135,6 @@ class ReleasePlanHandoffContractTests(unittest.TestCase):
         combined = _squash(f"{readme}\n{refinement}")
 
         for deferred in (
-            "release-slate automation",
             "scope-audit automation",
             "release-check automation",
             "servo signal consumption",

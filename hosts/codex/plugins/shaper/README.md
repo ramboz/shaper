@@ -43,8 +43,9 @@ shaper is designed around repo-native Markdown artifacts and small agent skills:
 - **`shape-release`** - elicits raw intent into a bounded release plan.
 - **`cutline`** - reads existing specs and status boards, then recommends
   include/defer/split/risk-first moves without mutating lifecycle state.
-- **Release slate** - `docs/releases/README.md` stays compact and current
-  without becoming a backlog or second status board.
+- **`release-slate`** - refreshes `docs/releases/README.md` from release
+  plans while staying compact and avoiding backlog or second-status-board
+  behavior.
 - **Planned `scope-audit`** - will check whether active work is leaking past
   the appetite or cutline.
 - **Planned `release-check`** - will give advisory
@@ -94,6 +95,7 @@ hybrid plugin baseline, and now includes the first release-plan handoff assets:
 | Release automation | CI, release-please, host-explicit zips | CI, PR-title gate, release-please, and host-explicit archive upload in Spec 004 |
 | Release plan and slate artifacts | `docs/releases/<slug>.md` and compact slate | ADR-0003 accepted; first template and slate added by Spec 002 |
 | `shape-release` and `cutline` | First release-plan-to-SDD handoff loop | Implemented by Spec 002 |
+| `release-slate` | Compact current view of release plans | Implemented by Spec 005 |
 | `scope-audit` | Scope check against appetite and cutline | Spec 006 draft |
 | `release-check` | Advisory release readiness check | Spec 007 draft |
 
@@ -192,10 +194,10 @@ npx release-please release-pr \
 
 ## Still deferred
 
-The first product loop is intentionally narrow. release-slate automation,
-scope-audit automation, release-check automation, servo signal consumption, web
-UI, task boards, sprint planning, estimation, backlog grooming, and
-issue-system replacement remain out of scope for this handoff slice.
+The first product loop is intentionally narrow. scope-audit automation,
+release-check automation, servo signal consumption, web UI, task boards,
+sprint planning, estimation, backlog grooming, and
+issue-system replacement remain out of scope for the current product surface.
 
 ## Start here
 
@@ -224,14 +226,15 @@ shaper/
 |   `-- codex/                   # Committed Codex marketplace package
 |-- skills/
 |   |-- shape-release/
+|   |-- release-slate/
 |   `-- cutline/
 |-- templates/                   # Release-plan template
 |-- scripts/                     # Builders, drift guards, release checks
 `-- dist/                        # Generated release zips; ignored by git
 ```
 
-Later specs add `release-slate`, `scope-audit`, and `release-check`
-automation; the current product surface ships `shape-release`, `cutline`, the
+Later specs add `scope-audit` and `release-check` automation; the current
+product surface ships `shape-release`, `cutline`, `release-slate`, the
 release-plan template, the compact release slate file, and release automation.
 
 ## Contributing

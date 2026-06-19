@@ -74,6 +74,11 @@ class ReleaseArchiveShapeTests(unittest.TestCase):
 
         self.assertIn(".claude-plugin/plugin.json", names)
         self.assertIn("skills/shape-release/SKILL.md", names)
+        self.assertIn("skills/shape-release/scripts/shape_release.py", names)
+        self.assertIn("skills/cutline/SKILL.md", names)
+        self.assertIn("skills/cutline/scripts/cutline.py", names)
+        self.assertIn("skills/release-slate/SKILL.md", names)
+        self.assertIn("skills/release-slate/scripts/release_slate.py", names)
         self.assertNotIn("hosts/claude/.claude-plugin/plugin.json", names)
         self.assertFalse(any(name.startswith("hosts/") for name in names))
         self.assertFalse(any(name.startswith("docs/") for name in names))
@@ -90,6 +95,14 @@ class ReleaseArchiveShapeTests(unittest.TestCase):
         self.assertIn(".agents/plugins/marketplace.json", names)
         self.assertIn("plugins/shaper/.codex-plugin/plugin.json", names)
         self.assertIn("plugins/shaper/skills/shape-release/SKILL.md", names)
+        self.assertIn("plugins/shaper/skills/shape-release/scripts/shape_release.py", names)
+        self.assertIn("plugins/shaper/skills/cutline/SKILL.md", names)
+        self.assertIn("plugins/shaper/skills/cutline/scripts/cutline.py", names)
+        self.assertIn("plugins/shaper/skills/release-slate/SKILL.md", names)
+        self.assertIn(
+            "plugins/shaper/skills/release-slate/scripts/release_slate.py",
+            names,
+        )
         self.assertFalse(any(name.startswith("hosts/") for name in names))
         self.assertFalse(any(name.startswith("docs/") for name in names))
         self.assertFalse(any(name.startswith(".github/") for name in names))

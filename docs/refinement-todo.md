@@ -29,8 +29,8 @@
 **Resolution:** [ADR-0002: Release automation and host-explicit archives](decisions/adr-0002-release-automation-and-archives.md) and [Spec 004 slice 004-03](specs/004-release-automation/slice-03-host-explicit-release-zips.md).
 
 ### Decision: Host-package README rewriting
-**Resolved for first product skills:** Spec 002 keeps host README generation as an exact root README copy, but updates the root README so host packages accurately describe the shipped `shape-release` / `cutline` skills and deferred product skills. Host-specific link rewriting is still deferred because this slice adds host-neutral skills, not host-specific runtime prose or install verification.
-**Resolution:** [Spec 002 slice 002-01](specs/002-release-plan-handoff/slice-01-release-plan-handoff.md) and [README.md](../README.md).
+**Resolved for current product skills:** Spec 002 keeps host README generation as an exact root README copy, and Spec 005 continues that model for the host-neutral `release-slate` skill. The root README is updated before host-package regeneration so committed host packages accurately describe shipped product skills and still-deferred product work. Host-specific link rewriting is still deferred until a slice adds host-specific runtime prose or install verification.
+**Resolution:** [Spec 002 slice 002-01](specs/002-release-plan-handoff/slice-01-release-plan-handoff.md), [Spec 005 slice 005-01](specs/005-release-slate/slice-01-release-slate.md), and [README.md](../README.md).
 
 ### Decision: Hook and agent host rendering
 **Deferred:** `scripts/build_host_packages.py` has future copy hooks for `agents/` and `hooks/`, but no hooks or agents ship in the Spec 003 baseline. Before those directories become real product payloads, shaper should decide whether host-specific rendering/trust documentation is needed instead of blanket copying.

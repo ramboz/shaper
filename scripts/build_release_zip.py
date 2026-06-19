@@ -23,7 +23,11 @@ REQUIRED_FILES = {
         ".claude-plugin/plugin.json",
         "README.md",
         "skills/shape-release/SKILL.md",
+        "skills/shape-release/scripts/shape_release.py",
         "skills/cutline/SKILL.md",
+        "skills/cutline/scripts/cutline.py",
+        "skills/release-slate/SKILL.md",
+        "skills/release-slate/scripts/release_slate.py",
         "templates/release-plan.md",
     ),
     "codex": (
@@ -31,7 +35,11 @@ REQUIRED_FILES = {
         f"plugins/{PLUGIN_NAME}/.codex-plugin/plugin.json",
         f"plugins/{PLUGIN_NAME}/README.md",
         f"plugins/{PLUGIN_NAME}/skills/shape-release/SKILL.md",
+        f"plugins/{PLUGIN_NAME}/skills/shape-release/scripts/shape_release.py",
         f"plugins/{PLUGIN_NAME}/skills/cutline/SKILL.md",
+        f"plugins/{PLUGIN_NAME}/skills/cutline/scripts/cutline.py",
+        f"plugins/{PLUGIN_NAME}/skills/release-slate/SKILL.md",
+        f"plugins/{PLUGIN_NAME}/skills/release-slate/scripts/release_slate.py",
         f"plugins/{PLUGIN_NAME}/templates/release-plan.md",
     ),
 }

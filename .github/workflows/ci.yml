@@ -34,10 +34,12 @@ jobs:
           scripts/validate_manifests.py
           skills/shape-release/scripts/shape_release.py
           skills/cutline/scripts/cutline.py
+          skills/release-slate/scripts/release_slate.py
           tests/test_hybrid_plugin_baseline.py
           tests/test_release_plan_handoff.py
           tests/test_release_ci_gate.py
           tests/test_release_archives.py
+          tests/test_release_slate.py
 
       - name: Validate manifests
         run: python3 scripts/validate_manifests.py

@@ -45,8 +45,8 @@ The `.codex/` directory is the project-local JIG scaffold runtime, not
 shaper's canonical plugin source. The `hosts/<host>/` packages are generated
 from root source and committed, following JIG `v2` ADR-0018. For now they carry
 valid plugin metadata, README content, the first product skills, and the
-release-plan template. Later specs add `release-slate`, `scope-audit`, and
-`release-check` automation.
+release-plan template. Later specs add `scope-audit` and `release-check`
+automation.
 
 The `docs/releases/` shape follows ADR-0003. Each `docs/releases/<slug>.md`
 file is a release plan. `docs/releases/README.md` is a compact release slate,
@@ -126,8 +126,9 @@ not a backlog or second status board.
   plan Markdown.
 - **Cutline analysis:** reads existing JIG specs/status board and proposes
   include/defer/split/risk-first recommendations without mutating them.
-- **Release slate:** maintains a compact current slate of release plans without
-  becoming a backlog or duplicate JIG status board.
+- **Release slate:** reads release plans and their JIG handoff links, then
+  maintains a compact current slate without becoming a backlog or duplicate JIG
+  status board.
 - **Scope audit:** detects appetite leakage, unresolved risks/rabbit holes,
   orphan specs, and JIG work exceeding the cutline.
 - **Release check:** later skill that judges whether a release plan is
@@ -152,8 +153,7 @@ mutate JIG spec states.
 - **`docs/releases/README.md`** - compact release slate: active candidate,
   committed, shipping, shipped, and currently relevant dropped release plans.
 - **`docs/specs/README.md`** - JIG status board read by cutline, scope-audit,
-  release-slate, and release-check flows; shaper must not create a second
-  status board.
+  and release-check flows; shaper must not create a second status board.
 - **`docs/specs/*`** - JIG specs and slices read as source material for
   recommendations.
 - **`docs/product-vision.md` / `docs/architecture.md`** - project-level framing
@@ -172,8 +172,9 @@ mutate JIG spec states.
 - **Skill invocation behavior** (`skills/<name>/SKILL.md`) - skills define how
   agents elicit, read, and update repo-native Markdown.
 - **JIG read surfaces** (JIG's existing `docs/specs/README.md` and
-  `docs/specs/*`) - cutline and scope-audit read JIG specs/status without
-  mutating lifecycle state.
+  `docs/specs/*`) - cutline, scope-audit, and release-check read JIG
+  specs/status without mutating lifecycle state. release-slate reads only JIG
+  handoff links already present in release plans.
 - **Servo signal surface** (no accepted artifact yet) - future release-check may
   consume servo quality signals after a read-boundary ADR.
 - **Release archive contract** (Spec 004 builders and smoke tests) - Claude

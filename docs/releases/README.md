@@ -8,6 +8,8 @@ Keep entries short. Link to release plans and, when useful, JIG specs or slices
 without copying JIG lifecycle status. Remove dropped or deferred ideas once
 they stop informing a current release decision.
 
+No release plans were found.
+
 ## Candidate
 
 | Release plan | Why it matters now | Handoff notes |
@@ -27,6 +29,8 @@ they stop informing a current release decision.
 | _None yet_ | _-_ | _-_ |
 
 ## Shipped
+
+Recently shipped release plans stay here only while they inform current decisions.
 
 | Release plan | Why it matters now | Handoff notes |
 |---|---|---|
