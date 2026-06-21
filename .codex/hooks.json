@@ -1,7 +1,4 @@
 {
-  "metadata": {
-    "managed_by_jig": true
-  },
   "hooks": {
     "PreToolUse": [
       {
