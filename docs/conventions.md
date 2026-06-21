@@ -27,15 +27,36 @@
 
 ## Code style
 
-> **Deferred — no signal from initial scaffold.** Will be filled in as the project
-> encounters style decisions worth recording. Each addition follows the
-> Rule/Why/How format above.
+**Rule:** Product helpers are standard-library Python unless a slice explicitly
+justifies a dependency.
+**Why:** shaper ships as a small host-neutral plugin, so low-dependency helpers
+keep host packages easy to inspect, test, and archive.
+**How to apply:** Put executable helper logic under the relevant `skills/*/`
+tree or `scripts/`, prefer table-driven code over framework setup, and record a
+new ADR/spec decision before adding a package manager or runtime dependency.
+
+**Rule:** Static checks use the repo-local `.jig/lint-command` contract.
+**Why:** A single checked command gives CI, agents, and humans the same syntax
+baseline without introducing third-party lint tooling before it is needed.
+**How to apply:** When a slice adds an owned Python helper, update
+`.jig/lint-command` and focused tests in the same change.
 
 ## Testing
 
-> **Deferred — no test framework decided yet.** Will be filled in once the first
-> spec requires tests beyond ad-hoc verification.
+**Rule:** Tests use standard-library `unittest` through `.jig/test-command`.
+**Why:** This matches the current helper style and keeps the project runnable in
+plain Python environments.
+**How to apply:** Add focused tests under `tests/` for helper behavior,
+non-mutation boundaries, and host-package/archive contracts touched by the
+slice. Broaden the test command only when a slice introduces a new executable
+surface.
 
 ## Git
 
-> **Deferred — commit message format and branch naming not yet decided.**
+**Rule:** Pull-request titles use scoped conventional-commit syntax.
+**Why:** Squash-merged PR titles become commit subjects on `main`, and
+release-please uses those subjects to decide changelog entries and version
+bumps.
+**How to apply:** Use `type(scope): subject`, with one of the supported types in
+`README.md`. Keep subjects lowercase and without a trailing period. Branch names
+have no project-specific automation contract yet.

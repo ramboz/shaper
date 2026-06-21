@@ -136,20 +136,23 @@ work to JIG.
 
 <!-- elicited: 2026-06-17 / status: filled -->
 
-- **Runtime / language:** Probably python (python3) as we want this consistent
-  with `/Users/ramboz/Projects/misc/jig` and `/Users/ramboz/Projects/misc/servo`.
+- **Runtime / language:** Python 3 for helper scripts, consistent with
+  `/Users/ramboz/Projects/misc/jig` and `/Users/ramboz/Projects/misc/servo`.
 - **Platform commitments:**
   - Cloud target: none for the initial product.
   - Deployment shape: plugin surfaces for Claude Code and Codex where practical.
-  - Package manager: deferred until implementation needs packaging.
+  - Package manager: none yet; standard-library Python is enough for the
+    current helper surface.
   - Database: none; repo-native Markdown first.
   - Key external services: JIG docs/specs/status board, optional servo quality
-    signals after a future read-boundary ADR.
-- **Locked-in vs. still open:** repo-native Markdown first, soft coupling to
-  JIG and servo, no web UI, the hybrid plugin baseline, host-explicit release
-  archives, and the release-plan/no-backlog-slate artifact model are locked in.
-  Package manager, test framework, and the later servo read boundary remain
-  open.
+    signals from `docs/servo/release-signals/<slug>.md` under ADR-0004's
+    read-only boundary.
+- **Locked-in decisions:** repo-native Markdown first, soft coupling to JIG and
+  servo, no web UI, the hybrid plugin baseline, host-explicit release archives,
+  the release-plan/no-backlog-slate artifact model, and ADR-0004's JIG/servo
+  release-signal boundary. The current implementation also uses
+  standard-library `unittest` and `.jig` test/lint commands. No stack decision
+  is open for the current product surface.
 
 ## Design principles & constraints
 
@@ -190,13 +193,18 @@ the source of truth for spec lifecycle state.
   - A release needs a release check using JIG status and optional servo quality
     signals.
 
-## Open questions
+## Resolved Questions
 
 <!-- elicited: 2026-06-17 / status: filled -->
 
-- How much JIG detection belongs in the first release-plan handoff slice versus
-  later scope-audit work?
-- What exact servo artifacts should `release-check` read, and how should it
-  degrade when they are absent?
-- What should "patch-ready instructions" look like when shaper recommends JIG
-  spec state transitions without mutating them?
+- **JIG detection depth:** Spec 002 shipped shallow status-board and linked-spec
+  reads for cutline/handoff. Spec 006 added scope-audit's broader advisory
+  checks without mutating JIG lifecycle state.
+- **Servo evidence boundary:** ADR-0004 and Spec 007 slice 02 limit
+  `release-check` to optional read-only
+  `docs/servo/release-signals/<slug>.md` artifacts. Missing or malformed servo
+  evidence degrades to "not evaluated".
+- **Patch-ready JIG guidance:** `cutline`, `scope-audit`, and `release-check`
+  may recommend include/defer/split/risk-first or release decisions with
+  evidence and rationale, but they do not run JIG transitions or edit lifecycle
+  status.

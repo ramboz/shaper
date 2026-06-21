@@ -211,6 +211,7 @@ mutate JIG spec states.
 No HTTP API, event bus, RPC, GraphQL surface, or web UI is planned for the
 initial product.
 
-## Open questions
+## Deferred decisions
 
-> Deferred items live in [refinement-todo.md](refinement-todo.md).
+> Deferred decisions and their resolution triggers live in
+> [refinement-todo.md](refinement-todo.md).
