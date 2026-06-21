@@ -1,6 +1,6 @@
 {
   "name": "shaper",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Release shaping before implementation starts for Codex",
   "author": {
     "name": "ramboz"
