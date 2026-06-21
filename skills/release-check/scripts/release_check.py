@@ -1,9 +1,9 @@
 """Advisory release-check from release-plan criteria and JIG status.
 
-Reads a release plan and JIG status board/specs (when present) and recommends
-one of ship / cut scope / stop and re-shape / extend only with explicit
-rationale. This is the JIG-only slice: servo signals are reported as not
-evaluated, never as a failure. The helper never mutates JIG lifecycle state.
+Reads a release plan, JIG status board/specs (when present), and optional
+servo release-signal artifacts (when present) and recommends one of ship / cut
+scope / stop and re-shape / extend only with explicit rationale. Servo signals
+are advisory evidence only. The helper never mutates JIG or servo state.
 """
 
 from __future__ import annotations
@@ -25,6 +25,7 @@ UNRESOLVED_RISK_PATTERNS = (
     "needs research",
 )
 EMPTY_MARKERS = {"_none_", "_-_", "_tbd_", "tbd", "none", "-"}
+SERVO_STATUSES = {"pass", "fail", "mixed", "not-evaluated"}
 
 
 @dataclass(frozen=True)
@@ -34,6 +35,14 @@ class BoardRow:
     status: str
     spec_path: str
     text: str = ""
+
+
+@dataclass(frozen=True)
+class ServoSignal:
+    status: str
+    path: str | None = None
+    summary: tuple[str, ...] = ()
+    note: str = ""
 
 
 def _strip_markdown(value: str) -> str:
@@ -79,6 +88,35 @@ def _section_entries(text: str, heading: str) -> list[str]:
     return entries
 
 
+def _frontmatter_and_body(text: str) -> tuple[dict[str, str], str]:
+    if not text.startswith("---\n"):
+        return {}, text
+    _, rest = text.split("---\n", 1)
+    if "\n---\n" not in rest:
+        return {}, text
+    raw_frontmatter, body = rest.split("\n---\n", 1)
+    frontmatter: dict[str, str] = {}
+    for line in raw_frontmatter.splitlines():
+        if ":" not in line:
+            continue
+        key, value = line.split(":", 1)
+        frontmatter[key.strip()] = value.strip().strip("\"'")
+    return frontmatter, body
+
+
+def _body_summary(body: str) -> tuple[str, ...]:
+    lines = []
+    for raw in body.splitlines():
+        stripped = raw.strip()
+        if not stripped or stripped.startswith("#"):
+            continue
+        stripped = stripped.lstrip("-*").strip()
+        if not stripped or stripped.lower() in EMPTY_MARKERS:
+            continue
+        lines.append(_strip_markdown(stripped))
+    return tuple(lines[:6])
+
+
 def _resolve_release(repo: Path, release: str | None) -> tuple[Path | None, str | None]:
     if not release:
         return None, None
@@ -100,6 +138,52 @@ def _resolve_release(repo: Path, release: str | None) -> tuple[Path | None, str 
         if resolved.is_file():
             return resolved, resolved.read_text(encoding="utf-8")
     return candidates[-1], None
+
+
+def _release_slug(repo: Path, release_path: Path | None, release: str | None) -> str | None:
+    if release_path and release_path.suffix == ".md":
+        return release_path.stem
+    if release:
+        raw = Path(release)
+        return raw.stem if raw.suffix else release
+    return None
+
+
+def _read_servo_signal(repo: Path, release_slug: str | None) -> ServoSignal:
+    if not release_slug:
+        return ServoSignal(
+            status="not-evaluated",
+            note="No release slug was available for servo signal lookup.",
+        )
+    repo_root = repo.resolve()
+    path = (repo / "docs" / "servo" / "release-signals" / f"{release_slug}.md").resolve()
+    try:
+        path.relative_to(repo_root)
+    except ValueError:
+        return ServoSignal(
+            status="not-evaluated",
+            note="Servo release-signal path escaped the repository and was ignored.",
+        )
+    if not path.is_file():
+        return ServoSignal(
+            status="not-evaluated",
+            note="No servo release-signal artifact found.",
+        )
+
+    text = path.read_text(encoding="utf-8")
+    frontmatter, body = _frontmatter_and_body(text)
+    status = frontmatter.get("status", "not-evaluated").strip().lower()
+    note = ""
+    if status not in SERVO_STATUSES:
+        note = f"Servo signal status '{status}' is not recognized; treated as not evaluated."
+        status = "not-evaluated"
+    relative = path.relative_to(repo_root).as_posix()
+    return ServoSignal(
+        status=status,
+        path=relative,
+        summary=_body_summary(body),
+        note=note,
+    )
 
 
 def _spec_reference_key(target: str) -> str:
@@ -384,6 +468,41 @@ def _render_open_risks(
     return lines
 
 
+def _servo_disagreement(recommendation: str, signal: ServoSignal) -> str:
+    if signal.status in {"not-evaluated", ""}:
+        return ""
+    if recommendation == "ship" and signal.status in {"fail", "mixed"}:
+        return f"JIG evidence supports ship while servo reports {signal.status}."
+    if recommendation != "ship" and signal.status == "pass":
+        return f"Servo reports pass while JIG recommendation is {recommendation}."
+    return ""
+
+
+def _display_servo_status(status: str) -> str:
+    return "not evaluated" if status == "not-evaluated" else status
+
+
+def _render_servo_signal(signal: ServoSignal, recommendation: str) -> list[str]:
+    lines = ["## Servo Signals", ""]
+    if signal.path:
+        lines.append(f"Servo files read: {signal.path}")
+    lines.append(f"Servo signals: {_display_servo_status(signal.status)}")
+    if signal.note:
+        lines.append(signal.note)
+    for item in signal.summary:
+        lines.append(f"- {item}")
+    disagreement = _servo_disagreement(recommendation, signal)
+    if disagreement:
+        lines.extend(
+            [
+                "",
+                "Servo/JIG disagreement: human decision required.",
+                disagreement,
+            ]
+        )
+    return lines
+
+
 def _render(repo: Path, release: str | None) -> str:
     release_path, release_text = _resolve_release(repo, release)
     if release and release_text is None:
@@ -413,6 +532,7 @@ def _render(repo: Path, release: str | None) -> str:
     risks = _unresolved_risks(release_text)
     extension = _extension_rationale(release_text)
     recommendation, rationale = _recommend(scoped, conflicts, risks, extension)
+    servo_signal = _read_servo_signal(repo, _release_slug(repo, release_path, release))
 
     if release_path and release_text:
         release_line = (
@@ -427,7 +547,7 @@ def _render(repo: Path, release: str | None) -> str:
         "",
         release_line,
         no_jig_message or "JIG files read: " + ", ".join(jig_files_read),
-        "Servo signals: not evaluated (JIG-only slice).",
+        f"Servo signals: {_display_servo_status(servo_signal.status)}",
         "",
     ]
     parts.extend(_render_criteria(release_text))
@@ -435,6 +555,8 @@ def _render(repo: Path, release: str | None) -> str:
     parts.extend(_render_jig_status(scoped))
     parts.append("")
     parts.extend(_render_open_risks(conflicts, risks))
+    parts.append("")
+    parts.extend(_render_servo_signal(servo_signal, recommendation))
     parts.append("")
     parts.extend(
         [
@@ -446,6 +568,7 @@ def _render(repo: Path, release: str | None) -> str:
             "",
             "Advisory only: use JIG workflow separately for any lifecycle changes.",
             "JIG files left untouched.",
+            "Servo files left untouched.",
             "",
         ]
     )

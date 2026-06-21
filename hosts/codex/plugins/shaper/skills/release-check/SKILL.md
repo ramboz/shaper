@@ -1,9 +1,9 @@
 ---
 name: release-check
 description: >
-  Read a release plan plus JIG specs/status when present, then give an advisory
-  ship / cut-scope / stop-and-re-shape / extend-with-rationale recommendation
-  from JIG evidence only, without mutating JIG lifecycle state.
+  Read a release plan plus JIG specs/status and optional servo release signals
+  when present, then give an advisory ship / cut-scope / stop-and-re-shape /
+  extend-with-rationale recommendation without mutating JIG or servo state.
 user-invocable: true
 ---
 
@@ -13,9 +13,8 @@ Use this skill when a maintainer has a release plan and wants an advisory call
 on whether the release is shippable, scope should be cut, work should stop and
 be re-shaped, or an extension is explicitly justified.
 
-This is the JIG-only slice. Servo quality signals are reported as not evaluated,
-never as a failure. Optional servo signal reads wait for the JIG/servo
-read-boundary ADR.
+Servo quality signals are optional advisory evidence. Missing servo artifacts
+are reported as not evaluated, never as a failure.
 
 ## Read boundary
 
@@ -24,19 +23,29 @@ Read only what is needed:
 - the target `docs/releases/<slug>.md` release plan: appetite, cutline, JIG
   handoff, release-check criteria, risks / rabbit holes, and no-gos;
 - `docs/specs/README.md`, when present;
-- linked or relevant `docs/specs/*` specs and slices, when present.
+- linked or relevant `docs/specs/*` specs and slices, when present;
+- `docs/servo/release-signals/<slug>.md`, when present, where `<slug>` matches
+  the release plan slug.
 
 If `docs/specs/README.md` and relevant `docs/specs/*` files are absent, report
 "No JIG specs/status board were found" and give release-plan-only guidance.
 Leave JIG files untouched.
 
+If the matching servo release-signal artifact is absent, report "not evaluated"
+and continue. Do not read arbitrary servo directories, logs, runtime state,
+queues, heartbeats, caches, or generated reports outside
+`docs/servo/release-signals/<slug>.md`.
+
 ## Mutation boundary
 
-- This is a non-mutating analysis skill for JIG artifacts.
+- This is a non-mutating analysis skill for JIG and servo artifacts.
 - It must not edit JIG spec lifecycle state.
 - It must not run `workflow.py transition`.
 - It must not rewrite `docs/specs/README.md` or any `docs/specs/*` lifecycle
   field.
+- It must not run servo commands, loops, hooks, evaluators, oracle code, or
+  heartbeat dispatch.
+- It must not create, update, delete, normalize, or repair servo artifacts.
 - It produces a recommendation and rationale only.
 
 ## Recommendation
@@ -56,16 +65,22 @@ Output exactly one recommendation:
 Always surface open risks — unresolved rabbit holes and no-go conflicts —
 before recommending ship.
 
+When JIG evidence and servo signals disagree, surface the disagreement and
+recommend a human decision. Servo evidence can add caution or strengthen the
+rationale, but it cannot override JIG status, no-gos, release appetite, or an
+explicit release-plan extension requirement by itself.
+
 For a deterministic first pass, run:
 
 ```bash
 python3 skills/release-check/scripts/release_check.py --repo <repo> --release <slug>
 ```
 
-The helper reads the release plan and `docs/specs/README.md` plus linked spec
-files when present, prints the release criteria read, JIG status, open risks,
-and a single recommendation with rationale, and never writes to JIG files. Use
-agent judgment to refine the rationale before acting on it.
+The helper reads the release plan, `docs/specs/README.md` plus linked spec files
+when present, and the matching servo release-signal artifact when present. It
+prints the release criteria read, JIG status, servo signal summary, open risks,
+and a single recommendation with rationale, and never writes to JIG or servo
+files. Use agent judgment to refine the rationale before acting on it.
 
 ## Matching notes
 
@@ -77,6 +92,10 @@ The helper is deterministic and advisory; refine its calls with judgment:
 - In-scope JIG work is the set of board rows whose spec is linked from the
   release plan. When the plan links no specs (or none match the board), the
   helper falls back to treating every board row as in-scope.
+- Servo release signals are read only from
+  `docs/servo/release-signals/<slug>.md`. The frontmatter `status` may be
+  `pass`, `fail`, `mixed`, or `not-evaluated`; the Markdown body is summarized
+  as advisory evidence.
 - No-go conflicts use word-subset and phrase matching, so the match is
   heuristic: it can over-match when a no-go shares vocabulary with legitimate
   work, and under-match across singular/plural wording. Treat a flagged
@@ -89,8 +108,8 @@ The helper is deterministic and advisory; refine its calls with judgment:
 
 - If no JIG specs/status board were found, say so and base the recommendation
   on the release plan alone.
-- Servo signals are always reported as not evaluated in this slice. Do not block
-  or fail when servo artifacts are absent.
+- Do not block or fail when servo artifacts are absent; report servo signals as
+  not evaluated.
 - If a release plan is missing appetite, no-gos, or risks, flag that gap before
   making a confident recommendation.
 
@@ -100,9 +119,10 @@ End with:
 
 - release plan inspected;
 - JIG files read, or the no-JIG message;
-- servo signals reported as not evaluated;
+- servo files read or not evaluated;
 - release criteria read;
 - JIG status of in-scope work;
 - open risks (rabbit holes and no-go conflicts);
+- servo signal summary and any JIG/servo disagreement;
 - a single recommendation with rationale;
-- confirmation that JIG files were left untouched.
+- confirmation that JIG and servo files were left untouched.

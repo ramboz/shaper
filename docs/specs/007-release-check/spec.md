@@ -1,5 +1,5 @@
 ---
-status: IN_PROGRESS
+status: DONE
 skill: release-check
 tier: product
 last_verified:
@@ -13,15 +13,15 @@ shaper should eventually answer the release-shaping question: is this release
 shippable enough, should scope be cut, should work stop and be reshaped, or is
 an extension justified explicitly?
 
-The first slice is JIG-only. Optional servo signal consumption waits for a
-future ADR that defines the read boundary.
+The first slice is JIG-only. The second slice adds optional servo signal
+consumption through ADR-0004's read-only release-signal boundary.
 
 ## Goals
 
 1. Add `shaper:release-check`.
 2. Produce advisory ship/cut-scope/stop/re-shape/extend-with-rationale output.
 3. Start with JIG-only evidence.
-4. Add optional servo signal reads only after the read-boundary ADR exists.
+4. Add optional servo signal reads through the accepted read-boundary ADR.
 
 ## Non-goals
 
@@ -37,21 +37,21 @@ future ADR that defines the read boundary.
 
 The first useful data set is JIG-only: release criteria, JIG status, open
 risks, cutline state, and explicit no-gos. Servo signals add a second data set
-after their read boundary is accepted.
+through ADR-0004's accepted read boundary.
 
 **Rejected splits:**
 
 - Interface-only: a release-check skill without evidence would be vibes.
 - Path-only: ship/cut/stop outcomes all need the same evidence read.
-- Spike: JIG-only evidence is clear enough; servo integration is deferred by
-  dependency instead.
+- Spike: JIG-only evidence was clear enough for the first slice; servo
+  integration followed once ADR-0004 accepted the read boundary.
 
 ## Dependencies
 
 - [ADR-0003: Release plan and no-backlog slate artifact model](../../decisions/adr-0003-release-plan-no-backlog-slate.md)
 - [Spec 002: Release plan to JIG handoff](../002-release-plan-handoff/spec.md)
 - [Spec 006: Scope audit and scope hammering](../006-scope-audit/spec.md)
-- Future ADR-0004: JIG/servo read boundary, before servo signal reads.
+- [ADR-0004: JIG/servo read boundary](../../decisions/adr-0004-jig-servo-read-boundary.md)
 
 ## Slices
 

@@ -33,3 +33,6 @@ Spec 007 slice 007-01 introduced release_check.py following the cutline/scope-au
 
 ## CI syntax-check list is a second source of truth alongside .jig/lint-command
 Adding a Python helper means updating the file list in BOTH `.jig/lint-command` AND the `Check Python syntax` step in `.github/workflows/ci.yml` — they are independent hardcoded lists, and the CI one will silently drop new files from the enforced syntax gate (which runs the Python 3.11/3.12 matrix) if you only update `.jig/lint-command`. Also: backslashes inside f-string expressions (PEP 701) are a SyntaxError on 3.11 — compute the escaped value in a plain statement first, as scope_audit.py does.
+
+## release-check servo signal boundary
+Spec 007 slice 007-02 completed optional servo signal reads for release-check. The only accepted servo input is docs/servo/release-signals/<release-slug>.md from ADR-0004; absence and unrecognized statuses render as not evaluated, signal disagreement is advisory/human-decision-only, and release-check must not run servo loops or mutate JIG/servo state.

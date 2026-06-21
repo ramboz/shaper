@@ -138,7 +138,7 @@ class ReleasePlanHandoffContractTests(unittest.TestCase):
         self.assertIn("implemented by spec 006", combined)
         for deferred in (
             "release-check automation",
-            "servo signal consumption",
+            "running servo loops",
             "web ui",
             "task boards",
             "sprint planning",

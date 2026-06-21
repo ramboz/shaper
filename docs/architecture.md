@@ -44,8 +44,9 @@ shaper/
 The `.codex/` directory is the project-local JIG scaffold runtime, not
 shaper's canonical plugin source. The `hosts/<host>/` packages are generated
 from root source and committed, following JIG `v2` ADR-0018. For now they carry
-valid plugin metadata, README content, the product skills (including the
-JIG-only `release-check`), and the release-plan template.
+valid plugin metadata, README content, the product skills (including
+`release-check` with optional servo release-signal reads), and the release-plan
+template.
 
 The `docs/releases/` shape follows ADR-0003. Each `docs/releases/<slug>.md`
 file is a release plan. `docs/releases/README.md` is a compact release slate,
@@ -71,12 +72,13 @@ not a backlog or second status board.
   from the tagged source state.
 - **Package manager:** deferred until implementation needs packaging.
 - **Database / state:** no database; repo-native Markdown first.
-- **Key external services:** JIG docs/specs/status board, optional servo quality
-  signals after a future read-boundary ADR.
+- **Key external services:** JIG docs/specs/status board, optional servo release
+  signals from `docs/servo/release-signals/<slug>.md`.
 - **Locked-in decisions:** repo-native Markdown first; soft coupling to JIG and
   servo; no web UI; hybrid plugin baseline; host-explicit release archives;
-  release-plan/no-backlog-slate artifact model.
-- **Still open:** the later JIG/servo read boundary for `release-check`.
+  release-plan/no-backlog-slate artifact model; ADR-0004's JIG/servo
+  read-only release-signal boundary.
+- **Still open:** none for the current release-check surface.
 - **Testing/static checks:** the first builder tests use standard-library
   `unittest` through `.jig/test-command`; the first code-health check compiles
   owned Python through `.jig/lint-command`. Both avoid a package-manager
@@ -132,9 +134,8 @@ not a backlog or second status board.
   risks/rabbit holes, no-go conflicts, orphan specs, and JIG work exceeding
   the cutline.
 - **Release check:** judges whether a release plan is shippable, giving an
-  advisory ship / cut-scope / stop-and-re-shape / extend recommendation. The
-  JIG-only read (Spec 007 slice 007-01) is implemented; optional servo quality
-  signals remain deferred to slice 007-02 behind the future read-boundary ADR.
+  advisory ship / cut-scope / stop-and-re-shape / extend recommendation from
+  JIG evidence and optional servo release signals.
 - **Host adapters:** keep Claude Code and Codex plugin surfaces aligned where
   practical.
 - **Release automation:** operational layer that validates changes, delegates
@@ -161,8 +162,9 @@ mutate JIG spec states.
 - **`docs/product-vision.md` / `docs/architecture.md`** - project-level framing
   that constrains shaper's own future specs.
 - **`docs/decisions/*`** - ADRs only where a hard-to-reverse decision is needed.
-- **Optional servo quality signals** - consumed by future release-check work if
-  present; shaper does not define or run servo oracles.
+- **`docs/servo/release-signals/<slug>.md`** - optional servo release-signal
+  artifact read by release-check when present; shaper does not define or run
+  servo oracles.
 
 ## Contract surfaces
 
@@ -177,8 +179,9 @@ mutate JIG spec states.
   `docs/specs/*`) - cutline, scope-audit, and release-check read JIG
   specs/status without mutating lifecycle state. release-slate reads only JIG
   handoff links already present in release plans.
-- **Servo signal surface** (no accepted artifact yet) - future release-check may
-  consume servo quality signals after a read-boundary ADR.
+- **Servo signal surface** (`docs/servo/release-signals/<slug>.md`) -
+  release-check may read the matching release-scoped artifact as advisory
+  evidence, but must not run servo loops or mutate servo-owned files.
 - **Release archive contract** (Spec 004 builders and smoke tests) - Claude
   archives are flat plugin packages; Codex archives are marketplace bundles
   with extract-then-add install semantics.

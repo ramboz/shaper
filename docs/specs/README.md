@@ -21,4 +21,4 @@
 | [005-release-slate](005-release-slate/spec.md) | 005-01 - release slate | **DONE** |  |
 | [006-scope-audit](006-scope-audit/spec.md) | 006-01 - scope-audit-and-hammering | **DONE** |  |
 | [007-release-check](007-release-check/spec.md) | 007-01 - JIG-only release check | **DONE** |  |
-| [007-release-check](007-release-check/spec.md) | 007-02 - optional servo signal read | DRAFT |  |
+| [007-release-check](007-release-check/spec.md) | 007-02 - optional servo signal read | **DONE** |  |

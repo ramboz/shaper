@@ -50,7 +50,8 @@ shaper is designed around repo-native Markdown artifacts and small agent skills:
   plan's appetite, cutline, no-gos, or unresolved rabbit holes.
 - **`release-check`** - gives an advisory
   ship/cut-scope/stop-and-re-shape/extend recommendation from release criteria
-  and SDD status.
+  and SDD status, plus optional servo release signals when the matching
+  `docs/servo/release-signals/<slug>.md` artifact exists.
 
 ## Relationship to jig and servo
 
@@ -65,8 +66,9 @@ shaper is a sibling plugin, not a replacement for either project.
   boundaries, no-gos, risk retirement, cutlines, and release readiness checks.
 
 The coupling is intentionally soft. shaper should hand off to SDD generally,
-read jig docs when jig is present, and later consume servo signals when they
-exist. It should degrade gracefully when those artifacts are absent.
+read jig docs when jig is present, and consume servo release signals only when
+an accepted `docs/servo/release-signals/<slug>.md` artifact exists. It should
+degrade gracefully when those artifacts are absent.
 
 ## Artifact model
 
@@ -97,7 +99,7 @@ hybrid plugin baseline, and now includes the first release-plan handoff assets:
 | `shape-release` and `cutline` | First release-plan-to-SDD handoff loop | Implemented by Spec 002 |
 | `release-slate` | Compact current view of release plans | Implemented by Spec 005 |
 | `scope-audit` | Scope check against appetite and cutline | Implemented by Spec 006 |
-| `release-check` | Advisory release readiness check | JIG-only check implemented by Spec 007 (slice 007-01); servo signal read deferred to 007-02 |
+| `release-check` | Advisory release readiness check | JIG and optional servo release-signal reads implemented by Spec 007 |
 
 For live per-slice state, see the
 [spec status board](docs/specs/README.md).
@@ -194,10 +196,10 @@ npx release-please release-pr \
 
 ## Still deferred
 
-The first product loop is intentionally narrow. release-check automation, servo
-signal consumption, web UI, task boards, sprint planning, estimation, backlog
-grooming, and issue-system replacement remain out of scope for the current
-product surface.
+The first product loop is intentionally narrow. Release-check automation beyond
+the shipped advisory skill, running servo loops, web UI, task boards, sprint
+planning, estimation, backlog grooming, and issue-system replacement remain out
+of scope for the current product surface.
 
 ## Start here
 
@@ -228,15 +230,16 @@ shaper/
 |   |-- shape-release/
 |   |-- release-slate/
 |   |-- scope-audit/
-|   `-- cutline/
+|   |-- cutline/
+|   `-- release-check/
 |-- templates/                   # Release-plan template
 |-- scripts/                     # Builders, drift guards, release checks
 `-- dist/                        # Generated release zips; ignored by git
 ```
 
-Later specs add `release-check` automation; the current product surface ships
-`shape-release`, `cutline`, `release-slate`, `scope-audit`, the release-plan
-template, the compact release slate file, and release automation.
+The current product surface ships `shape-release`, `cutline`, `release-slate`,
+`scope-audit`, `release-check`, the release-plan template, the compact release
+slate file, and release automation.
 
 ## Contributing
 

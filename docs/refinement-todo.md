@@ -17,8 +17,8 @@
 **Resolution:** [Spec 002 slice 002-01](specs/002-release-plan-handoff/slice-01-release-plan-handoff.md) and [skills/cutline/SKILL.md](../skills/cutline/SKILL.md).
 
 ### Decision: JIG and servo detection depth
-**Resolved for first handoff:** `cutline` performs shallow JIG detection by reading `docs/specs/README.md` and relevant `docs/specs/*` files when present. If no JIG specs/status board were found, it reports that state and leaves JIG files untouched. Servo signal consumption remains deferred to the later `release-check` work and must not block this handoff path.
-**Resolution:** [Spec 002 slice 002-01](specs/002-release-plan-handoff/slice-01-release-plan-handoff.md), [skills/cutline/SKILL.md](../skills/cutline/SKILL.md), and [Spec 007: Release check](specs/007-release-check/spec.md).
+**Resolved:** `cutline` performs shallow JIG detection by reading `docs/specs/README.md` and relevant `docs/specs/*` files when present. If no JIG specs/status board were found, it reports that state and leaves JIG files untouched. `release-check` reads optional servo evidence only from the accepted `docs/servo/release-signals/<slug>.md` boundary and treats absence as not evaluated.
+**Resolution:** [Spec 002 slice 002-01](specs/002-release-plan-handoff/slice-01-release-plan-handoff.md), [skills/cutline/SKILL.md](../skills/cutline/SKILL.md), [ADR-0004](decisions/adr-0004-jig-servo-read-boundary.md), and [Spec 007 slice 007-02](specs/007-release-check/slice-02-optional-servo-signal-read.md).
 
 ### Decision: Plugin packaging and host layout
 **Resolved:** shaper adopts JIG `v2`'s committed host-package baseline: root source manifests, committed `hosts/claude` and `hosts/codex` packages, and a regenerate/check drift guard. Spec 002 adds the first product skills (`shape-release` and `cutline`) to that package shape.

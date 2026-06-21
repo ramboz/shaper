@@ -133,6 +133,34 @@ def _write_spec(root: Path, slug: str, title: str, body: str) -> Path:
     return path
 
 
+def _write_servo_signal(
+    root: Path,
+    slug: str = "release-check",
+    *,
+    status: str = "pass",
+    body: str = "## Summary\n\n- Servo signal looks good.\n",
+) -> Path:
+    path = root / "docs" / "servo" / "release-signals" / f"{slug}.md"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(
+        "\n".join(
+            [
+                "---",
+                f"release: {slug}",
+                f"status: {status}",
+                "generated_at: 2026-06-20",
+                "source: servo",
+                "---",
+                "",
+                body.rstrip(),
+                "",
+            ]
+        ),
+        encoding="utf-8",
+    )
+    return path
+
+
 class ReleaseCheckWorkflowTests(unittest.TestCase):
     def setUp(self):
         self.tmp = Path(tempfile.mkdtemp(prefix="shaper-release-check-"))
@@ -342,7 +370,7 @@ class ReleaseCheckWorkflowTests(unittest.TestCase):
         self.assertIn("No automatic release", result.stdout)
         self.assertIn("Ship only when risks are retired", result.stdout)
 
-    def test_servo_signals_reported_as_not_evaluated(self):
+    def test_absent_servo_signals_reported_as_not_evaluated(self):
         _write_release_plan(self.tmp)
         _write_board(self.tmp, [("010-release", "010-01 - release-check report", "DONE")])
         _write_spec(
@@ -356,7 +384,115 @@ class ReleaseCheckWorkflowTests(unittest.TestCase):
 
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn("Servo signals: not evaluated", result.stdout)
+        self.assertIn("No servo release-signal artifact found.", result.stdout)
         self.assertNotIn("servo unavailable", result.stdout.lower())
+
+    def test_reads_passing_servo_signal_from_accepted_boundary(self):
+        _write_release_plan(self.tmp)
+        _write_servo_signal(
+            self.tmp,
+            body=(
+                "## Summary\n\n"
+                "- Smoke checks passed.\n\n"
+                "## Passing signals\n\n"
+                "- Python tests green.\n"
+            ),
+        )
+        _write_board(self.tmp, [("010-release", "010-01 - release-check report", "DONE")])
+        _write_spec(
+            self.tmp,
+            "010-release",
+            "Release Check",
+            "## Acceptance Criteria\n\n1. Produce a release-check report.\n",
+        )
+
+        result = self._run()
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn(
+            "Servo files read: docs/servo/release-signals/release-check.md",
+            result.stdout,
+        )
+        self.assertIn("Servo signals: pass", result.stdout)
+        self.assertIn("Smoke checks passed.", result.stdout)
+        self.assertIn("## Recommendation: ship", result.stdout)
+
+    def test_reads_failing_servo_signal_as_advisory_evidence(self):
+        _write_release_plan(self.tmp)
+        _write_servo_signal(
+            self.tmp,
+            status="fail",
+            body=(
+                "## Summary\n\n"
+                "- Regression suite failed.\n\n"
+                "## Failing signals\n\n"
+                "- CLI smoke test failed.\n"
+            ),
+        )
+        _write_board(
+            self.tmp,
+            [("010-release", "010-01 - release-check report", "IN_PROGRESS")],
+        )
+        _write_spec(
+            self.tmp,
+            "010-release",
+            "Release Check",
+            "## Acceptance Criteria\n\n1. Produce a release-check report.\n",
+        )
+
+        result = self._run()
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("Servo signals: fail", result.stdout)
+        self.assertIn("Regression suite failed.", result.stdout)
+        self.assertIn("## Recommendation: stop and re-shape", result.stdout)
+
+    def test_unrecognized_servo_signal_status_is_not_evaluated(self):
+        _write_release_plan(self.tmp)
+        _write_servo_signal(
+            self.tmp,
+            status="unknown",
+            body="## Summary\n\n- Servo produced a status shaper does not know.\n",
+        )
+        _write_board(self.tmp, [("010-release", "010-01 - release-check report", "DONE")])
+        _write_spec(
+            self.tmp,
+            "010-release",
+            "Release Check",
+            "## Acceptance Criteria\n\n1. Produce a release-check report.\n",
+        )
+
+        result = self._run()
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("Servo signals: not evaluated", result.stdout)
+        self.assertIn(
+            "Servo signal status 'unknown' is not recognized; treated as not evaluated.",
+            result.stdout,
+        )
+        self.assertIn("## Recommendation: ship", result.stdout)
+
+    def test_jig_servo_disagreement_recommends_human_decision(self):
+        _write_release_plan(self.tmp)
+        _write_servo_signal(
+            self.tmp,
+            status="fail",
+            body="## Summary\n\n- Release smoke check failed after JIG completion.\n",
+        )
+        _write_board(self.tmp, [("010-release", "010-01 - release-check report", "DONE")])
+        _write_spec(
+            self.tmp,
+            "010-release",
+            "Release Check",
+            "## Acceptance Criteria\n\n1. Produce a release-check report.\n",
+        )
+
+        result = self._run()
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("Servo/JIG disagreement: human decision required.", result.stdout)
+        self.assertIn("JIG evidence supports ship while servo reports fail.", result.stdout)
+        self.assertIn("## Recommendation: ship", result.stdout)
 
     def test_open_risks_surfaced_and_block_ship(self):
         _write_release_plan(
@@ -381,8 +517,13 @@ class ReleaseCheckWorkflowTests(unittest.TestCase):
         self.assertIn("TBD before implementation", result.stdout)
         self.assertNotIn("## Recommendation: ship", result.stdout)
 
-    def test_does_not_mutate_jig_lifecycle_state(self):
+    def test_does_not_mutate_jig_or_servo_state(self):
         _write_release_plan(self.tmp, no_gos="- No issue-system replacement.")
+        _write_servo_signal(
+            self.tmp,
+            status="fail",
+            body="## Summary\n\n- Servo signal is existing evidence.\n",
+        )
         _write_board(
             self.tmp,
             [("010-release", "010-01 - issue-system replacement", "IN_PROGRESS")],
@@ -395,21 +536,28 @@ class ReleaseCheckWorkflowTests(unittest.TestCase):
             "## Acceptance Criteria\n\n1. Build an issue-system replacement.\n",
         )
         specs = self.tmp / "docs" / "specs"
-        before = {
-            path.relative_to(specs).as_posix(): _read(path)
-            for path in specs.rglob("*.md")
+        servo = self.tmp / "docs" / "servo"
+        before_specs = {
+            path.relative_to(specs).as_posix(): _read(path) for path in specs.rglob("*.md")
+        }
+        before_servo = {
+            path.relative_to(servo).as_posix(): _read(path) for path in servo.rglob("*.md")
         }
 
         result = self._run()
 
-        after = {
-            path.relative_to(specs).as_posix(): _read(path)
-            for path in specs.rglob("*.md")
+        after_specs = {
+            path.relative_to(specs).as_posix(): _read(path) for path in specs.rglob("*.md")
+        }
+        after_servo = {
+            path.relative_to(servo).as_posix(): _read(path) for path in servo.rglob("*.md")
         }
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertEqual(after, before)
+        self.assertEqual(after_specs, before_specs)
+        self.assertEqual(after_servo, before_servo)
         self.assertIn("## Advisory Only", result.stdout)
         self.assertIn("JIG files left untouched", result.stdout)
+        self.assertIn("Servo files left untouched", result.stdout)
         self.assertNotIn("workflow.py transition", result.stdout)
 
     def test_no_jig_artifacts_degrades_gracefully(self):
