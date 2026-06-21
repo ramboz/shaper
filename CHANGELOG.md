@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.3.0](https://github.com/ramboz/shaper/compare/v0.2.0...v0.3.0) (2026-06-21)
+
+
+### Features
+
+* **release-check:** read optional servo signals ([e18196d](https://github.com/ramboz/shaper/commit/e18196d5acbb390429be617fde62628d1ef69606))
+
+
+### Documentation
+
+* **project:** reconcile resolved decisions ([ad62b93](https://github.com/ramboz/shaper/commit/ad62b93d696c79af61c4db2e8cdb1a8ad5d93324))
+
 ## [0.2.0](https://github.com/ramboz/shaper/compare/v0.1.0...v0.2.0) (2026-06-19)
 
 
