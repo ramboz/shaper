@@ -73,6 +73,7 @@ class ReleaseArchiveShapeTests(unittest.TestCase):
             names = set(zf.namelist())
 
         self.assertIn(".claude-plugin/plugin.json", names)
+        self.assertIn("shaper.jpg", names)
         self.assertIn("skills/shape-release/SKILL.md", names)
         self.assertIn("skills/shape-release/scripts/shape_release.py", names)
         self.assertIn("skills/cutline/SKILL.md", names)
@@ -98,6 +99,7 @@ class ReleaseArchiveShapeTests(unittest.TestCase):
 
         self.assertIn(".agents/plugins/marketplace.json", names)
         self.assertIn("plugins/shaper/.codex-plugin/plugin.json", names)
+        self.assertIn("plugins/shaper/shaper.jpg", names)
         self.assertIn("plugins/shaper/skills/shape-release/SKILL.md", names)
         self.assertIn("plugins/shaper/skills/shape-release/scripts/shape_release.py", names)
         self.assertIn("plugins/shaper/skills/cutline/SKILL.md", names)

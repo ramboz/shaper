@@ -22,6 +22,7 @@ REQUIRED_FILES = {
     "claude": (
         ".claude-plugin/plugin.json",
         "README.md",
+        "shaper.jpg",
         "skills/shape-release/SKILL.md",
         "skills/shape-release/scripts/shape_release.py",
         "skills/cutline/SKILL.md",
@@ -38,6 +39,7 @@ REQUIRED_FILES = {
         ".agents/plugins/marketplace.json",
         f"plugins/{PLUGIN_NAME}/.codex-plugin/plugin.json",
         f"plugins/{PLUGIN_NAME}/README.md",
+        f"plugins/{PLUGIN_NAME}/shaper.jpg",
         f"plugins/{PLUGIN_NAME}/skills/shape-release/SKILL.md",
         f"plugins/{PLUGIN_NAME}/skills/shape-release/scripts/shape_release.py",
         f"plugins/{PLUGIN_NAME}/skills/cutline/SKILL.md",

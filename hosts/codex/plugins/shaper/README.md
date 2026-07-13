@@ -1,4 +1,4 @@
-# shaper
+![shaper](./shaper.jpg)
 
 > A Codex and Claude Code plugin for shaping release-sized work before
 > implementation starts.

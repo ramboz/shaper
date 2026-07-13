@@ -77,6 +77,10 @@ class HostPackageBuilderTests(unittest.TestCase):
             (self.tmp / "claude" / ".claude-plugin" / "plugin.json").is_file()
         )
         self.assertTrue((self.tmp / "claude" / "README.md").is_file())
+        self.assertEqual(
+            (self.tmp / "claude" / "shaper.jpg").read_bytes(),
+            (ROOT / "shaper.jpg").read_bytes(),
+        )
         self.assertFalse((self.tmp / "claude" / ".codex-plugin").exists())
         self.assertFalse((self.tmp / "claude" / ".codex").exists())
 
@@ -98,6 +102,16 @@ class HostPackageBuilderTests(unittest.TestCase):
                 / ".codex-plugin"
                 / "plugin.json"
             ).is_file()
+        )
+        self.assertEqual(
+            (
+                self.tmp
+                / "codex"
+                / "plugins"
+                / "shaper"
+                / "shaper.jpg"
+            ).read_bytes(),
+            (ROOT / "shaper.jpg").read_bytes(),
         )
         self.assertFalse((self.tmp / "codex" / "plugins" / "shaper" / ".codex").exists())
 

@@ -19,7 +19,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 PLUGIN_NAME = "shaper"
 REGEN_COMMAND = "python3 scripts/build_host_packages.py"
-OPTIONAL_ROOT_FILES = ("README.md", "LICENSE")
+OPTIONAL_ROOT_FILES = ("README.md", "LICENSE", "shaper.jpg")
 OPTIONAL_RUNTIME_DIRS = ("skills", "templates", "agents", "hooks")
 EXCLUDED_DIR_NAMES = frozenset({"__pycache__", ".pytest_cache", ".mypy_cache"})
 EXCLUDED_FILE_SUFFIXES = (".pyc",)
