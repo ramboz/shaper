@@ -22,5 +22,5 @@
 | [006-scope-audit](006-scope-audit/spec.md) | 006-01 - scope-audit-and-hammering | **DONE** |  |
 | [007-release-check](007-release-check/spec.md) | 007-01 - JIG-only release check | **DONE** |  |
 | [007-release-check](007-release-check/spec.md) | 007-02 - optional servo signal read | **DONE** |  |
-| [008-vertical-scope-shaping](008-vertical-scope-shaping/spec.md) | 008-01 — vertical-scope-outline | DRAFT |  |
-| [008-vertical-scope-shaping](008-vertical-scope-shaping/spec.md) | 008-02 — architecture-appetite-handoff | DRAFT |  |
+| [008-vertical-scope-shaping](008-vertical-scope-shaping/spec.md) | 008-01 — vertical-scope-outline | READY_FOR_IMPLEMENTATION |  |
+| [008-vertical-scope-shaping](008-vertical-scope-shaping/spec.md) | 008-02 — architecture-appetite-handoff | READY_FOR_IMPLEMENTATION |  |

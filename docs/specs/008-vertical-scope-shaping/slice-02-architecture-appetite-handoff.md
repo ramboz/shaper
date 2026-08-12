@@ -1,5 +1,5 @@
 ---
-status: DRAFT
+status: READY_FOR_IMPLEMENTATION
 dependencies: [008-01, adr-0005]
 last_verified:
 ---
@@ -22,18 +22,26 @@ risk-pointer only, never ADRs, design, or module boundaries).
 
 **Acceptance Criteria:**
 
-1. **The handoff carries an architecture-appetite field.** `## JIG Handoff` in
-   `templates/release-plan.md` gains an "Architecture appetite" entry capturing
-   (a) the leanness ceiling ("the leanest architecture that satisfies this
-   release; what would be over-engineering here"), (b) any architectural no-gos,
-   and (c) a pointer to architectural risk worth an early spike. Existing handoff
+1. **The handoff carries an architecture-appetite field with the accepted
+   three-element content model.** `## JIG Handoff` in `templates/release-plan.md`
+   gains an "Architecture appetite" entry with exactly the three ceiling-shaped
+   elements ADR-0005 fixes (Recommended Decision), and **no "proposed shape"
+   slot**: (i) **Investment posture** — a strict *upper bound* on architectural
+   investment ("at most" / "permitted up to," never "at least"; the spectrum runs
+   *throwaway is enough → durability permitted, not required*); (ii)
+   **Over-investment no-gos** — specific over-builds to refuse (a refusal, never a
+   selection); (iii) **Spike pointer** — architectural risk worth retiring early.
+   The field must not contain a "the leanest architecture is X" line — completing
+   that sentence names a mechanism, which is jig's decision. Existing handoff
    fields (candidate specs / new work / patch-ready instructions / non-mutating
    notes) are preserved.
 2. **`shape-release` elicits it and states the guardrail.** The skill's
-   "Inputs to gather" includes architecture appetite, and its **Boundaries**
-   section states the load-bearing rule verbatim in intent: shaper records
-   architecture *appetite and no-gos only* — it must **not** write ADRs, name
-   module boundaries, or specify a design; jig owns those. This is enforced as a
+   "Inputs to gather" includes architecture appetite (the three elements above),
+   and its **Boundaries** section states the load-bearing rule from ADR-0005:
+   shaper records architecture *appetite / over-investment no-gos / spike pointer
+   only* — the investment posture is an **upper bound only** (never a floor or a
+   minimum), and the skill must **not** write ADRs, name module boundaries, a
+   mechanism, or any positive design; jig owns those. This is enforced as a
    boundary the skill will not cross, not merely a style note.
 3. **The field degrades safely.** When the maintainer gives no architecture
    appetite, the field is written as `TBD` (advisory, non-blocking) — never
