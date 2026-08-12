@@ -118,13 +118,30 @@ not a backlog or second status board.
 - **Mechanics:** ADR-0003 defines `docs/releases/<slug>.md` and
   `docs/releases/README.md` as the public Markdown artifact contracts.
 
+### Vertical-scope shaping and architecture appetite
+
+- **Principle:** vertical-first delivery discipline should propagate *above*
+  JIG's spec→slice altitude, and over-engineering should be discouraged at the
+  cheapest (pre-spec) point — without shaper crossing into JIG's architecture
+  ownership.
+- **Mechanics:** ADR-0005 adds two things to `shape-release` and the release-plan
+  template, and no more: (1) an ordered **vertical-scope** list in the Solution
+  Outline (thinnest walking-skeleton first); (2) a bounded **architecture-appetite**
+  ceiling in the JIG Handoff — investment posture (strict upper bound),
+  over-investment no-gos, and a spike pointer, with **no positive-shape slot**.
+  The load-bearing boundary: shaper expresses architecture *appetite*; JIG makes
+  architecture *decisions* (ADRs, module boundaries, design). The retrospective
+  complement — a JIG-side leanness/YAGNI review lens — lives in JIG, not shaper.
+
 ## Module boundaries
 
 <!-- elicited: 2026-06-17 / status: filled -->
 
-- **Release shaping:** elicits problem/baseline, appetite, solution outline,
-  risks/rabbit holes, no-gos, release criteria, and JIG handoff; writes release
-  plan Markdown.
+- **Release shaping:** elicits problem/baseline, appetite, solution outline
+  (including an ordered **vertical-scope** delivery list, thinnest path first),
+  risks/rabbit holes, no-gos, release criteria, and JIG handoff (including a
+  bounded **architecture-appetite** ceiling — investment posture / over-investment
+  no-gos / spike pointer, per ADR-0005); writes release plan Markdown.
 - **Cutline analysis:** reads existing JIG specs/status board and proposes
   include/defer/split/risk-first recommendations without mutating them.
 - **Release slate:** reads release plans and their JIG handoff links, then

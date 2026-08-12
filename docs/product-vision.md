@@ -208,3 +208,10 @@ the source of truth for spec lifecycle state.
   may recommend include/defer/split/risk-first or release decisions with
   evidence and rationale, but they do not run JIG transitions or edit lifecycle
   status.
+- **Vertical-first shaping and architecture appetite:** ADR-0005 and Spec 008
+  extend `shape-release` to (a) decompose new work into ordered vertical scopes
+  (thinnest path first) and (b) carry a bounded architecture-appetite ceiling in
+  the JIG handoff. The boundary that keeps this inside shaper's charter: shaper
+  expresses architecture *appetite* (a leanness ceiling — appetite/no-gos/spike
+  only), while JIG makes architecture *decisions*. shaper mints no ADRs and names
+  no module boundaries; the retrospective leanness/YAGNI lens is JIG's.

@@ -44,6 +44,8 @@ jobs:
           tests/test_release_slate.py
           tests/test_scope_audit.py
           tests/test_release_check.py
+          tests/test_vertical_scope_outline.py
+          tests/test_architecture_appetite_handoff.py
 
       - name: Validate manifests
         run: python3 scripts/validate_manifests.py

@@ -32,6 +32,15 @@ Update via `/jig:memory-sync` or when `jig-memory-scan` surfaces an unknown refe
   release plan; advisory and non-mutating.
 - **Release slate** - compact `docs/releases/README.md` overlay that links to
   release plans and JIG specs without restating JIG lifecycle status.
+- **Vertical scopes** - the new work in a release plan's Solution Outline written
+  as an ordered list of thin, end-to-end scopes (thinnest walking-skeleton path
+  first), so work reaches JIG already delivery-ordered (Spec 008-01).
+- **Architecture appetite** - a bounded leanness *ceiling* in the JIG Handoff:
+  investment posture (a strict **upper bound**, "at most" never "at least"),
+  over-investment no-gos, and a spike pointer. **ADR-0005 boundary invariant:**
+  shaper expresses architecture *appetite*; JIG makes architecture *decisions* —
+  the field never names an ADR, module boundary, mechanism, or positive design
+  (Spec 008-02).
 
 ### Working preferences
 - **Subagents approved by default** - the user has approved Codex to spin up
@@ -39,9 +48,9 @@ Update via `/jig:memory-sync` or when `jig-memory-scan` surfaces an unknown refe
   help the task; do not pause for per-use approval.
 
 ### Active specs
-- No active implementation slice. Check
-  [docs/specs/README.md](docs/specs/README.md) for the next DRAFT or
-  READY_FOR_IMPLEMENTATION candidate.
+- No active implementation slice. Spec 008 (vertical-scope shaping) is DONE;
+  ADR-0005 accepted. Check [docs/specs/README.md](docs/specs/README.md) for the
+  next DRAFT or READY_FOR_IMPLEMENTATION candidate.
 
 ### Deferred decisions
 See docs/refinement-todo.md
@@ -70,8 +79,11 @@ See docs/refinement-todo.md
 ## Current Sprint Focus
 
 The release-plan-to-JIG handoff loop now includes shipped `shape-release`,
-`cutline`, and `release-slate` skills. Next product focus is advancing
-`scope-audit` (Spec 006) through the normal lifecycle before implementation.
+`cutline`, `release-slate`, `scope-audit`, and `release-check` skills. Spec 008
+(ADR-0005) extended `shape-release` so new work is shaped as ordered vertical
+scopes and the handoff carries a bounded architecture-appetite ceiling — closing
+the prospective minimum-viable-architecture gap. The matching *retrospective*
+half (a JIG-side leanness/YAGNI review lens) lives in JIG, not shaper.
 
 ## Development Constraints
 
