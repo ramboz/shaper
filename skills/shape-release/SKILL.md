@@ -35,6 +35,9 @@ write or update `docs/releases/<slug>.md`:
 - `problem/baseline`: current state, problem, and why now;
 - `appetite`: fixed time or attention budget and variable scope;
 - `solution outline`: the smallest useful release shape;
+- `vertical scopes`: the new work decomposed into an ordered list of thin,
+  end-to-end vertical scopes, thinnest walking-skeleton path first (see
+  "Vertical scope discipline" below);
 - `risks/rabbit holes`: unknowns that could make the release unsafe or too
   large;
 - `no-gos`: explicit exclusions;
@@ -46,6 +49,15 @@ Ask at most five focused questions at a time. If the user gives enough
 information to start, write the plan and leave precise `TBD` markers for
 unanswered fields.
 
+## Vertical scope discipline
+
+Each vertical scope must deliver end-to-end, demoable value on its own. A
+scope that is "just the data model" or "just the parser" is a horizontal
+slice, not a vertical one — re-split it until every scope crosses the whole
+stack and something demoable comes out the other end. This mirrors JIG's
+SPIDR anti-horizontal-phasing rule, applied one altitude higher (release
+work, not spec slices).
+
 ## Writing or refining a plan
 
 1. Choose a short kebab-case slug from the user's language.
@@ -54,12 +66,19 @@ unanswered fields.
    `templates/release-plan.md`. For deterministic create/refine work, use
    `skills/shape-release/scripts/shape_release.py --repo <repo> --slug <slug>`
    with the fields the user supplied; leave omitted fields as `TBD`.
-4. Preserve existing user-authored wording when refining a plan. Prefer
-   appending clarifying bullets over rewriting the user's intent.
-5. Keep the JIG handoff non-mutating: link to specs/slices or propose new JIG
+4. Write the vertical-scope decomposition into the "Vertical Scopes (delivery
+   order)" subsection of `## Solution Outline`, ordered thinnest-demoable-path
+   first (use `--vertical-scope` on the script, repeatable, once per scope in
+   delivery order). If scopes are omitted, leave the `TBD` marker in place —
+   never a fabricated ordering.
+5. Preserve existing user-authored wording when refining a plan. Prefer
+   appending clarifying bullets over rewriting the user's intent; the same
+   applies to vertical scopes — append new ones after existing ones rather
+   than overwriting them.
+6. Keep the JIG handoff non-mutating: link to specs/slices or propose new JIG
    work, but leave JIG files untouched unless the user separately asks to edit
    a release plan's handoff notes.
-6. Call out any absent sibling tools plainly. For example, if servo signals are
+7. Call out any absent sibling tools plainly. For example, if servo signals are
    absent, write "No servo signals were found; release-check criteria remain
    advisory."
 

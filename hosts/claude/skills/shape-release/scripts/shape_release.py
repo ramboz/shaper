@@ -12,6 +12,15 @@ from pathlib import Path
 STATUSES = ("candidate", "committed", "shipping", "shipped", "dropped")
 SLUG_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 
+VERTICAL_SCOPES_HEADING = "### Vertical Scopes (delivery order)"
+VERTICAL_SCOPES_INTRO = (
+    'Ordered thinnest-demoable-path-first. Each scope must deliver end-to-end,\n'
+    'demoable value on its own (not "just the data model" / "just the parser").'
+)
+VERTICAL_SCOPES_TBD = (
+    "1. _TBD — thinnest walking-skeleton path and its demoable outcome._"
+)
+
 
 def _source_root() -> Path:
     return Path(__file__).resolve().parents[3]
@@ -45,6 +54,45 @@ def _replace_section(text: str, heading: str, body: str) -> str:
     if pattern.search(text):
         return pattern.sub(replacement, text, count=1)
     return text.rstrip() + f"\n\n{replacement}"
+
+
+def _vertical_scopes_pattern() -> re.Pattern[str]:
+    escaped = re.escape(VERTICAL_SCOPES_HEADING)
+    return re.compile(rf"(?ms)^{escaped}\n.*?(?=^### |^## |\Z)")
+
+
+def _vertical_scopes_block(scopes: list[str]) -> str:
+    if scopes:
+        items = "\n".join(
+            f"{index}. {scope}" for index, scope in enumerate(scopes, start=1)
+        )
+    else:
+        items = VERTICAL_SCOPES_TBD
+    return f"{VERTICAL_SCOPES_HEADING}\n\n{VERTICAL_SCOPES_INTRO}\n\n{items}\n"
+
+
+def _existing_vertical_scopes(text: str) -> list[str]:
+    match = _vertical_scopes_pattern().search(text)
+    if not match:
+        return []
+    items = re.findall(r"(?m)^\d+\.\s+(.*)$", match.group(0))
+    return [item for item in items if item.strip() and "_TBD" not in item]
+
+
+def _set_vertical_scopes(text: str, scopes: list[str]) -> str:
+    block = _vertical_scopes_block(scopes)
+    pattern = _vertical_scopes_pattern()
+    if pattern.search(text):
+        return pattern.sub(lambda _match: block, text, count=1)
+    solution_pattern = _section_pattern("Solution Outline")
+    match = solution_pattern.search(text)
+    if not match:
+        # No Solution Outline to nest under (a hand-authored or malformed plan).
+        # Create the section rather than silently dropping the user's scopes.
+        return _replace_section(text, "Solution Outline", block.rstrip())
+    section = match.group(0).rstrip()
+    replacement = f"{section}\n\n{block}"
+    return text[: match.start()] + replacement + text[match.end() :]
 
 
 def _append_section_bullets(text: str, heading: str, values: list[str]) -> str:
@@ -140,8 +188,17 @@ def _upsert(path: Path, ns: argparse.Namespace) -> str:
             _bullet_lines(
                 [ns.solution] if ns.solution else [],
                 "ask for the smallest useful release shape",
-            ),
+            )
+            + "\n\n"
+            + _vertical_scopes_block(ns.vertical_scope),
         )
+    if existing and ns.vertical_scope:
+        current = _existing_vertical_scopes(text)
+        additions = [
+            scope for scope in ns.vertical_scope if scope not in current
+        ]
+        if additions:
+            text = _set_vertical_scopes(text, current + additions)
     if existing and ns.risk:
         text = _append_section_bullets(text, "Risks / Rabbit Holes", ns.risk)
     elif ns.risk or not existing:
@@ -203,6 +260,7 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--problem")
     parser.add_argument("--appetite")
     parser.add_argument("--solution")
+    parser.add_argument("--vertical-scope", action="append", default=[])
     parser.add_argument("--risk", action="append", default=[])
     parser.add_argument("--no-go", action="append", default=[])
     parser.add_argument("--cutline", action="append", default=[])

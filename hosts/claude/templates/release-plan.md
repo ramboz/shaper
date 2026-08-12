@@ -26,6 +26,13 @@ decision.
 - Main user-facing path:
 - Important non-goals:
 
+### Vertical Scopes (delivery order)
+
+Ordered thinnest-demoable-path-first. Each scope must deliver end-to-end,
+demoable value on its own (not "just the data model" / "just the parser").
+
+1. _TBD — thinnest walking-skeleton path and its demoable outcome._
+
 ## Risks / Rabbit Holes
 
 - Risk:
