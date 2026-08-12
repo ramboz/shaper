@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.4.0](https://github.com/ramboz/shaper/compare/v0.3.0...v0.4.0) (2026-08-12)
+
+
+### Features
+
+* **shape-release:** architecture-appetite handoff ceiling (slice 008-02) ([825b6f3](https://github.com/ramboz/shaper/commit/825b6f3c3064c383d1f1ca7e7bdc16b0bba13bcd))
+* **shape-release:** vertical-scope delivery-order outline (slice 008-01) ([91a9574](https://github.com/ramboz/shaper/commit/91a95742e079d7b871e7a8373b98e3528c17d176))
+
+
+### Documentation
+
+* **decisions,specs:** land ADR-0005 + spec 008 drafts ([8b48807](https://github.com/ramboz/shaper/commit/8b48807de553b4c4166ceeb111c782680d35f8b7))
+* **decisions:** accept ADR-0005 after 5-round frame-critique ([eab6900](https://github.com/ramboz/shaper/commit/eab69002f2b661267568d8ecbd201ef9ac223eae))
+* **reconcile:** reconcile project docs + memory for ADR-0005 / spec 008 ([60e04d3](https://github.com/ramboz/shaper/commit/60e04d30cfa8f170a84949e3cc9a00496b8fddfd))
+
 ## [0.3.0](https://github.com/ramboz/shaper/compare/v0.2.0...v0.3.0) (2026-07-13)
 
 
