@@ -21,6 +21,21 @@ VERTICAL_SCOPES_TBD = (
     "1. _TBD — thinnest walking-skeleton path and its demoable outcome._"
 )
 
+ARCH_APPETITE_HEADING = "### Architecture appetite"
+ARCH_APPETITE_INTRO = (
+    "A leanness ceiling jig reads before drafting specs. Appetite / no-gos /\n"
+    "spike pointer only — shaper never names an ADR, module boundary, "
+    "mechanism,\n"
+    "or design; jig decides those. This is the prospective half; jig's\n"
+    "leanness/YAGNI review lens is the retrospective complement, enforced at "
+    "jig\n"
+    "review — not here."
+)
+ARCH_POSTURE_LABEL = 'Investment posture (upper bound — "at most", never "at least")'
+ARCH_NO_GO_LABEL = "Over-investment no-gos (over-builds to refuse)"
+ARCH_SPIKE_LABEL = "Spike (architectural risk to retire early)"
+ARCH_TBD = "_TBD_"
+
 
 def _source_root() -> Path:
     return Path(__file__).resolve().parents[3]
@@ -95,6 +110,76 @@ def _set_vertical_scopes(text: str, scopes: list[str]) -> str:
     return text[: match.start()] + replacement + text[match.end() :]
 
 
+def _arch_appetite_pattern() -> re.Pattern[str]:
+    escaped = re.escape(ARCH_APPETITE_HEADING)
+    return re.compile(rf"(?ms)^{escaped}\n.*?(?=^### |^## |\Z)")
+
+
+def _arch_appetite_block(posture: str | None, no_gos: list[str], spike: str | None) -> str:
+    posture_value = posture if posture else ARCH_TBD
+    no_go_value = "; ".join(no_gos) if no_gos else ARCH_TBD
+    spike_value = spike if spike else ARCH_TBD
+    return (
+        f"{ARCH_APPETITE_HEADING}\n\n"
+        f"{ARCH_APPETITE_INTRO}\n\n"
+        f"- {ARCH_POSTURE_LABEL}: {posture_value}\n"
+        f"- {ARCH_NO_GO_LABEL}: {no_go_value}\n"
+        f"- {ARCH_SPIKE_LABEL}: {spike_value}\n"
+    )
+
+
+def _existing_arch_appetite(
+    text: str,
+) -> tuple[str | None, list[str], str | None]:
+    match = _arch_appetite_pattern().search(text)
+    if not match:
+        return None, [], None
+    block = match.group(0)
+
+    posture = None
+    posture_match = re.search(
+        rf"(?m)^- {re.escape(ARCH_POSTURE_LABEL)}: (.*)$", block
+    )
+    if posture_match:
+        value = posture_match.group(1).strip()
+        if value and value != ARCH_TBD:
+            posture = value
+
+    no_gos: list[str] = []
+    no_go_match = re.search(rf"(?m)^- {re.escape(ARCH_NO_GO_LABEL)}: (.*)$", block)
+    if no_go_match:
+        value = no_go_match.group(1).strip()
+        if value and value != ARCH_TBD:
+            no_gos = [item.strip() for item in value.split("; ") if item.strip()]
+
+    spike = None
+    spike_match = re.search(rf"(?m)^- {re.escape(ARCH_SPIKE_LABEL)}: (.*)$", block)
+    if spike_match:
+        value = spike_match.group(1).strip()
+        if value and value != ARCH_TBD:
+            spike = value
+
+    return posture, no_gos, spike
+
+
+def _set_arch_appetite(
+    text: str, posture: str | None, no_gos: list[str], spike: str | None
+) -> str:
+    block = _arch_appetite_block(posture, no_gos, spike)
+    pattern = _arch_appetite_pattern()
+    if pattern.search(text):
+        return pattern.sub(lambda _match: block, text, count=1)
+    jig_pattern = _section_pattern("JIG Handoff")
+    match = jig_pattern.search(text)
+    if not match:
+        # No JIG Handoff section to nest under (a hand-authored or malformed
+        # plan). Create the section rather than silently dropping the appetite.
+        return _replace_section(text, "JIG Handoff", block.rstrip())
+    section = match.group(0).rstrip()
+    replacement = f"{section}\n\n{block}"
+    return text[: match.start()] + replacement + text[match.end() :]
+
+
 def _append_section_bullets(text: str, heading: str, values: list[str]) -> str:
     if not values:
         return text
@@ -102,7 +187,7 @@ def _append_section_bullets(text: str, heading: str, values: list[str]) -> str:
     match = pattern.search(text)
     if not match:
         return _replace_section(text, heading, _bullet_lines(values, ""))
-    section = match.group(0).rstrip()
+    section = match.group(0)
     additions = []
     for value in values:
         bullet = f"- {value}"
@@ -110,8 +195,16 @@ def _append_section_bullets(text: str, heading: str, values: list[str]) -> str:
             additions.append(bullet)
     if not additions:
         return text
-    replacement = f"{section}\n" + "\n".join(additions) + "\n"
-    return text[: match.start()] + replacement + text[match.end() :]
+    # New bullets belong with the section's own bullet list, BEFORE any nested
+    # `### ` subsection (e.g. `### Vertical Scopes`, `### Architecture appetite`).
+    # Appending after such a subsection both misplaces the bullet and lets a
+    # later `_set_*` replace of that subsection's span silently delete it.
+    subsection = re.search(r"(?m)^### ", section)
+    head = (section if subsection is None else section[: subsection.start()]).rstrip()
+    tail = "" if subsection is None else section[subsection.start() :]
+    new_head = f"{head}\n" + "\n".join(additions) + "\n"
+    new_section = new_head if not tail else f"{new_head}\n{tail}"
+    return text[: match.start()] + new_section + text[match.end() :]
 
 
 def _fill_cutline_tbd(text: str, value: str) -> str:
@@ -229,8 +322,20 @@ def _upsert(path: Path, ns: argparse.Namespace) -> str:
             _bullet_lines(
                 ns.jig_handoff,
                 "ask which JIG specs or slices should receive handoff notes",
-            ),
+            )
+            + "\n\n"
+            + _arch_appetite_block(ns.arch_posture, ns.arch_no_go, ns.arch_spike),
         )
+    if existing and (ns.arch_posture or ns.arch_no_go or ns.arch_spike):
+        current_posture, current_no_gos, current_spike = _existing_arch_appetite(
+            text
+        )
+        posture = ns.arch_posture or current_posture
+        spike = ns.arch_spike or current_spike
+        no_gos = current_no_gos + [
+            value for value in ns.arch_no_go if value not in current_no_gos
+        ]
+        text = _set_arch_appetite(text, posture, no_gos, spike)
     if existing and ns.criterion:
         text = _append_section_bullets(text, "Release-Check Criteria", ns.criterion)
     elif ns.criterion or not existing:
@@ -265,6 +370,14 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--no-go", action="append", default=[])
     parser.add_argument("--cutline", action="append", default=[])
     parser.add_argument("--jig-handoff", action="append", default=[])
+    parser.add_argument("--arch-posture", help="architecture investment posture (upper bound only)")
+    parser.add_argument(
+        "--arch-no-go",
+        action="append",
+        default=[],
+        help="over-investment no-go to refuse (repeatable)",
+    )
+    parser.add_argument("--arch-spike", help="architectural risk worth retiring early")
     parser.add_argument("--criterion", action="append", default=[])
     return parser
 

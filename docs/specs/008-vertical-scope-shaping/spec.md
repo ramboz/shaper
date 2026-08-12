@@ -1,6 +1,6 @@
 ---
-status: IN_PROGRESS
-skill:
+status: DONE
+skill: shape-release
 use_cases: []
 ---
 

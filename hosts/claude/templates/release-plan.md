@@ -76,6 +76,18 @@ demoable value on its own (not "just the data model" / "just the parser").
 - Patch-ready instructions, if any:
 - Non-mutating notes:
 
+### Architecture appetite
+
+A leanness ceiling jig reads before drafting specs. Appetite / no-gos /
+spike pointer only — shaper never names an ADR, module boundary, mechanism,
+or design; jig decides those. This is the prospective half; jig's
+leanness/YAGNI review lens is the retrospective complement, enforced at jig
+review — not here.
+
+- Investment posture (upper bound — "at most", never "at least"): _TBD_
+- Over-investment no-gos (over-builds to refuse): _TBD_
+- Spike (architectural risk to retire early): _TBD_
+
 ## Release-Check Criteria
 
 - Before this release can ship:

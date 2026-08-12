@@ -23,6 +23,15 @@ spec-driven workflow.
   release is committed, shipping, shipped, or dropped.
 - JIG owns implementation workflow and spec lifecycle. This skill may write JIG
   handoff notes, but it must not run lifecycle transitions or edit JIG status.
+- Architecture appetite records appetite only, never architecture decisions
+  (ADR-0005): capture investment posture, over-investment no-gos, and a spike
+  pointer — nothing else. The investment posture is a strict **upper bound**
+  ("at most" / "permitted up to"), never "at least" — never a floor or a minimum.
+  This skill must not write an ADR, name a module boundary, name a mechanism,
+  or specify any positive design — completing "the leanest architecture is X"
+  is jig's decision, not this skill's, full stop. This ceiling is the
+  prospective half; jig's leanness/YAGNI review lens is the retrospective
+  complement, enforced at jig review, not here.
 - If servo signals are absent, do not block. Record release-check criteria as
   desired future evidence rather than pretending signals exist.
 
@@ -43,6 +52,10 @@ write or update `docs/releases/<slug>.md`:
 - `no-gos`: explicit exclusions;
 - `cutline`: include, defer, split, and risk-first notes if known;
 - `JIG handoff`: existing specs/slices to link or new specs to draft;
+- `architecture appetite`: a leanness ceiling for the JIG handoff --
+  investment posture (upper bound only), over-investment no-gos, and a spike
+  pointer for architectural risk worth retiring early (see the architecture
+  appetite entry in `## Boundaries`);
 - `release-check criteria`: evidence that should be true before shipping.
 
 Ask at most five focused questions at a time. If the user gives enough
@@ -78,7 +91,12 @@ work, not spec slices).
 6. Keep the JIG handoff non-mutating: link to specs/slices or propose new JIG
    work, but leave JIG files untouched unless the user separately asks to edit
    a release plan's handoff notes.
-7. Call out any absent sibling tools plainly. For example, if servo signals are
+7. Write the architecture-appetite subsection into `## JIG Handoff` using
+   `--arch-posture`, `--arch-no-go` (repeatable), and `--arch-spike` on the
+   script. Leave the `_TBD_` markers in place when a maintainer gives none --
+   never fabricate a posture, no-go, or spike, and never fill in what the
+   leanest architecture would be; that decision belongs to jig.
+8. Call out any absent sibling tools plainly. For example, if servo signals are
    absent, write "No servo signals were found; release-check criteria remain
    advisory."
 

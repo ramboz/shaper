@@ -23,4 +23,4 @@
 | [007-release-check](007-release-check/spec.md) | 007-01 - JIG-only release check | **DONE** |  |
 | [007-release-check](007-release-check/spec.md) | 007-02 - optional servo signal read | **DONE** |  |
 | [008-vertical-scope-shaping](008-vertical-scope-shaping/spec.md) | 008-01 — vertical-scope-outline | **DONE** |  |
-| [008-vertical-scope-shaping](008-vertical-scope-shaping/spec.md) | 008-02 — architecture-appetite-handoff | READY_FOR_IMPLEMENTATION |  |
+| [008-vertical-scope-shaping](008-vertical-scope-shaping/spec.md) | 008-02 — architecture-appetite-handoff | **DONE** |  |
