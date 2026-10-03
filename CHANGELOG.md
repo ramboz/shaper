@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.1](https://github.com/ramboz/shaper/compare/v0.4.0...v0.4.1) (2026-10-03)
+
+
+### Documentation
+
+* **vision:** adopt the use-case breadth layer ([c0d7a33](https://github.com/ramboz/shaper/commit/c0d7a33067bffc4d1ba3248c5ec8f869b08263ab))
+
 ## [0.4.0](https://github.com/ramboz/shaper/compare/v0.3.0...v0.4.0) (2026-08-12)
 
 
