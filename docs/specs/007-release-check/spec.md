@@ -3,6 +3,7 @@ status: DONE
 skill: release-check
 tier: product
 last_verified:
+use_cases: [UC-6]
 ---
 
 # Spec 007: Release check

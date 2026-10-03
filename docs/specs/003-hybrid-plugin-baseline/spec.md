@@ -5,6 +5,7 @@ tier: host-adapter
 adr_required: true
 adr: ../../decisions/adr-0001-hybrid-plugin-baseline.md
 last_verified:
+use_cases: [UC-7]
 ---
 
 # Spec 003: Hybrid plugin baseline

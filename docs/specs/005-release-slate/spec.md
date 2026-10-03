@@ -5,6 +5,7 @@ tier: product
 adr_required: true
 adr: ../../decisions/adr-0003-release-plan-no-backlog-slate.md
 last_verified:
+use_cases: [UC-4]
 ---
 
 # Spec 005: Release slate overlay

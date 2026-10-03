@@ -5,6 +5,7 @@ tier: operations
 adr_required: true
 adr: ../../decisions/adr-0002-release-automation-and-archives.md
 last_verified:
+use_cases: [UC-8]
 ---
 
 # Spec 004: Release automation and host-explicit archives

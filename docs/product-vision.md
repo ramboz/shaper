@@ -132,6 +132,19 @@ work to JIG.
 - No heavyweight agile framework.
 - No silent mutation of JIG spec states.
 
+## Use cases
+
+<!-- elicited: 2026-10-03 / status: filled -->
+
+- UC-1: A maintainer can shape raw product intent into a bounded release plan
+- UC-2: A maintainer can hand a release plan off to JIG as implementation-ready work
+- UC-3: A maintainer can draw a cutline over existing JIG specs
+- UC-4: A maintainer can see active releases at a glance without a backlog
+- UC-5: A maintainer can audit a release for scope leakage against its appetite
+- UC-6: A maintainer can decide whether to ship, cut scope, stop, or re-shape
+- UC-7: A maintainer can use shaper from Claude Code, Codex, or GitHub Copilot CLI
+- UC-8: A core developer can cut a new shaper release with minimal effort and maximum automation and QA
+
 ## Stack
 
 <!-- elicited: 2026-06-17 / status: filled -->

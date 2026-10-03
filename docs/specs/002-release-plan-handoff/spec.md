@@ -3,6 +3,7 @@ status: DONE
 adr_required: true
 adr: ../../decisions/adr-0003-release-plan-no-backlog-slate.md
 last_verified:
+use_cases: [UC-1, UC-2, UC-3]
 ---
 
 # Spec 002: First release-plan-to-JIG handoff loop
