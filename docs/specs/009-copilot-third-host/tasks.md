@@ -11,14 +11,14 @@
 - [x] Implement Copilot package, marketplace, prose adapter, locator, and guards.
 - [x] Prove isolated installed discovery, helper behavior, and live skill use.
 - [x] Run compliance, craft, architecture, and reconciliation reviews.
-- [ ] Reconcile documentation/memory and close slice DONE.
+- [x] Reconcile documentation/memory and close slice DONE.
 
 ## 009-02
 
-- [ ] Witness new archive/release tests fail.
-- [ ] Implement archive, version, and release workflow integration.
-- [ ] Prove extracted-package discovery and helper behavior.
-- [ ] Run compliance, craft, architecture, and reconciliation reviews.
+- [x] Witness new archive/release tests fail.
+- [x] Implement archive, version, and release workflow integration.
+- [x] Prove extracted-package discovery and helper behavior.
+- [x] Run compliance, craft, architecture, and reconciliation reviews.
 - [ ] Reconcile documentation/memory and close slice DONE.
 
 ## Landing

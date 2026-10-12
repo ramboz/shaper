@@ -1,0 +1,91 @@
+{
+  "runtime": "3.14.0",
+  "checks": [
+    {
+      "command": [
+        "bash",
+        ".jig/test-command"
+      ],
+      "exit_code": 0,
+      "result": "......................................................................................................................................\n----------------------------------------------------------------------\nRan 134 tests in 30.869s\n\nOK"
+    },
+    {
+      "command": [
+        "bash",
+        ".jig/lint-command"
+      ],
+      "exit_code": 0,
+      "result": ""
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/validate_manifests.py"
+      ],
+      "exit_code": 0,
+      "result": "OK: 8/8 manifest(s) valid"
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/build_host_packages.py",
+        "--check"
+      ],
+      "exit_code": 0,
+      "result": "OK: committed host packages are in sync with source."
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/check_spec_board.py"
+      ],
+      "exit_code": 0,
+      "result": "OK: lifecycle board and spec rollups match vendored JIG; advisory audit preserved."
+    },
+    {
+      "command": [
+        "python3",
+        "/Users/ramboz/.copilot/installed-plugins/jig/jig/.github/skills/spec-workflow/workflow.py",
+        "check-board",
+        "."
+      ],
+      "exit_code": 0,
+      "result": "spec board: clean"
+    },
+    {
+      "command": [
+        "python3",
+        "/Users/ramboz/.copilot/installed-plugins/jig/jig/.github/skills/adr-workflow/adr.py",
+        "check-index",
+        "docs/decisions"
+      ],
+      "exit_code": 0,
+      "result": "ADR index: clean"
+    },
+    {
+      "command": [
+        "git",
+        "--no-pager",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "result": ""
+    }
+  ],
+  "publication": "not performed",
+  "minimum_syntax": {
+    "grammar": "Python 3.11",
+    "files": 24,
+    "result": "pass",
+    "interpreter_execution": "CI-owned; not locally claimed"
+  },
+  "extracted_cli": {
+    "result": "pass",
+    "cli_version": "GitHub Copilot CLI 1.0.96-2.",
+    "archive_sha256": "6fcffe697a6c43765427f46ff2763bec7b620bb9a49df5f16c97be474c31fecb",
+    "payload_byte_identical": true,
+    "refined_plan": true,
+    "jig_servo_unchanged": true
+  }
+}

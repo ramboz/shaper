@@ -21,6 +21,7 @@ VERSIONED_MANIFESTS = (
     ".codex-plugin/plugin.json",
     "hosts/claude/.claude-plugin/plugin.json",
     "hosts/codex/plugins/shaper/.codex-plugin/plugin.json",
+    "hosts/copilot/.plugin/plugin.json",
 )
 
 PR_TITLE_TYPES = {
@@ -77,8 +78,8 @@ class WorkflowFileTests(unittest.TestCase):
         self.assertIn("scripts/build_release_zip.py", text)
         self.assertIn("python3 scripts/validate_manifests.py", text)
         self.assertIn("python3 scripts/build_host_packages.py --check", text)
-        self.assertIn("workflow.py status-board .", text)
-        self.assertIn("git diff --exit-code docs/specs/README.md", text)
+        self.assertIn("python3 scripts/check_spec_board.py", text)
+        self.assertNotIn("workflow.py status-board .", text)
         self.assertNotIn("release-please", text)
 
     def test_pr_title_workflow_enforces_release_language(self):

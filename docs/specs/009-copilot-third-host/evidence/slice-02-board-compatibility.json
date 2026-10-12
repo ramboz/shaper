@@ -1,0 +1,50 @@
+{
+  "reason": "Current JIG ceremony adds a richer-skill advisory footer that the older vendored CI renderer removes.",
+  "scope": "Read-only CI adapter; no .codex runtime migration or lifecycle drift bypass.",
+  "red": {
+    "command": "python3 -m unittest discover -s tests -p test_spec_board_check.py",
+    "exit_code": 1,
+    "failure": "ModuleNotFoundError: check_spec_board"
+  },
+  "green": {
+    "command": "python3 -m unittest discover -s tests -p test_spec_board_check.py",
+    "exit_code": 0,
+    "tests_passed": 7,
+    "behaviors": [
+      "Current lifecycle table with newer advisory footer passes without mutating any source.",
+      "Stale lifecycle rows fail without mutating the source.",
+      "Stale spec status rollup fails without mutating the source.",
+      "Missing lifecycle table or audit preceding the table fails explicitly without mutation.",
+      "Newer nonlocking review-owner display hints are compatible; IN_PROGRESS ownership remains compared.",
+      "Regenerated raw source status is never normalized into valid state.",
+      "Deferred resolution-trigger text is never treated as a lifecycle Status cell."
+    ]
+  },
+  "craft_blocker_red": {
+    "command": "python3 -m unittest discover -s tests -p test_spec_board_check.py -k missing_table",
+    "exit_code": 1,
+    "failure_events": 2,
+    "failure": "Adapter falsely passed missing/audit-hidden lifecycle rows",
+    "fix": "Require lifecycle table and reject audit placement before it before comparing normalized sections."
+  },
+  "review_owner_red": {
+    "command": "python3 -m unittest discover -s tests -p test_spec_board_check.py -k nonlocking",
+    "exit_code": 1,
+    "failure_events": 3,
+    "fix": "Normalize only READY_FOR_REVIEW/REVIEWED/RECONCILED display hints; preserve statuses, rollups, and IN_PROGRESS claims."
+  },
+  "normalization_scope_red": {
+    "commands": [
+      "python3 -m unittest discover -s tests -p test_spec_board_check.py -k invalid_source",
+      "python3 -m unittest discover -s tests -p test_spec_board_check.py -k deferred_resolution"
+    ],
+    "exit_codes": [1, 1],
+    "failure_events": 2,
+    "fix": "Normalize only committed lifecycle Status cells; leave regenerated source truth and all other table columns/sections untouched."
+  },
+  "local_gate": {
+    "command": "python3 scripts/check_spec_board.py",
+    "exit_code": 0,
+    "diagnostic": "lifecycle board and spec rollups match vendored JIG; advisory audit preserved"
+  }
+}

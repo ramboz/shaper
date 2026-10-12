@@ -1,0 +1,72 @@
+{
+  "slice": "009-02",
+  "date": "2026-10-12",
+  "phase": "Historical implementer handoff, before parent CI compatibility repairs and final review closure.",
+  "final_board_compatibility": "slice-02-board-compatibility.json",
+  "runtime": "Python 3.14.0",
+  "checks": {
+    "owned_python_syntax": {
+      "command": "bash .jig/lint-command",
+      "result": "pass",
+      "files": 22
+    },
+    "minimum_python_syntax": {
+      "check": "ast.parse(feature_version=(3, 11)) for all 22 owned Python files",
+      "result": "pass",
+      "boundary": "Syntax only, not a Python 3.11 interpreter run."
+    },
+    "python_3_12": {
+      "command": "python3.12 --version",
+      "result": "unavailable",
+      "diagnostic": "pyenv: python3.12: command not found",
+      "boundary": "The shim exists but pyenv has no 3.12 interpreter; no dependency installed."
+    },
+    "manifests": {
+      "command": "python3 scripts/validate_manifests.py",
+      "result": "pass",
+      "valid": "8/8"
+    },
+    "committed_packages": {
+      "commands": [
+        "python3 scripts/build_host_packages.py",
+        "python3 scripts/build_host_packages.py --check"
+      ],
+      "result": "pass",
+      "hosts": ["claude", "codex", "copilot"],
+      "version": "0.4.0",
+      "hand_managed_version_change": false
+    },
+    "archives": {
+      "check": "build and smoke-test all three host-explicit v0.4.0 archives",
+      "result": "pass",
+      "copilot_determinism": "Focused test compares repeated archive bytes.",
+      "copilot_component_guard": "Build and extracted smoke reuse copilot_package_errors.",
+      "real_extracted_install": "slice-02-extracted-cli.json",
+      "publication": "not performed; workflow contracts only"
+    },
+    "board": {
+      "result": "pass with current JIG helper",
+      "helper": "/Users/ramboz/Projects/misc/jig/skills/spec-workflow/workflow.py",
+      "check": "Regenerate in scratch copy; compare every spec Markdown file against current worktree.",
+      "drift": [],
+      "worktree_modified": false,
+      "legacy_helper_result": "The project-local .codex helper strips the richer-skill selection audit footer; status rows and rollups agree. Preserved parent board and deferred runtime migration."
+    },
+    "adr_index": {
+      "command": "python3 /Users/ramboz/Projects/misc/jig/skills/adr-workflow/adr.py check-index docs/decisions",
+      "result": "pass",
+      "diagnostic": "ADR index: clean",
+      "records": 6
+    },
+    "patch_hygiene": {
+      "command": "git diff --check",
+      "result": "pass"
+    }
+  },
+  "remaining_parent_owned": [
+    "Independent compliance, craft, architecture and reconciliation reviews",
+    "Deviation/reconciliation log, memory/primers and gated lifecycle transitions",
+    "Provisional numbering check, commit/push, PR and remote CI/publication verification",
+    "Existing project-local board-helper mismatch recorded in docs/inbox.md"
+  ]
+}

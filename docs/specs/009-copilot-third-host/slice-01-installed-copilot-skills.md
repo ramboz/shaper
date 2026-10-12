@@ -1,10 +1,9 @@
 ---
-status: RECONCILED
+status: DONE
 dependencies: [adr-0006]
 last_verified: 2026-10-12
 arch_review: true
 frame_review: true
-claimed_by: copilot-third-host
 ---
 
 ## Slice 009-01 - installed-copilot-skills
@@ -69,8 +68,8 @@ shaping skills from a consuming repository without copying runtime files.
 
 ### Close-out (post-DONE)
 
-- [ ] Status board regenerated and audited.
-- [ ] Primer retains only in-flight slice 009-02.
+- [x] Status board regenerated and audited.
+- [x] Primer retains only in-flight slice 009-02.
 
 **Anti-horizontal-phasing check:** A user can install the package and produce
 usable release-plan/slate artifacts through Copilot after this slice.

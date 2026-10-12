@@ -1,0 +1,41 @@
+{
+  "slice": "009-02",
+  "date": "2026-10-12",
+  "runtime": "Python 3.14.0",
+  "test_runner": "python3 -c wrapper using stdlib unittest.TestSuite, defaultTestLoader.discover and TextTestRunner; emitted counts and distilled diagnostics as JSON",
+  "discovery_root": "tests",
+  "focused_patterns": [
+    "test_copilot_release.py",
+    "test_release_ci_gate.py",
+    "test_release_archives.py"
+  ],
+  "red": {
+    "witnessed_before_implementation": true,
+    "tests_run": 36,
+    "failure_entries_including_subtests": 17,
+    "error_entries_including_subtests": 13,
+    "exit_code": 1,
+    "key_diagnostics": [
+      "test_ac1_committed_payload_determinism_and_native_manifest: AssertionError: 1 != 0 : Copilot host must build",
+      "test_ac1_build_and_smoke_reuse_declared_component_validation: AttributeError: build_release_zip has no copilot_package_errors",
+      "test_ac2_version_inventory_gated_tagged_release_and_additive_notes: missing hosts/copilot/.plugin/plugin.json in extra-files",
+      "test_ac3_extracted_probe_reuses_boundary_and_refines_installed_plan: ModuleNotFoundError: smoke_copilot_archive",
+      "test_ac4_distribution_docs_and_owned_python_inventory: README missing shaper-copilot-vX.Y.Z.zip",
+      "test_release_please_config_updates_all_versioned_manifests: missing fifth versioned manifest"
+    ]
+  },
+  "green": {
+    "tests_run": 36,
+    "failures": 0,
+    "errors": 0,
+    "exit_code": 0,
+    "new_test_methods": 8,
+    "refactor": "After green, compact archive-probe evidence retains documented helper command, bootstrap provenance and shell SHA-256 rather than duplicating full bootstraps.",
+    "full_unit_suite": {
+      "discovery": "unittest.defaultTestLoader.discover('tests'), using the same JSON-summary wrapper",
+      "tests_run": 127,
+      "failures": 0,
+      "errors": 0
+    }
+  }
+}

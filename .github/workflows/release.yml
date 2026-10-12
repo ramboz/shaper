@@ -66,6 +66,20 @@ jobs:
             --version "${{ needs.release-please.outputs.version }}" \
             --smoke-test "dist/shaper-claude-v${{ needs.release-please.outputs.version }}.zip"
 
+      - name: Build Copilot release zip
+        run: |
+          python3 scripts/build_release_zip.py \
+            --host copilot \
+            --version "${{ needs.release-please.outputs.version }}" \
+            --output "dist/shaper-copilot-v${{ needs.release-please.outputs.version }}.zip"
+
+      - name: Smoke-test Copilot zip
+        run: |
+          python3 scripts/build_release_zip.py \
+            --host copilot \
+            --version "${{ needs.release-please.outputs.version }}" \
+            --smoke-test "dist/shaper-copilot-v${{ needs.release-please.outputs.version }}.zip"
+
       - name: Smoke-test Codex zip
         run: |
           python3 scripts/build_release_zip.py \
@@ -81,6 +95,7 @@ jobs:
             "${{ needs.release-please.outputs.tag_name }}" \
             "dist/shaper-claude-v${{ needs.release-please.outputs.version }}.zip" \
             "dist/shaper-codex-v${{ needs.release-please.outputs.version }}.zip" \
+            "dist/shaper-copilot-v${{ needs.release-please.outputs.version }}.zip" \
             --clobber
 
       - name: Append install-artifacts note to release body
@@ -102,6 +117,9 @@ jobs:
             archive with \`.claude-plugin/plugin.json\` at the zip root.
           - \`shaper-codex-v${VERSION}.zip\` is an extract-then-add Codex marketplace bundle:
             extract it, then add the extracted marketplace root to Codex.
+          - \`shaper-copilot-v${VERSION}.zip\` is an extract-then-install Copilot CLI
+            plugin archive with \`.plugin/plugin.json\` at the zip root:
+            extract it, then run \`copilot plugin install /absolute/path/to/extracted/shaper\`.
           EOF
           )"
           gh release edit "$TAG" --notes "${existing}${note}"

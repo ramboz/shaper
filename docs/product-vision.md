@@ -154,6 +154,11 @@ work to JIG.
 - **Platform commitments:**
   - Cloud target: none for the initial product.
   - Deployment shape: plugin surfaces for Claude Code, Codex, and Copilot CLI.
+    One canonical source generates three committed host packages and deterministic
+    archives: `shaper-claude-vX.Y.Z.zip`, `shaper-codex-vX.Y.Z.zip`, and
+    `shaper-copilot-vX.Y.Z.zip`. Copilot is CLI-only with extract-then-install
+    directory semantics, not an IDE/cloud-agent or direct zip-install promise.
+    Release-please owns versioning; local verification does not prove publication.
   - Package manager: none yet; standard-library Python is enough for the
     current helper surface.
   - Database: none; repo-native Markdown first.

@@ -45,3 +45,12 @@ ADR-0005 carried `frame_review: true`, so `adr.py accept` refused until a record
 
 ## Copilot installed roots and data-only discovery
 Spec 009 confirms that skill-issued helper commands run from the consuming repository, not the plugin. Quote SHAPER_ROOT paths, honor COPILOT_HOME, prefer the disclosed active skill runtime, and keep docs/ paths consumer-relative. Do not run an arbitrary installed shaper_root.py before identifying its plugin: the first bootstrap did that, and a regression proved foreign code executed. The repaired bootstrap reads identity/completeness as data. Static package presence is not skill discovery; isolated marketplace/direct installs and a live two-skill session were witnessed separately.
+
+## Current JIG ceremony and vendored CI board formats
+
+Compatibility must normalize only committed lifecycle Status cells for
+nonlocking review-owner hints. Never normalize regenerated source statuses or
+other table columns: witnessed regressions showed both can conceal real drift.
+`IN_PROGRESS` ownership remains compared. Seven focused cases guard this boundary.
+
+Spec 009 introduced richer-skill audit prose from current installed JIG while CI still used the older vendored renderer. Direct regeneration removed the advisory footer and would fail CI. The read-only check_spec_board.py adapter regenerates rows and spec rollups in a scratch copy, ignores only the known advisory section for comparison, and requires the lifecycle table to precede it. A witnessed regression showed why checking table presence/order is essential: stripping an audit could otherwise hide missing regenerated rows. This preserves CI gates without migrating .codex.

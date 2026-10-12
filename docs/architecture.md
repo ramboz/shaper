@@ -60,10 +60,11 @@ not a backlog or second status board.
 - **Runtime / language:** Python 3 standard-library tooling for repository
   helpers, consistent with `/Users/ramboz/Projects/misc/jig` and
   `/Users/ramboz/Projects/misc/servo`.
-- **Platform commitments:** cross-host from the start: support both Claude Code
-  and Codex plugin surfaces where practical. The accepted baseline is JIG
+- **Platform commitments:** cross-host from the start: support Claude Code,
+  Codex, and Copilot CLI plugin surfaces. Copilot support is CLI-only, not IDE
+  or cloud-agent parity. The accepted baseline is JIG
   `v2`'s committed host-package model: root source, `hosts/claude`,
-  `hosts/codex`, and drift guard.
+  `hosts/codex`, `hosts/copilot` (ADR-0006), and drift guard.
 - **CI/CD and releases:** accepted via ADR-0002 and implemented progressively
   in Spec 004. The first gate adds conventional commit PR-title validation,
   pull-request / `main` CI, manifest validation, host-package drift checks, and
@@ -111,7 +112,11 @@ not a backlog or second status board.
 - **Mechanics:** ADR-0002 adopts the JIG/servo release baseline: conventional
   commit PR-title gate, CI, release-please-managed versions and GitHub releases,
   and smoke-tested release archives named `shaper-claude-vX.Y.Z.zip` and
-  `shaper-codex-vX.Y.Z.zip`.
+  `shaper-codex-vX.Y.Z.zip`. ADR-0006 / Spec 009-02 adds
+  `shaper-copilot-vX.Y.Z.zip`, an extract-then-install Copilot CLI directory
+  with `.plugin/plugin.json` at the root. Build and smoke validation reuse
+  `copilot_package_errors` for the closed payload and actual declared component
+  paths; all three archives consume committed packages and are deterministic.
 
 ### Copilot CLI install adapter
 
@@ -125,8 +130,12 @@ not a backlog or second status board.
   to canonical source. The standard-library locator prefers the disclosed
   active skill, otherwise searches `COPILOT_HOME`; missing runtime is an error.
   Deterministic CI contracts are separate from the optional real installed
-  discovery/helper probe and authenticated live-session evidence. Copilot
-  archive/release wiring remains the follow-up slice 009-02.
+  discovery/helper probe and authenticated live-session evidence. Spec 009-02's
+  optional `scripts/smoke_copilot_archive.py` reuses installed-probe boundary
+  helpers to install an extracted archive under isolated `COPILOT_HOME`, verify
+  all five enabled installed skills from a separate consumer, create/refine a
+  plan, refresh the slate, run advice, and hash-protect JIG/servo fixtures.
+  Neither local probe nor static workflow contracts claim release publication.
 
 ### Release plan and no-backlog slate
 
@@ -216,22 +225,31 @@ mutate JIG spec states.
 - **Servo signal surface** (`docs/servo/release-signals/<slug>.md`) -
   release-check may read the matching release-scoped artifact as advisory
   evidence, but must not run servo loops or mutate servo-owned files.
-- **Release archive contract** (Spec 004 builders and smoke tests) - Claude
+- **Release archive contract** (Spec 004 / 009 builders and smoke tests) - Claude
   archives are flat plugin packages; Codex archives are marketplace bundles
-  with extract-then-add install semantics.
+  with extract-then-add install semantics; Copilot archives are plugin directories
+  with extract-then-install semantics (not direct zip installation). Five skills,
+  their helpers, template, standalone root locator, README and image are bundled;
+  repository-only content, hooks, agents, and project instructions are rejected.
 - **Change-quality gate** (`.github/workflows/ci.yml`,
   `.github/workflows/pr-title.yml`, `scripts/validate_manifests.py`) - pull
   requests and `main` run the unit suite, Python syntax check, manifest
   validation, host-package drift guard, and status-board drift check; PR titles
   must be scoped conventional commits.
+- **Lifecycle-board compatibility** (`scripts/check_spec_board.py`) - the
+  vendored JIG renderer checks lifecycle rows and spec rollups in a scratch
+  copy. It preserves the newer advisory audit section and normalizes only
+  nonlocking review-owner display hints. Lifecycle states, spec rollups and
+  `IN_PROGRESS` ownership remain compared; `.codex/` is not migrated.
 - **Release automation gate** (`.github/workflows/release.yml`,
   `.github/release-please-config.json`,
   `.github/.release-please-manifest.json`, `CHANGELOG.md`) - pushes to `main`
   let release-please open or update a release PR that bumps all versioned plugin
   manifests, updates the changelog and manifest, and creates the tag/GitHub
   release when merged. When release-please creates a release, the package job
-  checks committed host-package drift, builds `shaper-claude-vX.Y.Z.zip` and
-  `shaper-codex-vX.Y.Z.zip`, smoke-tests both, uploads both, and appends
+  checks committed host-package drift, builds `shaper-claude-vX.Y.Z.zip`,
+  `shaper-codex-vX.Y.Z.zip`, and `shaper-copilot-vX.Y.Z.zip`, smoke-tests and
+  uploads all three, and appends
   install-artifact notes without overwriting release-please changelog notes.
 - **Plugin install contract** (`.claude-plugin/plugin.json`,
   `.claude-plugin/marketplace.json`, `.codex-plugin/plugin.json`,
@@ -239,7 +257,8 @@ mutate JIG spec states.
   `hosts/copilot/`) - root manifests are canonical source,
   host packages are committed generated payloads, and
   `scripts/build_host_packages.py --check` guards host-package drift. Cross-host
-  version parity is owned by release-please-managed manifests plus the drift
+  version parity across five versioned manifests (including the generated
+  Copilot manifest) is owned by release-please-managed manifests plus the drift
   guard; the release archive builder consumes the committed host packages rather
   than re-walking repo source.
 

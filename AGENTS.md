@@ -49,7 +49,7 @@ Update via `/jig:memory-sync` or when `jig-memory-scan` surfaces an unknown refe
 
 ### Active specs
 - Spec 009 (Copilot third host) is IN_PROGRESS under ADR-0006: installed
-  Copilot skills first, then the released Copilot artifact. Check
+  Copilot skills are DONE; the released Copilot artifact is in progress. Check
   [docs/specs/README.md](docs/specs/README.md) for per-slice state.
 
 ### Deferred decisions
