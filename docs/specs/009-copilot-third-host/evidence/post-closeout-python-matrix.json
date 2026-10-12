@@ -1,0 +1,103 @@
+{
+  "phase": "Post-closeout verification",
+  "date": "2026-10-12",
+  "platform": "macOS arm64",
+  "installation": "Session-scoped uv-managed runtimes; no global interpreter or project dependency change",
+  "results": [
+    {
+      "python": "3.11.14",
+      "global_interpreters_modified": false,
+      "checks": [
+        {
+          "command": [
+            "bash",
+            ".jig/test-command"
+          ],
+          "exit_code": 0,
+          "output": "......................................................................................................................................\n----------------------------------------------------------------------\nRan 134 tests in 21.761s\n\nOK"
+        },
+        {
+          "command": [
+            "bash",
+            ".jig/lint-command"
+          ],
+          "exit_code": 0,
+          "output": ""
+        },
+        {
+          "command": [
+            "python3",
+            "scripts/validate_manifests.py"
+          ],
+          "exit_code": 0,
+          "output": "OK: 8/8 manifest(s) valid"
+        },
+        {
+          "command": [
+            "python3",
+            "scripts/build_host_packages.py",
+            "--check"
+          ],
+          "exit_code": 0,
+          "output": "OK: committed host packages are in sync with source."
+        },
+        {
+          "command": [
+            "python3",
+            "scripts/check_spec_board.py"
+          ],
+          "exit_code": 0,
+          "output": "OK: lifecycle board and spec rollups match vendored JIG; advisory audit preserved."
+        }
+      ]
+    },
+    {
+      "python": "3.12.12",
+      "global_interpreters_modified": false,
+      "checks": [
+        {
+          "command": [
+            "bash",
+            ".jig/test-command"
+          ],
+          "exit_code": 0,
+          "output": "......................................................................................................................................\n----------------------------------------------------------------------\nRan 134 tests in 23.677s\n\nOK"
+        },
+        {
+          "command": [
+            "bash",
+            ".jig/lint-command"
+          ],
+          "exit_code": 0,
+          "output": ""
+        },
+        {
+          "command": [
+            "python3",
+            "scripts/validate_manifests.py"
+          ],
+          "exit_code": 0,
+          "output": "OK: 8/8 manifest(s) valid"
+        },
+        {
+          "command": [
+            "python3",
+            "scripts/build_host_packages.py",
+            "--check"
+          ],
+          "exit_code": 0,
+          "output": "OK: committed host packages are in sync with source."
+        },
+        {
+          "command": [
+            "python3",
+            "scripts/check_spec_board.py"
+          ],
+          "exit_code": 0,
+          "output": "OK: lifecycle board and spec rollups match vendored JIG; advisory audit preserved."
+        }
+      ]
+    }
+  ],
+  "github_ci": "Not triggered: native PR creation remains blocked by the app account identity"
+}

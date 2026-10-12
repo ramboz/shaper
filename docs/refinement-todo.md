@@ -23,14 +23,21 @@
 ### Decision: Plugin packaging and host layout
 **Resolved:** shaper adopts JIG `v2`'s committed host-package baseline: root source manifests, committed `hosts/claude` and `hosts/codex` packages, and a regenerate/check drift guard. Spec 002 adds the first product skills (`shape-release` and `cutline`) to that package shape.
 **Resolution:** [Spec 003: Hybrid plugin baseline](specs/003-hybrid-plugin-baseline/spec.md) / [ADR-0001: Hybrid plugin baseline](decisions/adr-0001-hybrid-plugin-baseline.md) / [Spec 002 slice 002-01](specs/002-release-plan-handoff/slice-01-release-plan-handoff.md).
+**Copilot extension:** ADR-0006 / Spec 009 add committed `hosts/copilot`,
+native discovery metadata and a separate string-source marketplace descriptor.
 
 ### Decision: Release archive shape
 **Resolved:** shaper uses host-explicit release archives built from the committed host packages: `shaper-claude-vX.Y.Z.zip` is a flat Claude Code plugin package, and `shaper-codex-vX.Y.Z.zip` is an extract-then-add Codex marketplace bundle.
 **Resolution:** [ADR-0002: Release automation and host-explicit archives](decisions/adr-0002-release-automation-and-archives.md) and [Spec 004 slice 004-03](specs/004-release-automation/slice-03-host-explicit-release-zips.md).
+**Copilot extension:** [Spec 009-02](specs/009-copilot-third-host/slice-02-copilot-release-artifact.md)
+adds the flat `shaper-copilot-vX.Y.Z.zip` extract-then-install artifact.
 
 ### Decision: Host-package README rewriting
 **Resolved for current product skills:** Spec 002 keeps host README generation as an exact root README copy, and Spec 005 continues that model for the host-neutral `release-slate` skill. The root README is updated before host-package regeneration so committed host packages accurately describe shipped product skills and still-deferred product work. Host-specific link rewriting is still deferred until a slice adds host-specific runtime prose or install verification.
 **Resolution:** [Spec 002 slice 002-01](specs/002-release-plan-handoff/slice-01-release-plan-handoff.md), [Spec 005 slice 005-01](specs/005-release-slate/slice-01-release-slate.md), and [README.md](../README.md).
+**Current boundary:** Spec 009 keeps README exact-copy generation for all three
+hosts. Only Copilot skill bodies need installed-runtime prose adaptation;
+host-specific README link rewriting remains deferred to a concrete link need.
 
 ### Decision: Hook and agent host rendering
 **Deferred:** `scripts/build_host_packages.py` has future copy hooks for `agents/` and `hooks/`, but no hooks or agents ship in the Spec 003 baseline. Before those directories become real product payloads, shaper should decide whether host-specific rendering/trust documentation is needed instead of blanket copying.
@@ -57,3 +64,13 @@
 **Resolved for release-please:** Spec 004 slice 004-02 adds release-please config, the release workflow, a seeded changelog, and a dry-run/documented release PR flow. Release-please updates all versioned root and committed host-package plugin manifests together.
 **Resolved for archives:** Spec 004 slice 004-03 adds a release-created package job that checks host-package drift, builds and smoke-tests both host-explicit zips, uploads them to the GitHub release, and appends install-artifact notes.
 **Resolution:** [Spec 004 slice 004-01](specs/004-release-automation/slice-01-ci-and-conventional-commit-gate.md), [Spec 004 slice 004-02](specs/004-release-automation/slice-02-release-please-pipeline.md), and [Spec 004 slice 004-03](specs/004-release-automation/slice-03-host-explicit-release-zips.md).
+
+**Copilot extension:** Spec 009 adds the fifth versioned manifest and third
+archive to release-please/build/smoke/upload. CI's read-only scratch-copy board
+adapter retains vendored JIG lifecycle/rollup checks and preserves the newer
+advisory audit footer without a runtime migration.
+
+### Decision: Copilot runtime-root policy consolidation
+**Deferred:** The self-contained data-only skill bootstrap and standalone shaper_root.py mirror the small identity/completeness/selection policy. Tests now execute both entry points; introspective code generation is not introduced for this port.
+**Resolution trigger:** A future change to the runtime inventory or installation-selection policy must update both and decide whether canonical bootstrap generation reduces maintenance without executing untrusted installed code.
+**Source:** Spec 009-01 architecture review and reconciliation.

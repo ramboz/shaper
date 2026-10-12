@@ -6,17 +6,21 @@ import argparse
 import json
 import re
 import sys
+import tempfile
 import zipfile
 from pathlib import Path
 from typing import Iterable
 
+from build_host_packages import copilot_package_errors
+
 
 ROOT = Path(__file__).resolve().parent.parent
 PLUGIN_NAME = "shaper"
-HOSTS = ("claude", "codex")
+HOSTS = ("claude", "codex", "copilot")
 HOST_MANIFESTS = {
     "claude": ".claude-plugin/plugin.json",
     "codex": f"plugins/{PLUGIN_NAME}/.codex-plugin/plugin.json",
+    "copilot": ".plugin/plugin.json",
 }
 REQUIRED_FILES = {
     "claude": (
@@ -117,19 +121,30 @@ def _zip_entry(zf: zipfile.ZipFile, arcname: str, data: bytes) -> None:
     zf.writestr(info, data)
 
 
-def _manifest_version(package_root: Path, host: str) -> tuple[str | None, str | None]:
-    manifest = package_root / HOST_MANIFESTS[host]
+def _parse_manifest_version(raw: bytes, manifest: str) -> tuple[str | None, str | None]:
     try:
-        data = json.loads(manifest.read_text(encoding="utf-8"))
-    except FileNotFoundError:
-        return None, f"missing committed {host} package manifest at {manifest}"
+        data = json.loads(raw.decode("utf-8"))
+    except UnicodeDecodeError:
+        return None, f"{manifest}: invalid UTF-8"
     except json.JSONDecodeError as exc:
         return None, f"{manifest}: invalid JSON: {exc.msg}"
-
+    if not isinstance(data, dict):
+        return None, f"{manifest}: manifest root must be a JSON object"
     version = data.get("version")
     if not isinstance(version, str) or not version:
         return None, f"{manifest}: missing string version"
     return version, None
+
+
+def _manifest_version(package_root: Path, host: str) -> tuple[str | None, str | None]:
+    manifest = package_root / HOST_MANIFESTS[host]
+    try:
+        raw = manifest.read_bytes()
+    except FileNotFoundError:
+        return None, f"missing committed {host} package manifest at {manifest}"
+    except OSError as exc:
+        return None, f"{manifest}: cannot read manifest: {exc}"
+    return _parse_manifest_version(raw, str(manifest))
 
 
 def build(
@@ -173,6 +188,12 @@ def build(
         )
         return 2
 
+    if host == "copilot":
+        problems = copilot_package_errors(package_root)
+        if problems:
+            out.write("FAIL: committed copilot package: " + "; ".join(problems) + "\n")
+            return 1
+
     entries = sorted(_iter_files(package_root), key=lambda path: path.as_posix())
     if not entries:
         out.write(f"FAIL: committed {host} package at {package_root} is empty\n")
@@ -188,10 +209,15 @@ def build(
             f"OK: built {output_path} as a flat Claude Code plugin archive "
             f"with {len(entries)} entries.\n"
         )
-    else:
+    elif host == "codex":
         out.write(
             f"OK: built {output_path} as an extract-then-add Codex marketplace "
             f"bundle with {len(entries)} entries.\n"
+        )
+    else:
+        out.write(
+            f"OK: built {output_path} as an extract-then-install Copilot CLI "
+            f"plugin archive with {len(entries)} entries.\n"
         )
     return 0
 
@@ -211,14 +237,22 @@ def _manifest_version_from_zip(
         raw = zf.read(manifest)
     except KeyError:
         return None, f"missing {manifest}"
-    try:
-        data = json.loads(raw.decode("utf-8"))
-    except json.JSONDecodeError as exc:
-        return None, f"{manifest}: invalid JSON: {exc.msg}"
-    version = data.get("version")
-    if not isinstance(version, str) or not version:
-        return None, f"{manifest}: missing string version"
-    return version, None
+    return _parse_manifest_version(raw, manifest)
+
+
+def _copilot_zip_errors(zf: zipfile.ZipFile) -> list[str]:
+    # The shared guard walks real component paths and validates loader metadata.
+    # Reject unsafe/duplicate names before materializing the closed payload.
+    names = zf.namelist()
+    if len(names) != len(set(names)) or any(
+        name.startswith("/") or "\\" in name or ".." in Path(name).parts
+        for name in names
+    ):
+        return ["unsafe archive member path or duplicate entry"]
+    with tempfile.TemporaryDirectory(prefix="shaper-copilot-smoke-") as tmp:
+        package = Path(tmp)
+        zf.extractall(package)
+        return copilot_package_errors(package)
 
 
 def smoke_test(host: str, zip_path: Path, expected_version: str | None = None, out=None) -> int:
@@ -237,11 +271,12 @@ def smoke_test(host: str, zip_path: Path, expected_version: str | None = None, o
     try:
         with zipfile.ZipFile(zip_path) as zf:
             names = set(zf.namelist())
-            missing = sorted(set(REQUIRED_FILES[host]) - names)
+            component_errors = _copilot_zip_errors(zf) if host == "copilot" else []
+            missing = sorted(set(REQUIRED_FILES.get(host, ())) - names)
             forbidden = sorted(
                 name
                 for name in names
-                if any(name.startswith(prefix) for prefix in FORBIDDEN_PREFIXES[host])
+                if any(name.startswith(prefix) for prefix in FORBIDDEN_PREFIXES.get(host, ()))
             )
             junk = sorted(
                 name
@@ -256,6 +291,7 @@ def smoke_test(host: str, zip_path: Path, expected_version: str | None = None, o
         return 1
 
     problems: list[str] = []
+    problems.extend(component_errors)
     if missing:
         problems.append("missing required file(s): " + ", ".join(missing))
     if forbidden:
@@ -269,6 +305,10 @@ def smoke_test(host: str, zip_path: Path, expected_version: str | None = None, o
             f"version mismatch: zip name/version is {expected_version!r}, "
             f"manifest declares {manifest_version!r}"
         )
+    if host == "copilot" and manifest_version:
+        expected_name = expected_output_name(host, expected_version or manifest_version)
+        if zip_path.name != expected_name:
+            problems.append(f"output filename must be {expected_name!r}; got {zip_path.name!r}")
 
     if problems:
         out.write(f"FAIL smoke[{host}]: " + "; ".join(problems) + "\n")
@@ -279,10 +319,15 @@ def smoke_test(host: str, zip_path: Path, expected_version: str | None = None, o
             "PASS smoke[claude]: flat Claude Code plugin archive validated "
             "with .claude-plugin/plugin.json at the root.\n"
         )
-    else:
+    elif host == "codex":
         out.write(
             "PASS smoke[codex]: extract-then-add Codex marketplace bundle "
             "validated.\n"
+        )
+    else:
+        out.write(
+            "PASS smoke[copilot]: extract-then-install Copilot CLI plugin archive "
+            "validated with .plugin/plugin.json at the root and declared skills paths.\n"
         )
     return 0
 

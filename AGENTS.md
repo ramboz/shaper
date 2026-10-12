@@ -41,6 +41,10 @@ Update via `/jig:memory-sync` or when `jig-memory-scan` surfaces an unknown refe
   shaper expresses architecture *appetite*; JIG makes architecture *decisions* —
   the field never names an ADR, module boundary, mechanism, or positive design
   (Spec 008-02).
+- **Copilot runtime root** - `$SHAPER_ROOT` resolves the installed `.github`
+  runtime; consumer `docs/` paths stay repository-relative. The bootstrap
+  discovers package identity/completeness as data, without executing arbitrary
+  installed locators (ADR-0006 / Spec 009).
 
 ### Working preferences
 - **Subagents approved by default** - the user has approved Codex to spin up
@@ -48,8 +52,8 @@ Update via `/jig:memory-sync` or when `jig-memory-scan` surfaces an unknown refe
   help the task; do not pause for per-use approval.
 
 ### Active specs
-- No active implementation slice. Spec 008 (vertical-scope shaping) is DONE;
-  ADR-0005 accepted. Check [docs/specs/README.md](docs/specs/README.md) for the
+- No active implementation slice. Spec 009 (Copilot third host) is DONE;
+  ADR-0006 accepted. Check [docs/specs/README.md](docs/specs/README.md) for the
   next DRAFT or READY_FOR_IMPLEMENTATION candidate.
 
 ### Deferred decisions
@@ -77,6 +81,9 @@ See docs/refinement-todo.md
 5. Reconcile docs, deviation logs, and memory before marking a slice `DONE`.
 
 ## Current Sprint Focus
+
+The five product skills now ship in committed, generated Claude Code, Codex,
+and Copilot CLI packages with host-explicit release artifacts.
 
 The release-plan-to-JIG handoff loop now includes shipped `shape-release`,
 `cutline`, `release-slate`, `scope-audit`, and `release-check` skills. Spec 008

@@ -1,6 +1,6 @@
 ![shaper](./shaper.jpg)
 
-> A Codex and Claude Code plugin for shaping release-sized work before
+> A Codex, Claude Code, and Copilot CLI plugin for shaping release-sized work before
 > implementation starts.
 
 **shaper** turns rough product intent into a small, buildable release plan:
@@ -109,13 +109,15 @@ For live per-slice state, see the
 ADR-0001 and ADR-0002 align shaper with the sibling plugin release model:
 
 - canonical source at the repository root;
-- committed host packages under `hosts/claude/` and `hosts/codex/`;
+- committed host packages under `hosts/claude/`, `hosts/codex/`, and
+  `hosts/copilot/` (ADR-0006);
 - a drift guard so host packages stay generated from source;
 - release-please-managed versions, changelog entries, tags, and GitHub
   releases;
 - host-explicit release archives:
   - `shaper-claude-vX.Y.Z.zip`
   - `shaper-codex-vX.Y.Z.zip`
+  - `shaper-copilot-vX.Y.Z.zip`
 
 The install surfaces package metadata, README content, the first product
 skills, and the release-plan template. Release archives are built from those
@@ -131,6 +133,91 @@ Current host install semantics:
   `hosts/codex/.agents/plugins/marketplace.json` points at
   `./plugins/shaper` and includes `policy.installation`,
   `policy.authentication`, and `category`.
+- Copilot CLI reads the native root `.github/plugin/marketplace.json` string
+  source `./hosts/copilot`. Its generated `.plugin/plugin.json` explicitly
+  declares `.github/skills`; the five skills, Python helpers, root locator,
+  and template live together under the installed `.github` runtime.
+
+### Install and verify in Copilot CLI
+
+Supported: **Copilot CLI** and Python 3 for helpers. Initial probes used
+1.0.93-1; the final repaired package passed installed discovery/helper checks
+and an authenticated skill workflow on 1.0.96-2.
+This makes no IDE or cloud-agent parity claim and installs no hooks, agents,
+project instructions, or JIG runtime.
+
+From your consuming repository, add the marketplace and install:
+
+```bash
+copilot plugin marketplace add ramboz/shaper
+copilot plugin install shaper@shaper
+copilot skill list --json
+```
+
+Alternatively, install the committed repository subdirectory directly (no
+marketplace registration or local build required):
+
+```bash
+copilot plugin install ramboz/shaper:hosts/copilot
+copilot skill list --json
+```
+
+For a local checkout, use `copilot plugin marketplace add "/absolute/path/to/shaper"`
+then `copilot plugin install shaper@shaper`, or
+`copilot plugin install "/absolute/path/to/shaper/hosts/copilot"`.
+Run discovery from a **separate consumer directory**, not the Shaper checkout.
+Verify that `shape-release`, `cutline`, `release-slate`, `scope-audit`, and
+`release-check` are loaded with plugin skill paths. `plugin list` alone is
+not proof of skill discovery.
+
+Each installed skill explains how to resolve and quote `$SHAPER_ROOT` in the
+same shell as its helper. The disclosed active skill directory takes precedence;
+otherwise the locator searches `${COPILOT_HOME:-$HOME/.copilot}/installed-plugins`.
+Consumer `docs/` paths stay relative to your repository. Missing runtime is an
+explicit error, not a fallback to consumer-relative scripts.
+
+To reproduce isolated discovery/helper verification without modifying your normal
+Copilot configuration, run the optional local probe (not required by CI):
+
+```bash
+python3 scripts/smoke_copilot_install.py --copilot /absolute/path/to/copilot
+```
+
+It uses a disposable `COPILOT_HOME`, installs the local marketplace/package,
+lists skills from a separate consumer, runs all five documented helpers, and
+checks JIG/servo files are unchanged. It prints JSON evidence and the retained
+fixture paths. Authenticated live skill use is a separate verification step;
+the deterministic probe does not claim to perform it.
+
+### Install an extracted Copilot release archive
+
+`shaper-copilot-vX.Y.Z.zip` is an **extract-then-install** Copilot CLI plugin
+archive. Download it from a published GitHub release, extract it into a directory
+so `.plugin/plugin.json` is at that directory's root, then install the directory
+from your separate consuming repository:
+
+```bash
+copilot plugin install "/absolute/path/to/extracted/shaper"
+copilot skill list --json
+```
+
+Do not pass the zip directly to `plugin install`. The archive includes all five
+skills/helpers, the template, standalone locator, README, and image; it excludes
+repository-only content. Static archive smoke checks reuse the package builder's
+declared component/loader validation, not a file-count proxy.
+
+To prove extraction, isolated directory installation, actual CLI discovery, and
+installed helper create/refine/slate/advice behavior locally:
+
+```bash
+python3 scripts/smoke_copilot_archive.py /absolute/path/to/shaper-copilot-vX.Y.Z.zip
+```
+
+This optional probe retains disposable fixtures under an isolated `COPILOT_HOME`,
+prints observed CLI version and enabled installed skill paths, and hash-checks
+JIG/servo fixtures. Ordinary CI does not need an installed/authenticated CLI.
+Local archive/install and workflow checks do not prove future GitHub publication;
+upload occurs only when the release-please release PR is merged.
 
 Regenerate committed host packages after changing plugin source:
 
@@ -147,15 +234,20 @@ python3 scripts/build_host_packages.py --check
 Build and smoke-test host-explicit release archives locally:
 
 ```bash
-python3 scripts/build_release_zip.py --host claude --version 0.1.0
-python3 scripts/build_release_zip.py --host codex --version 0.1.0
-python3 scripts/build_release_zip.py --host claude --smoke-test dist/shaper-claude-v0.1.0.zip
-python3 scripts/build_release_zip.py --host codex --smoke-test dist/shaper-codex-v0.1.0.zip
+VERSION="$(python3 -c 'import json; from pathlib import Path; print(json.loads(Path(".claude-plugin/plugin.json").read_text())["version"])')"
+python3 scripts/build_release_zip.py --host claude --version "$VERSION"
+python3 scripts/build_release_zip.py --host codex --version "$VERSION"
+python3 scripts/build_release_zip.py --host copilot --version "$VERSION"
+python3 scripts/build_release_zip.py --host claude --smoke-test "dist/shaper-claude-v${VERSION}.zip"
+python3 scripts/build_release_zip.py --host codex --smoke-test "dist/shaper-codex-v${VERSION}.zip"
+python3 scripts/build_release_zip.py --host copilot --smoke-test "dist/shaper-copilot-v${VERSION}.zip"
 ```
 
 The Claude zip is a flat plugin package. The Codex zip is an extract-then-add
 marketplace bundle: extract it first, then add the extracted marketplace root
-to Codex.
+to Codex. The Copilot zip is an extract-then-install plugin directory, with
+`.plugin/plugin.json` at its root. Repeated builds of each host archive are
+byte-identical.
 
 ### Release flow
 
@@ -175,13 +267,16 @@ The release PR updates these files together:
 Merging that release PR creates the `vX.Y.Z` tag and GitHub release. When
 release-please reports `release_created == true`, the package job checks host
 package drift from the tagged source state, builds
-`dist/shaper-claude-vX.Y.Z.zip` and `dist/shaper-codex-vX.Y.Z.zip`,
-smoke-tests both archives, uploads them to the GitHub release, and appends a
-short install-artifacts note to the release body.
+`dist/shaper-claude-vX.Y.Z.zip`, `dist/shaper-codex-vX.Y.Z.zip`, and
+`dist/shaper-copilot-vX.Y.Z.zip`, smoke-tests all three archives, uploads them to
+the GitHub release, and appends a short install-artifacts note without replacing
+the existing changelog notes.
 
 Do not hand-edit plugin manifest versions. They are release-managed so the
 root Claude and Codex manifests and committed host-package manifests stay in
-lockstep with the changelog and tag.
+lockstep with the changelog and tag. The five versioned manifests include the
+generated `hosts/copilot/.plugin/plugin.json`; its version comes from canonical
+Claude source during regeneration, not a new Copilot version authority.
 
 Dry-run the next release PR locally when changing the release configuration:
 
@@ -219,13 +314,15 @@ The current product layout:
 shaper/
 |-- .claude-plugin/              # Claude source manifest + marketplace pointer
 |-- .codex-plugin/               # Codex source manifest
+|-- .github/plugin/              # Copilot native marketplace pointer
 |-- docs/
 |   |-- releases/                # Release plans and compact release slate
 |   |-- specs/                   # Spec-driven implementation docs and board
 |   `-- decisions/               # ADRs for hard-to-reverse decisions
 |-- hosts/
 |   |-- claude/                  # Committed Claude Code plugin package
-|   `-- codex/                   # Committed Codex marketplace package
+|   |-- codex/                   # Committed Codex marketplace package
+|   `-- copilot/                 # Committed Copilot CLI plugin package
 |-- skills/
 |   |-- shape-release/
 |   |-- release-slate/
@@ -253,6 +350,22 @@ DRAFT -> READY_FOR_REVIEW -> READY_FOR_IMPLEMENTATION -> IN_PROGRESS
 
 See [docs/workflow.md](docs/workflow.md) for the full process and
 [docs/conventions.md](docs/conventions.md) before changing project rules.
+
+Local CI checks use the existing test/syntax commands and read-only validators:
+
+```bash
+bash .jig/test-command
+bash .jig/lint-command
+python3 scripts/validate_manifests.py
+python3 scripts/build_host_packages.py --check
+python3 scripts/check_spec_board.py
+```
+
+The board check regenerates lifecycle rows and spec rollups in a scratch copy
+using the repository's vendored JIG. It preserves newer JIG's advisory audit
+footer and accounts for nonlocking review-owner display hints. Lifecycle
+states, rollups and `IN_PROGRESS` ownership remain checked; the development
+runtime is not migrated.
 
 ### PR titles and release notes
 

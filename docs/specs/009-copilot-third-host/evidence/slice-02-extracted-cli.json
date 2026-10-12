@@ -1,0 +1,163 @@
+{
+  "archive": "/Users/ramboz/Projects/misc/shaper/.worktrees/ubiquitous-parakeet/dist/shaper-copilot-v0.4.0.zip",
+  "fixture": "/private/var/folders/l6/j_gn614s5t7615hkpq674ys00000gq/T/shaper archive probe jstcb43x",
+  "commands": [
+    {
+      "command": [
+        "/Users/ramboz/.nvm/versions/node/v22.16.0/bin/copilot",
+        "--version"
+      ],
+      "cwd": "/private/var/folders/l6/j_gn614s5t7615hkpq674ys00000gq/T/shaper archive probe jstcb43x/consumer",
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "/Users/ramboz/.nvm/versions/node/v22.16.0/bin/copilot",
+        "plugin",
+        "install",
+        "/private/var/folders/l6/j_gn614s5t7615hkpq674ys00000gq/T/shaper archive probe jstcb43x/extracted/shaper"
+      ],
+      "cwd": "/private/var/folders/l6/j_gn614s5t7615hkpq674ys00000gq/T/shaper archive probe jstcb43x/consumer",
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "/Users/ramboz/.nvm/versions/node/v22.16.0/bin/copilot",
+        "skill",
+        "list",
+        "--json"
+      ],
+      "cwd": "/private/var/folders/l6/j_gn614s5t7615hkpq674ys00000gq/T/shaper archive probe jstcb43x/consumer",
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "/private/var/folders/l6/j_gn614s5t7615hkpq674ys00000gq/T/shaper archive probe jstcb43x/home/installed-plugins/_direct/shaper/.github/skills/shape-release/scripts/shape_release.py",
+        "--repo",
+        ".",
+        "--slug",
+        "probe",
+        "--solution",
+        "Refined archive plan"
+      ],
+      "cwd": "/private/var/folders/l6/j_gn614s5t7615hkpq674ys00000gq/T/shaper archive probe jstcb43x/consumer",
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "/opt/homebrew/opt/python@3.14/bin/python3.14",
+        "/private/var/folders/l6/j_gn614s5t7615hkpq674ys00000gq/T/shaper archive probe jstcb43x/home/installed-plugins/_direct/shaper/.github/skills/release-slate/scripts/release_slate.py",
+        "--repo",
+        "."
+      ],
+      "cwd": "/private/var/folders/l6/j_gn614s5t7615hkpq674ys00000gq/T/shaper archive probe jstcb43x/consumer",
+      "exit_code": 0
+    }
+  ],
+  "publication": "not performed",
+  "live_agent_session": "not performed; deterministic installed helpers only",
+  "archive_sha256": "6fcffe697a6c43765427f46ff2763bec7b620bb9a49df5f16c97be474c31fecb",
+  "consumer": "/private/var/folders/l6/j_gn614s5t7615hkpq674ys00000gq/T/shaper archive probe jstcb43x/consumer",
+  "COPILOT_HOME": "/private/var/folders/l6/j_gn614s5t7615hkpq674ys00000gq/T/shaper archive probe jstcb43x/home",
+  "extracted_package": "/private/var/folders/l6/j_gn614s5t7615hkpq674ys00000gq/T/shaper archive probe jstcb43x/extracted/shaper",
+  "cli_version": "GitHub Copilot CLI 1.0.96-2.",
+  "installation_result": "Plugin \"shaper\" installed successfully. Installed 5 skills.",
+  "installed_package": "/private/var/folders/l6/j_gn614s5t7615hkpq674ys00000gq/T/shaper archive probe jstcb43x/home/installed-plugins/_direct/shaper",
+  "payload_byte_identical": true,
+  "discovered": {
+    "cutline": {
+      "path": "/private/var/folders/l6/j_gn614s5t7615hkpq674ys00000gq/T/shaper archive probe jstcb43x/home/installed-plugins/_direct/shaper/.github/skills/cutline",
+      "enabled": true
+    },
+    "release-check": {
+      "path": "/private/var/folders/l6/j_gn614s5t7615hkpq674ys00000gq/T/shaper archive probe jstcb43x/home/installed-plugins/_direct/shaper/.github/skills/release-check",
+      "enabled": true
+    },
+    "release-slate": {
+      "path": "/private/var/folders/l6/j_gn614s5t7615hkpq674ys00000gq/T/shaper archive probe jstcb43x/home/installed-plugins/_direct/shaper/.github/skills/release-slate",
+      "enabled": true
+    },
+    "scope-audit": {
+      "path": "/private/var/folders/l6/j_gn614s5t7615hkpq674ys00000gq/T/shaper archive probe jstcb43x/home/installed-plugins/_direct/shaper/.github/skills/scope-audit",
+      "enabled": true
+    },
+    "shape-release": {
+      "path": "/private/var/folders/l6/j_gn614s5t7615hkpq674ys00000gq/T/shaper archive probe jstcb43x/home/installed-plugins/_direct/shaper/.github/skills/shape-release",
+      "enabled": true
+    }
+  },
+  "helpers": {
+    "commands": [
+      {
+        "cwd": "/private/var/folders/l6/j_gn614s5t7615hkpq674ys00000gq/T/shaper archive probe jstcb43x/consumer",
+        "exit_code": 0,
+        "bootstrap_from": "/private/var/folders/l6/j_gn614s5t7615hkpq674ys00000gq/T/shaper archive probe jstcb43x/home/installed-plugins/_direct/shaper/.github/skills/shape-release/SKILL.md",
+        "SHAPER_SKILL_DIR": "/private/var/folders/l6/j_gn614s5t7615hkpq674ys00000gq/T/shaper archive probe jstcb43x/home/installed-plugins/_direct/shaper/.github/skills/shape-release",
+        "result": "docs/releases/probe.md",
+        "helper_command": "python3 \"$SHAPER_ROOT/skills/shape-release/scripts/shape_release.py\" --repo . --slug probe --problem 'Need a probe' --appetite 'One day' --solution 'Small probe' --vertical-scope 'Create a useful plan' --risk 'None identified' --no-go 'No automation' --jig-handoff '[Probe](../specs/010-probe/spec.md)' --criterion 'Helper works'",
+        "shell_command_sha256": "633ead74d7ecfc7624f1a0a5a376b648f5b368a635857395d5fa952cd407cb1d"
+      },
+      {
+        "cwd": "/private/var/folders/l6/j_gn614s5t7615hkpq674ys00000gq/T/shaper archive probe jstcb43x/consumer",
+        "exit_code": 0,
+        "bootstrap_from": "/private/var/folders/l6/j_gn614s5t7615hkpq674ys00000gq/T/shaper archive probe jstcb43x/home/installed-plugins/_direct/shaper/.github/skills/cutline/SKILL.md",
+        "SHAPER_SKILL_DIR": "/private/var/folders/l6/j_gn614s5t7615hkpq674ys00000gq/T/shaper archive probe jstcb43x/home/installed-plugins/_direct/shaper/.github/skills/cutline",
+        "result": "JIG files left untouched.",
+        "helper_command": "python3 \"$SHAPER_ROOT/skills/cutline/scripts/cutline.py\" --repo . --release probe",
+        "shell_command_sha256": "7b424b2d6b39423fa76e7227bd16e2e85e761305563520e474cff8ebc61b86af"
+      },
+      {
+        "cwd": "/private/var/folders/l6/j_gn614s5t7615hkpq674ys00000gq/T/shaper archive probe jstcb43x/consumer",
+        "exit_code": 0,
+        "bootstrap_from": "/private/var/folders/l6/j_gn614s5t7615hkpq674ys00000gq/T/shaper archive probe jstcb43x/home/installed-plugins/_direct/shaper/.github/skills/release-slate/SKILL.md",
+        "SHAPER_SKILL_DIR": "/private/var/folders/l6/j_gn614s5t7615hkpq674ys00000gq/T/shaper archive probe jstcb43x/home/installed-plugins/_direct/shaper/.github/skills/release-slate",
+        "result": "JIG lifecycle state copied: no",
+        "helper_command": "python3 \"$SHAPER_ROOT/skills/release-slate/scripts/release_slate.py\" --repo .",
+        "shell_command_sha256": "fc083f2f59303d6f0eb1049aede65490dbf8bc50467ebe65e994cd756dae4c49"
+      },
+      {
+        "cwd": "/private/var/folders/l6/j_gn614s5t7615hkpq674ys00000gq/T/shaper archive probe jstcb43x/consumer",
+        "exit_code": 0,
+        "bootstrap_from": "/private/var/folders/l6/j_gn614s5t7615hkpq674ys00000gq/T/shaper archive probe jstcb43x/home/installed-plugins/_direct/shaper/.github/skills/scope-audit/SKILL.md",
+        "SHAPER_SKILL_DIR": "/private/var/folders/l6/j_gn614s5t7615hkpq674ys00000gq/T/shaper archive probe jstcb43x/home/installed-plugins/_direct/shaper/.github/skills/scope-audit",
+        "result": "JIG files left untouched.",
+        "helper_command": "python3 \"$SHAPER_ROOT/skills/scope-audit/scripts/scope_audit.py\" --repo . --release probe",
+        "shell_command_sha256": "fd7b4b7adc9966545e199c0d4222929c658e3771b30084c4a051d46a5c0ab5c5"
+      },
+      {
+        "cwd": "/private/var/folders/l6/j_gn614s5t7615hkpq674ys00000gq/T/shaper archive probe jstcb43x/consumer",
+        "exit_code": 0,
+        "bootstrap_from": "/private/var/folders/l6/j_gn614s5t7615hkpq674ys00000gq/T/shaper archive probe jstcb43x/home/installed-plugins/_direct/shaper/.github/skills/release-check/SKILL.md",
+        "SHAPER_SKILL_DIR": "/private/var/folders/l6/j_gn614s5t7615hkpq674ys00000gq/T/shaper archive probe jstcb43x/home/installed-plugins/_direct/shaper/.github/skills/release-check",
+        "result": "Servo files left untouched.",
+        "helper_command": "python3 \"$SHAPER_ROOT/skills/release-check/scripts/release_check.py\" --repo . --release probe",
+        "shell_command_sha256": "27351b551c472c9e66a08dede36be858a5097fa4f3209405776edf1795066e5c"
+      }
+    ],
+    "fixture_sha256_before_and_after": {
+      "docs/specs/README.md": "64ca0d5cc2b491d681cad6fc05f7bd04ee0d351fbce14d0558e710095ba9ab27",
+      "docs/specs/010-probe/spec.md": "eb7b2784d11b0e39d19a0aef96916f40d2b3b6a3cdfa27983d5781ae9a7a3ce0",
+      "docs/servo/release-signals/probe.md": "5954d54563c739124bf2fdec86b7503b80cf135c2a7c79484dff9eea0c2fb9c5"
+    },
+    "jig_servo_unchanged": true,
+    "bundled_template": true,
+    "artifacts": [
+      "docs/releases/probe.md",
+      "docs/releases/README.md"
+    ]
+  },
+  "fixture_sha256_before": {
+    "docs/specs/README.md": "64ca0d5cc2b491d681cad6fc05f7bd04ee0d351fbce14d0558e710095ba9ab27",
+    "docs/specs/010-probe/spec.md": "eb7b2784d11b0e39d19a0aef96916f40d2b3b6a3cdfa27983d5781ae9a7a3ce0",
+    "docs/servo/release-signals/probe.md": "5954d54563c739124bf2fdec86b7503b80cf135c2a7c79484dff9eea0c2fb9c5"
+  },
+  "refined_plan": true,
+  "fixture_sha256_after": {
+    "docs/specs/README.md": "64ca0d5cc2b491d681cad6fc05f7bd04ee0d351fbce14d0558e710095ba9ab27",
+    "docs/specs/010-probe/spec.md": "eb7b2784d11b0e39d19a0aef96916f40d2b3b6a3cdfa27983d5781ae9a7a3ce0",
+    "docs/servo/release-signals/probe.md": "5954d54563c739124bf2fdec86b7503b80cf135c2a7c79484dff9eea0c2fb9c5"
+  },
+  "result": "pass",
+  "jig_servo_unchanged": true
+}

@@ -1,0 +1,62 @@
+{
+  "initial_compliance": "needs-changes",
+  "findings": [
+    "Bootstrap executed a foreign installed shaper_root.py before validating identity.",
+    "Malformed auxiliary frontmatter was accepted and emitted verbatim.",
+    "Earlier deterministic evidence retained a stale live-session handoff reference.",
+    "Follow-up compliance found YAML comment-only/alias/anchor/tag forms were treated as descriptions."
+  ],
+  "red": [
+    {
+      "command": "python3 -m unittest discover -s tests -p test_copilot_host.py -k foreign_installed",
+      "exit_code": 1,
+      "failure": "bootstrap executed another plugin's locator"
+    },
+    {
+      "command": "python3 -m unittest discover -s tests -p test_copilot_host.py -k auxiliary_metadata",
+      "exit_code": 1,
+      "failure_events": 4,
+      "failure": "ValueError not raised for invalid/unsupported auxiliary metadata"
+    }
+  ],
+  "follow_up_red": {
+    "command": "python3 -m unittest discover -s tests -p test_copilot_host.py -k loader_limits",
+    "exit_code": 1,
+    "failure_events": 4,
+    "cases": ["# missing", "*undefined", "&anchor", "!custom value"]
+  },
+  "quoted_scalar_red": {
+    "command": "python3 -m unittest discover -s tests -p test_copilot_host.py -k single_quoted",
+    "exit_code": 1,
+    "failure_events": 1,
+    "failure": "Undoubled interior single quote was accepted"
+  },
+  "fixes": [
+    "Fresh-shell discovery reads manifests/runtime paths as data; it never executes installed locator code.",
+    "The owned scalar metadata subset is explicit and user-invocable must be a plain boolean.",
+    "The live-session reference now points to completed evidence.",
+    "Unquoted YAML comment, alias, anchor and tag forms are rejected in the owned string subset.",
+    "Supported single-quoted scalars require doubled interior quotes."
+  ],
+  "green": {
+    "command": "python3 -m unittest discover -s tests -p test_copilot_host.py",
+    "exit_code": 0,
+    "tests_passed": 15
+  },
+  "installed_reprobe": {
+    "command": "python3 scripts/smoke_copilot_install.py",
+    "cli_version": "GitHub Copilot CLI 1.0.96-2",
+    "exit_code": 0,
+    "modes": ["marketplace", "direct"],
+    "enabled_plugin_skills_per_mode": 5,
+    "documented_helper_commands_per_mode": 5,
+    "bundled_template_verified": true,
+    "jig_servo_unchanged": true
+  },
+  "live_reprobe": {
+    "cli_version": "GitHub Copilot CLI 1.0.96-2",
+    "exit_code": 0,
+    "session_id": "ef0adb0c-9597-4786-98fb-1521f203db7d",
+    "evidence": "slice-01-live-session.md"
+  }
+}

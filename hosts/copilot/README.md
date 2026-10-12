@@ -1,0 +1,394 @@
+![shaper](./shaper.jpg)
+
+> A Codex, Claude Code, and Copilot CLI plugin for shaping release-sized work before
+> implementation starts.
+
+**shaper** turns rough product intent into a small, buildable release plan:
+what problem matters, how much time it is worth, what is deliberately out, what
+risks need answers first, and what evidence says the release is ready.
+
+## Why shaper
+
+AI-assisted projects can generate specs quickly, but speed creates a familiar
+failure mode: scope spreads across too many plausible slices, risks stay vague
+until implementation is already moving, and nobody can say what belongs in the
+current release versus what should wait.
+
+shaper sits above the spec-driven development (SDD) flow. It helps shape a
+bounded release plan before that work is handed to specs, slices, or whatever
+implementation workflow the project uses. It is inspired by
+[Shape Up](https://basecamp.com/shapeup), but its public language stays
+ordinary: release plans, release slates, release checks, and scope audits.
+
+## Core terms
+
+The project uses a few Shape Up-inspired terms, each with a small meaning:
+
+- **Appetite** - the amount of time or attention this release is worth.
+- **Cutline** - the boundary between what belongs in this release and what can
+  wait.
+- **No-gos** - explicit things this release will not do.
+- **Risk retirement** - answering the scary unknowns before implementation
+  starts.
+- **Release slate** - the compact list of release plans that matter right now.
+- **Release check** - an advisory ship/cut-scope/stop/re-shape decision.
+
+## What it does
+
+shaper is designed around repo-native Markdown artifacts and small agent skills:
+
+- **Release plans** - `docs/releases/<slug>.md` captures the problem,
+  appetite, solution outline, risks, no-gos, cutline, SDD handoff, and release
+  criteria.
+- **`shape-release`** - elicits raw intent into a bounded release plan.
+- **`cutline`** - reads existing specs and status boards, then recommends
+  include/defer/split/risk-first moves without mutating lifecycle state.
+- **`release-slate`** - refreshes `docs/releases/README.md` from release
+  plans while staying compact and avoiding backlog or second-status-board
+  behavior.
+- **`scope-audit`** - checks whether active SDD work is leaking past a release
+  plan's appetite, cutline, no-gos, or unresolved rabbit holes.
+- **`release-check`** - gives an advisory
+  ship/cut-scope/stop-and-re-shape/extend recommendation from release criteria
+  and SDD status, plus optional servo release signals when the matching
+  `docs/servo/release-signals/<slug>.md` artifact exists.
+
+## Relationship to jig and servo
+
+shaper is a sibling plugin, not a replacement for either project.
+
+- **[jig](https://github.com/ramboz/jig)** owns implementation workflow and
+  spec lifecycle: specs, vertical slices, lifecycle state, review evidence,
+  reconciliation, and landing.
+- **[servo](https://github.com/ramboz/servo)** owns eval/oracle loops:
+  oracles, quality gates, hooks, variant races, and scheduled discovery.
+- **shaper** owns release shaping before implementation starts: release
+  boundaries, no-gos, risk retirement, cutlines, and release readiness checks.
+
+The coupling is intentionally soft. shaper should hand off to SDD generally,
+read jig docs when jig is present, and consume servo release signals only when
+an accepted `docs/servo/release-signals/<slug>.md` artifact exists. It should
+degrade gracefully when those artifacts are absent.
+
+## Artifact model
+
+Accepted ADR-0003 defines the public artifact shape:
+
+| Artifact | Purpose |
+|---|---|
+| `docs/releases/<slug>.md` | A release plan: candidate, committed, shipping, shipped, or dropped. |
+| `docs/releases/README.md` | A compact release slate for the small set of currently relevant plans. |
+| `docs/specs/README.md` | When using jig, its status board remains the source of truth for implementation status. |
+
+The release slate is deliberately not a roadmap, sprint planner, backlog, or
+duplicate implementation board.
+
+## Current status
+
+shaper is currently moving from scaffolded baseline into the first product
+loop. The project has accepted the major architecture decisions, has a minimal
+hybrid plugin baseline, and now includes the first release-plan handoff assets:
+`shape-release`, `cutline`, `templates/release-plan.md`, and a compact
+`docs/releases/README.md` slate.
+
+| Surface | Role | Status |
+|---|---|---|
+| Hybrid plugin baseline | Codex and Claude Code host package layout | Root manifests, committed host packages, and drift guard in Spec 003 |
+| Release automation | CI, release-please, host-explicit zips | CI, PR-title gate, release-please, and host-explicit archive upload in Spec 004 |
+| Release plan and slate artifacts | `docs/releases/<slug>.md` and compact slate | ADR-0003 accepted; first template and slate added by Spec 002 |
+| `shape-release` and `cutline` | First release-plan-to-SDD handoff loop | Implemented by Spec 002 |
+| `release-slate` | Compact current view of release plans | Implemented by Spec 005 |
+| `scope-audit` | Scope check against appetite and cutline | Implemented by Spec 006 |
+| `release-check` | Advisory release readiness check | JIG and optional servo release-signal reads implemented by Spec 007 |
+
+For live per-slice state, see the
+[spec status board](docs/specs/README.md).
+
+## Distribution plan
+
+ADR-0001 and ADR-0002 align shaper with the sibling plugin release model:
+
+- canonical source at the repository root;
+- committed host packages under `hosts/claude/`, `hosts/codex/`, and
+  `hosts/copilot/` (ADR-0006);
+- a drift guard so host packages stay generated from source;
+- release-please-managed versions, changelog entries, tags, and GitHub
+  releases;
+- host-explicit release archives:
+  - `shaper-claude-vX.Y.Z.zip`
+  - `shaper-codex-vX.Y.Z.zip`
+  - `shaper-copilot-vX.Y.Z.zip`
+
+The install surfaces package metadata, README content, the first product
+skills, and the release-plan template. Release archives are built from those
+committed host packages by [`scripts/build_release_zip.py`](scripts/build_release_zip.py).
+
+Current host install semantics:
+
+- Claude Code remote install reads the root `.claude-plugin/marketplace.json`,
+  which resolves the plugin with `source: git-subdir` and `path:
+  hosts/claude`; the committed `hosts/claude` package is the install payload,
+  not the repository root.
+- Codex install uses `hosts/codex` as a marketplace root. Its descriptor at
+  `hosts/codex/.agents/plugins/marketplace.json` points at
+  `./plugins/shaper` and includes `policy.installation`,
+  `policy.authentication`, and `category`.
+- Copilot CLI reads the native root `.github/plugin/marketplace.json` string
+  source `./hosts/copilot`. Its generated `.plugin/plugin.json` explicitly
+  declares `.github/skills`; the five skills, Python helpers, root locator,
+  and template live together under the installed `.github` runtime.
+
+### Install and verify in Copilot CLI
+
+Supported: **Copilot CLI** and Python 3 for helpers. Initial probes used
+1.0.93-1; the final repaired package passed installed discovery/helper checks
+and an authenticated skill workflow on 1.0.96-2.
+This makes no IDE or cloud-agent parity claim and installs no hooks, agents,
+project instructions, or JIG runtime.
+
+From your consuming repository, add the marketplace and install:
+
+```bash
+copilot plugin marketplace add ramboz/shaper
+copilot plugin install shaper@shaper
+copilot skill list --json
+```
+
+Alternatively, install the committed repository subdirectory directly (no
+marketplace registration or local build required):
+
+```bash
+copilot plugin install ramboz/shaper:hosts/copilot
+copilot skill list --json
+```
+
+For a local checkout, use `copilot plugin marketplace add "/absolute/path/to/shaper"`
+then `copilot plugin install shaper@shaper`, or
+`copilot plugin install "/absolute/path/to/shaper/hosts/copilot"`.
+Run discovery from a **separate consumer directory**, not the Shaper checkout.
+Verify that `shape-release`, `cutline`, `release-slate`, `scope-audit`, and
+`release-check` are loaded with plugin skill paths. `plugin list` alone is
+not proof of skill discovery.
+
+Each installed skill explains how to resolve and quote `$SHAPER_ROOT` in the
+same shell as its helper. The disclosed active skill directory takes precedence;
+otherwise the locator searches `${COPILOT_HOME:-$HOME/.copilot}/installed-plugins`.
+Consumer `docs/` paths stay relative to your repository. Missing runtime is an
+explicit error, not a fallback to consumer-relative scripts.
+
+To reproduce isolated discovery/helper verification without modifying your normal
+Copilot configuration, run the optional local probe (not required by CI):
+
+```bash
+python3 scripts/smoke_copilot_install.py --copilot /absolute/path/to/copilot
+```
+
+It uses a disposable `COPILOT_HOME`, installs the local marketplace/package,
+lists skills from a separate consumer, runs all five documented helpers, and
+checks JIG/servo files are unchanged. It prints JSON evidence and the retained
+fixture paths. Authenticated live skill use is a separate verification step;
+the deterministic probe does not claim to perform it.
+
+### Install an extracted Copilot release archive
+
+`shaper-copilot-vX.Y.Z.zip` is an **extract-then-install** Copilot CLI plugin
+archive. Download it from a published GitHub release, extract it into a directory
+so `.plugin/plugin.json` is at that directory's root, then install the directory
+from your separate consuming repository:
+
+```bash
+copilot plugin install "/absolute/path/to/extracted/shaper"
+copilot skill list --json
+```
+
+Do not pass the zip directly to `plugin install`. The archive includes all five
+skills/helpers, the template, standalone locator, README, and image; it excludes
+repository-only content. Static archive smoke checks reuse the package builder's
+declared component/loader validation, not a file-count proxy.
+
+To prove extraction, isolated directory installation, actual CLI discovery, and
+installed helper create/refine/slate/advice behavior locally:
+
+```bash
+python3 scripts/smoke_copilot_archive.py /absolute/path/to/shaper-copilot-vX.Y.Z.zip
+```
+
+This optional probe retains disposable fixtures under an isolated `COPILOT_HOME`,
+prints observed CLI version and enabled installed skill paths, and hash-checks
+JIG/servo fixtures. Ordinary CI does not need an installed/authenticated CLI.
+Local archive/install and workflow checks do not prove future GitHub publication;
+upload occurs only when the release-please release PR is merged.
+
+Regenerate committed host packages after changing plugin source:
+
+```bash
+python3 scripts/build_host_packages.py
+```
+
+Check for package drift without mutating `hosts/`:
+
+```bash
+python3 scripts/build_host_packages.py --check
+```
+
+Build and smoke-test host-explicit release archives locally:
+
+```bash
+VERSION="$(python3 -c 'import json; from pathlib import Path; print(json.loads(Path(".claude-plugin/plugin.json").read_text())["version"])')"
+python3 scripts/build_release_zip.py --host claude --version "$VERSION"
+python3 scripts/build_release_zip.py --host codex --version "$VERSION"
+python3 scripts/build_release_zip.py --host copilot --version "$VERSION"
+python3 scripts/build_release_zip.py --host claude --smoke-test "dist/shaper-claude-v${VERSION}.zip"
+python3 scripts/build_release_zip.py --host codex --smoke-test "dist/shaper-codex-v${VERSION}.zip"
+python3 scripts/build_release_zip.py --host copilot --smoke-test "dist/shaper-copilot-v${VERSION}.zip"
+```
+
+The Claude zip is a flat plugin package. The Codex zip is an extract-then-add
+marketplace bundle: extract it first, then add the extracted marketplace root
+to Codex. The Copilot zip is an extract-then-install plugin directory, with
+`.plugin/plugin.json` at its root. Repeated builds of each host archive are
+byte-identical.
+
+### Release flow
+
+Release decisions are automated through
+[`.github/workflows/release.yml`](.github/workflows/release.yml). On every
+push to `main`, release-please reads the squash-merged conventional commit
+subjects and opens or updates a release PR when the commits warrant a version
+bump.
+
+The release PR updates these files together:
+
+- all versioned plugin manifests listed in
+  [`.github/release-please-config.json`](.github/release-please-config.json);
+- [`CHANGELOG.md`](CHANGELOG.md);
+- [`.github/.release-please-manifest.json`](.github/.release-please-manifest.json).
+
+Merging that release PR creates the `vX.Y.Z` tag and GitHub release. When
+release-please reports `release_created == true`, the package job checks host
+package drift from the tagged source state, builds
+`dist/shaper-claude-vX.Y.Z.zip`, `dist/shaper-codex-vX.Y.Z.zip`, and
+`dist/shaper-copilot-vX.Y.Z.zip`, smoke-tests all three archives, uploads them to
+the GitHub release, and appends a short install-artifacts note without replacing
+the existing changelog notes.
+
+Do not hand-edit plugin manifest versions. They are release-managed so the
+root Claude and Codex manifests and committed host-package manifests stay in
+lockstep with the changelog and tag. The five versioned manifests include the
+generated `hosts/copilot/.plugin/plugin.json`; its version comes from canonical
+Claude source during regeneration, not a new Copilot version authority.
+
+Dry-run the next release PR locally when changing the release configuration:
+
+```bash
+npx release-please release-pr \
+  --token=$GITHUB_TOKEN \
+  --repo-url=ramboz/shaper \
+  --config-file=.github/release-please-config.json \
+  --manifest-file=.github/.release-please-manifest.json \
+  --dry-run
+```
+
+## Still deferred
+
+The first product loop is intentionally narrow. Release-check automation beyond
+the shipped advisory skill, running servo loops, web UI, task boards, sprint
+planning, estimation, backlog grooming, and issue-system replacement remain out
+of scope for the current product surface.
+
+## Start here
+
+If you are reading shaper as a user or contributor:
+
+1. Read the [product vision](docs/product-vision.md) for the project boundary.
+2. Read the [architecture](docs/architecture.md) for the planned plugin shape.
+3. Check the [spec status board](docs/specs/README.md) for current work.
+4. Follow the [workflow](docs/workflow.md) before implementing any non-trivial
+   change.
+
+## Repository structure
+
+The current product layout:
+
+```text
+shaper/
+|-- .claude-plugin/              # Claude source manifest + marketplace pointer
+|-- .codex-plugin/               # Codex source manifest
+|-- .github/plugin/              # Copilot native marketplace pointer
+|-- docs/
+|   |-- releases/                # Release plans and compact release slate
+|   |-- specs/                   # Spec-driven implementation docs and board
+|   `-- decisions/               # ADRs for hard-to-reverse decisions
+|-- hosts/
+|   |-- claude/                  # Committed Claude Code plugin package
+|   |-- codex/                   # Committed Codex marketplace package
+|   `-- copilot/                 # Committed Copilot CLI plugin package
+|-- skills/
+|   |-- shape-release/
+|   |-- release-slate/
+|   |-- scope-audit/
+|   |-- cutline/
+|   `-- release-check/
+|-- templates/                   # Release-plan template
+|-- scripts/                     # Builders, drift guards, release checks
+`-- dist/                        # Generated release zips; ignored by git
+```
+
+The current product surface ships `shape-release`, `cutline`, `release-slate`,
+`scope-audit`, `release-check`, the release-plan template, the compact release
+slate file, and release automation.
+
+## Contributing
+
+shaper currently uses the spec lifecycle documented in this repo. Every
+non-trivial change starts with a vertical spec slice and moves through:
+
+```text
+DRAFT -> READY_FOR_REVIEW -> READY_FOR_IMPLEMENTATION -> IN_PROGRESS
+  -> REVIEWED -> RECONCILED -> DONE
+```
+
+See [docs/workflow.md](docs/workflow.md) for the full process and
+[docs/conventions.md](docs/conventions.md) before changing project rules.
+
+Local CI checks use the existing test/syntax commands and read-only validators:
+
+```bash
+bash .jig/test-command
+bash .jig/lint-command
+python3 scripts/validate_manifests.py
+python3 scripts/build_host_packages.py --check
+python3 scripts/check_spec_board.py
+```
+
+The board check regenerates lifecycle rows and spec rollups in a scratch copy
+using the repository's vendored JIG. It preserves newer JIG's advisory audit
+footer and accounts for nonlocking review-owner display hints. Lifecycle
+states, rollups and `IN_PROGRESS` ownership remain checked; the development
+runtime is not migrated.
+
+### PR titles and release notes
+
+Pull requests use conventional-commit titles because squash-merged PR titles
+become the commit subjects that release-please will read on `main`.
+
+Supported PR title types are:
+
+- `feat(scope): subject`
+- `fix(scope): subject`
+- `perf(scope): subject`
+- `docs(scope): subject`
+- `chore(scope): subject`
+- `refactor(scope): subject`
+- `test(scope): subject`
+- `build(scope): subject`
+- `ci(scope): subject`
+
+Scopes are required. Subjects should start lowercase and should not end with a
+period.
+
+Release-please only creates a release PR for commit types that imply a
+published change: `feat` creates a minor bump, `fix` and `perf` create patch
+bumps, and a breaking-change marker creates a major bump. `docs`, `chore`,
+`refactor`, `test`, `build`, and `ci` keep the changelog signal clean but do
+not publish a new version by themselves.

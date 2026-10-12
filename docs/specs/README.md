@@ -24,3 +24,14 @@
 | [007-release-check](007-release-check/spec.md) | 007-02 - optional servo signal read | **DONE** |  |
 | [008-vertical-scope-shaping](008-vertical-scope-shaping/spec.md) | 008-01 — vertical-scope-outline | **DONE** |  |
 | [008-vertical-scope-shaping](008-vertical-scope-shaping/spec.md) | 008-02 — architecture-appetite-handoff | **DONE** |  |
+| [009-copilot-third-host](009-copilot-third-host/spec.md) | 009-01 - installed-copilot-skills | **DONE** |  |
+| [009-copilot-third-host](009-copilot-third-host/spec.md) | 009-02 - copilot-release-artifact | **DONE** |  |
+
+## Richer-skill selection audit (spec 096-05)
+
+Advisory (ADR-0040 auditability — never blocks). Regenerated from `reviews/slice-*.md` `substrate:` fields.
+
+- **1** pass(es) recorded `not-shown` (selection step did not run — the kill-criterion-1 defect signal).
+- **0** pass(es) recorded `non-interactive` (declared no-orchestrator / CI).
+- **1** shown-and-declined anomaly(ies) (a high-confidence richer skill was shown and not applied):
+  - `009-copilot-third-host/slice-01-craft.md` — applied `pr-review`; declined: scout-pr-review
