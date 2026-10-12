@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.5.0](https://github.com/ramboz/shaper/compare/v0.4.0...v0.5.0) (2026-10-12)
+
+
+### Features
+
+* **copilot:** add first-class shaper support ([#6](https://github.com/ramboz/shaper/issues/6)) ([51e3f7b](https://github.com/ramboz/shaper/commit/51e3f7baffd56a05a11e4467396f8cf77120d14b))
+
+
+### Documentation
+
+* **vision:** adopt the use-case breadth layer ([c0d7a33](https://github.com/ramboz/shaper/commit/c0d7a33067bffc4d1ba3248c5ec8f869b08263ab))
+
 ## [0.4.0](https://github.com/ramboz/shaper/compare/v0.3.0...v0.4.0) (2026-08-12)
 
 
