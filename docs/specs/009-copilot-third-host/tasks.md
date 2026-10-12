@@ -30,8 +30,15 @@
 
 ### Landing blocker
 
-The app's native PR creation failed twice with GitHub HTTP 403: its Enterprise
+The app's native PR creation failed with GitHub HTTP 403: its Enterprise
 Managed User connection cannot access `ramboz/shaper`. The personal CLI account
 is already `ramboz`, and no PR exists for `copilot-third-host`. The implementation
 and all JIG slice gates are complete and pushed; app GitHub identity selection
 must be corrected before native PR creation and PR-triggered CI can finish.
+
+Post-closeout checks also passed all 134 tests and local gates on actual
+session-isolated Python 3.11.14 and 3.12.12, without changing global interpreters.
+See `evidence/post-closeout-python-matrix.json`. The browser route required login.
+A documented SDK session-only personal-identity override was verified and then
+restored, but the app's native PR API still used its Enterprise Managed User
+connection. This requires an app-level account selection, not a CLI auth switch.
