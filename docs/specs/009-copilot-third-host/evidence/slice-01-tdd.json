@@ -1,0 +1,61 @@
+{
+  "slice": "009-01",
+  "red": {
+    "command": "python3 -m unittest discover -s tests -p test_copilot_host.py",
+    "exit_code": 1,
+    "tests_run": 9,
+    "failure_events": 3,
+    "error_events": 11,
+    "note": "Subtests account for multiple error events. Witnessed before implementation; no failing-test commit requested.",
+    "key_failures": [
+      "test_copilot_host.py:44: AssertionError: missing Copilot package",
+      "test_copilot_host.py:137: AttributeError: build_host_packages has no attribute render_copilot_skill_md",
+      "test_copilot_host.py:237: AssertionError: missing copilot marketplace install documentation",
+      "FileNotFoundError: hosts/copilot and .github/plugin do not exist"
+    ]
+  },
+  "additional_red_witnesses": [
+    {
+      "command": "python3 -m unittest discover -s tests -p test_copilot_host.py",
+      "tests_run": 10,
+      "exit_code": 1,
+      "errors": 1,
+      "key_failure": "test_copilot_host.py:240: ModuleNotFoundError: smoke_copilot_install"
+    },
+    {
+      "command": "python3 -m unittest discover -s tests -p test_copilot_host.py 2>&1 | tail -n 35",
+      "tests_run": 12,
+      "shell_pipeline_exit_code": 0,
+      "test_verdict": "FAILED (failures=3)",
+      "note": "tail masked the unittest exit status; assertions genuinely failed.",
+      "key_failures": [
+        "test_copilot_host.py:204: AssertionError: 0 != 1 (wrong marketplace name/non-string owner accepted)",
+        "test_copilot_host.py:302: AssertionError: 1 != 0 (direct consumer parent missing)"
+      ]
+    },
+    {
+      "command": "python3 -m unittest discover -s tests -p test_copilot_host.py -k two_isolated",
+      "tests_run": 1,
+      "exit_code": 1,
+      "failures": 1,
+      "key_failure": "test_copilot_host.py:307: AssertionError: 1 != 0 (realistic direct-copy discovery paths)"
+    }
+  ],
+  "green": {
+    "command": "python3 -m unittest discover -s tests -p test_copilot_host.py",
+    "exit_code": 0,
+    "tests_passed": 12,
+    "failures": 0,
+    "errors": 0
+  },
+  "final_validation": [
+    {"command": "python3 scripts/build_host_packages.py", "exit_code": 0, "result": "All three committed packages regenerated"},
+    {"command": "python3 -m unittest discover -s tests", "exit_code": 0, "tests_passed": 115, "failures": 0, "errors": 0},
+    {"command": "bash .jig/lint-command", "exit_code": 0, "result": "Owned Python syntax passes"},
+    {"command": "python3 scripts/validate_manifests.py", "exit_code": 0, "manifests_valid": 8, "manifests_total": 8},
+    {"command": "python3 scripts/build_host_packages.py --check", "exit_code": 0, "result": "Read-only drift guard passes"},
+    {"command": "git --no-pager diff --check", "exit_code": 0, "result": "No whitespace errors"},
+    {"command": "git --no-pager diff --name-only -- hosts/claude hosts/codex skills templates .codex", "exit_code": 0, "result": ["hosts/claude/README.md", "hosts/codex/plugins/shaper/README.md"]}
+  ],
+  "live_session": "Not run by implementer; parent owns authenticated AC5 evidence."
+}

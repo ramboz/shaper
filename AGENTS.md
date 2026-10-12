@@ -48,9 +48,9 @@ Update via `/jig:memory-sync` or when `jig-memory-scan` surfaces an unknown refe
   help the task; do not pause for per-use approval.
 
 ### Active specs
-- No active implementation slice. Spec 008 (vertical-scope shaping) is DONE;
-  ADR-0005 accepted. Check [docs/specs/README.md](docs/specs/README.md) for the
-  next DRAFT or READY_FOR_IMPLEMENTATION candidate.
+- Spec 009 (Copilot third host) is IN_PROGRESS under ADR-0006: installed
+  Copilot skills first, then the released Copilot artifact. Check
+  [docs/specs/README.md](docs/specs/README.md) for per-slice state.
 
 ### Deferred decisions
 See docs/refinement-todo.md

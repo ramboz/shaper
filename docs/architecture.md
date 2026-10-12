@@ -31,7 +31,8 @@ shaper/
 │   └── decisions/               # ADRs only where a hard-to-reverse decision is needed
 ├── hosts/
 │   ├── claude/                  # committed Claude Code plugin package
-│   └── codex/                   # committed Codex marketplace package
+│   ├── codex/                   # committed Codex marketplace package
+│   └── copilot/                 # committed Copilot CLI plugin package (ADR-0006)
 ├── skills/                      # product skill instructions
 ├── templates/                   # release-plan template
 ├── scripts/                     # package builders, drift guards, manifest checks
@@ -99,8 +100,9 @@ not a backlog or second status board.
 - **Mechanics:** ADR-0001 adopts JIG `v2`'s committed host-package baseline:
   root canonical source, `.claude-plugin` and `.codex-plugin` source manifests,
   generated `hosts/claude` and `hosts/codex` packages committed to git, and a
-  drift guard. shaper uses a smaller builder than JIG because product skills
-  and host prose rewriting are deferred.
+  drift guard. ADR-0006 extends it with `hosts/copilot`: five shared product
+  helpers and the template, plus Copilot-only skill prose/root rendering.
+  Shaper retains a smaller builder because it has no product hooks or agents.
 
 ### Release automation and host-explicit archives
 
@@ -110,6 +112,21 @@ not a backlog or second status board.
   commit PR-title gate, CI, release-please-managed versions and GitHub releases,
   and smoke-tested release archives named `shaper-claude-vX.Y.Z.zip` and
   `shaper-codex-vX.Y.Z.zip`.
+
+### Copilot CLI install adapter
+
+- **Principle:** ADR-0006 extends committed host packages without importing
+  JIG runtime or imposing consumer project instructions.
+- **Mechanics:** Spec 009-01 adds the native `.github/plugin/marketplace.json`
+  string source and generated `hosts/copilot/.plugin/plugin.json` with
+  `skills: ".github/skills"`. Only skill prose is adapted: quoted installed
+  helper/template paths, self-contained root bootstrap, colon-free names, and
+  bounded descriptions. Five Python helpers and the template remain identical
+  to canonical source. The standard-library locator prefers the disclosed
+  active skill, otherwise searches `COPILOT_HOME`; missing runtime is an error.
+  Deterministic CI contracts are separate from the optional real installed
+  discovery/helper probe and authenticated live-session evidence. Copilot
+  archive/release wiring remains the follow-up slice 009-02.
 
 ### Release plan and no-backlog slate
 
@@ -153,8 +170,8 @@ not a backlog or second status board.
 - **Release check:** judges whether a release plan is shippable, giving an
   advisory ship / cut-scope / stop-and-re-shape / extend recommendation from
   JIG evidence and optional servo release signals.
-- **Host adapters:** keep Claude Code and Codex plugin surfaces aligned where
-  practical.
+- **Host adapters:** keep Claude Code, Codex, and Copilot CLI product surfaces
+  aligned, with Copilot-only installed-path/loader prose rendering.
 - **Release automation:** operational layer that validates changes, delegates
   versioning/changelog/tag/GitHub-release ownership to release-please, and
   builds host-explicit archives from committed host packages.
@@ -218,7 +235,8 @@ mutate JIG spec states.
   install-artifact notes without overwriting release-please changelog notes.
 - **Plugin install contract** (`.claude-plugin/plugin.json`,
   `.claude-plugin/marketplace.json`, `.codex-plugin/plugin.json`,
-  `hosts/claude/`, `hosts/codex/`) - root manifests are canonical source,
+  `.github/plugin/marketplace.json`, `hosts/claude/`, `hosts/codex/`,
+  `hosts/copilot/`) - root manifests are canonical source,
   host packages are committed generated payloads, and
   `scripts/build_host_packages.py --check` guards host-package drift. Cross-host
   version parity is owned by release-please-managed manifests plus the drift

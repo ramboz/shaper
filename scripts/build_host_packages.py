@@ -1,4 +1,4 @@
-"""Build shaper's committed Claude and Codex host packages.
+"""Build shaper's committed Claude, Codex, and Copilot host packages.
 
 The repository root is canonical source. `hosts/claude` and `hosts/codex` are
 source-derived install payloads committed for remote host installation. Use
@@ -10,10 +10,13 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import shutil
 import sys
 import tempfile
 from pathlib import Path
+
+from shaper_root import SKILLS as COPILOT_SKILLS
 
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -33,6 +36,190 @@ SOURCE_OWNED_DIRS = (
     "tests",
     "hosts",
 )
+
+# Each installed skill must work in a fresh shell, with no host root variable
+# or project instructions. Bootstrap discovery reads data only: another
+# installed plugin's similarly named locator must never be executed.
+COPILOT_ROOT_NOTE = '''
+## Installed runtime (Copilot CLI)
+
+Run helpers from the consuming repository; `docs/` paths belong to that
+repository, not this plugin. Python 3 is required. Do not copy runtime files.
+If Copilot discloses this invoked skill's absolute directory, set
+`SHAPER_SKILL_DIR` to that directory (the parent of its `SKILL.md`) in the
+shell below; prefer it over other installations. Do not guess a project path.
+Otherwise leave `SHAPER_SKILL_DIR` unset. This bootstrap honors `COPILOT_HOME`
+(default `~/.copilot`), including marketplace and direct installs, and paths
+with spaces. Run it in the same shell as each helper, including fresh shells:
+
+```bash
+SHAPER_ROOT="$(python3 - <<'PY'
+import json
+import os
+import re
+import sys
+from pathlib import Path
+skills = __COPILOT_SKILLS__
+def manifest(root):
+    try:
+        data = json.loads((root.parent / ".plugin/plugin.json").read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return None
+    if (not isinstance(data, dict) or data.get("name") != "shaper"
+            or data.get("skills") != ".github/skills" or root.name != ".github"
+            or not isinstance(data.get("version"), str)
+            or not re.fullmatch(r"\\d+\\.\\d+\\.\\d+", data["version"])):
+        return None
+    required = ["templates/release-plan.md", "scripts/shaper_root.py"]
+    for name in skills:
+        required.extend((f"skills/{name}/SKILL.md",
+                         f"skills/{name}/scripts/{name.replace('-', '_')}.py"))
+    return data if all((root / rel).is_file() for rel in required) else None
+active = os.environ.get("SHAPER_SKILL_DIR")
+roots = []
+if active:
+    skill = Path(active).resolve()
+    if skill.name == "SKILL.md":
+        skill = skill.parent
+    if skill.name in skills and skill.parent.name == "skills":
+        roots.append(skill.parent.parent)
+else:
+    home = Path(os.environ.get("COPILOT_HOME") or Path.home() / ".copilot")
+    roots = (home / "installed-plugins").glob("*/*/.github")
+candidates = []
+for root in roots:
+    data = manifest(root)
+    if data:
+        candidates.append((tuple(int(part) for part in data["version"].split(".")),
+                           str(root.resolve()), root.resolve()))
+if not candidates:
+    sys.exit("shaper_root: no valid Shaper runtime; install shaper or check COPILOT_HOME / SHAPER_SKILL_DIR")
+print(max(candidates)[2])
+PY
+)" || { echo "Shaper runtime unavailable; stop rather than use consumer-relative helpers." >&2; exit 1; }
+export SHAPER_ROOT
+```
+
+`SHAPER_ROOT` is the absolute installed `.github` runtime. Keep every helper
+and template path quoted. If resolution fails, stop explicitly; do not run
+a similarly named file from the consuming repository.
+'''
+
+
+def skill_metadata(text: str) -> tuple[dict[str, str], str]:
+    """Read the owned scalar frontmatter subset, rejecting ambiguous metadata."""
+    lines = text.splitlines(keepends=True)
+    if not lines or lines[0].strip() != "---":
+        raise ValueError("skill metadata: missing frontmatter")
+    end = next((i for i in range(1, len(lines)) if lines[i].strip() == "---"), None)
+    if end is None:
+        raise ValueError("skill metadata: unterminated frontmatter")
+    metadata = {}
+    i = 1
+    while i < end:
+        if not lines[i].strip():
+            i += 1
+            continue
+        match = re.fullmatch(r"([a-z][\w-]*):\s*(.*?)\s*\n?", lines[i])
+        if not match or match[1] in metadata:
+            raise ValueError("skill metadata: malformed or duplicate field")
+        key, value = match.groups()
+        if key not in ("name", "description", "user-invocable"):
+            raise ValueError(f"skill metadata: unsupported field {key}")
+        if key == "user-invocable" and value not in ("true", "false"):
+            raise ValueError("skill metadata: user-invocable must be a boolean")
+        i += 1
+        if value in (">", ">-", ">+", "|", "|-", "|+"):
+            parts = []
+            while i < end and (lines[i].startswith((" ", "\t")) or not lines[i].strip()):
+                parts.append(lines[i].strip())
+                i += 1
+            value = (" " if value.startswith(">") else "\n").join(parts).strip()
+        elif value.startswith('"'):
+            try:
+                value = json.loads(value)
+            except ValueError as exc:
+                raise ValueError(f"skill metadata: malformed {key}") from exc
+        elif value.startswith("'"):
+            if not re.fullmatch(r"'(?:[^']|'')*'", value):
+                raise ValueError(f"skill metadata: malformed single-quoted {key}")
+            value = value[1:-1].replace("''", "'")
+        elif key in ("name", "description") and (
+            value.startswith(("[", "{", "'", "#", "*", "&", "!", "@", "`"))
+            or ": " in value
+            or value.lower() in ("null", "true", "false", "~") or value.isdigit()
+        ):
+            raise ValueError(f"skill metadata: {key} must be a string")
+        metadata[key] = value
+    name = metadata.get("name")
+    if not isinstance(name, str) or not re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*", name):
+        raise ValueError("skill metadata: missing/invalid colon-free name")
+    description = metadata.get("description")
+    if not isinstance(description, str) or not description.strip():
+        raise ValueError("skill metadata: missing/invalid description")
+    return metadata, "".join(lines[end + 1:])
+
+
+def render_copilot_skill_md(text: str) -> str:
+    metadata, body = skill_metadata(text)
+    description = metadata["description"]
+    metadata["description"] = description[:1021] + "..." if len(description) > 1024 else description
+    header = "---\n" + "".join(
+        f"{key}: {json.dumps(value, ensure_ascii=False)}\n" if key in ("name", "description")
+        else f"{key}: {value}\n" for key, value in metadata.items()
+    ) + "---\n"
+    if len(description) > 1024:
+        body = f"\n> **Full description:** {description}\n" + body
+    # Runtime references only; consumer docs/ paths are deliberately untouched.
+    body = re.sub(r"skills/[\w-]+/scripts/[\w_]+\.py",
+                  lambda match: f'"$SHAPER_ROOT/{match[0]}"', body)
+    body = body.replace('`"$SHAPER_ROOT/skills/shape-release/scripts/shape_release.py"',
+                        '`python3 "$SHAPER_ROOT/skills/shape-release/scripts/shape_release.py"')
+    body = body.replace("templates/release-plan.md", '"$SHAPER_ROOT/templates/release-plan.md"')
+    root_note = COPILOT_ROOT_NOTE.replace("__COPILOT_SKILLS__", repr(COPILOT_SKILLS))
+    return header + root_note + body
+
+
+def copilot_package_errors(package: Path) -> list[str]:
+    """Check actual native component paths, metadata, and the closed payload."""
+    errors = []
+    try:
+        manifest = json.loads((package / ".plugin/plugin.json").read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return ["missing/malformed .plugin/plugin.json"]
+    if not isinstance(manifest, dict):
+        return ["manifest metadata must be an object"]
+    for field in ("name", "version", "description"):
+        if not isinstance(manifest.get(field), str) or not manifest[field].strip():
+            errors.append(f"missing/invalid {field} metadata")
+    if manifest.get("name") != PLUGIN_NAME:
+        errors.append("name must be shaper")
+    if not isinstance(manifest.get("version"), str) or not re.fullmatch(r"\d+\.\d+\.\d+", manifest["version"]):
+        errors.append("invalid version")
+    if manifest.get("skills") != ".github/skills" or not (package / ".github/skills").is_dir():
+        errors.append("skills component path must exist at .github/skills")
+    for field in ("hooks", "agents", "mcpServers", "lspServers"):
+        if field in manifest:
+            errors.append(f"unsupported component: {field}")
+    expected = {".plugin/plugin.json", "README.md", "shaper.jpg",
+                ".github/templates/release-plan.md", ".github/scripts/shaper_root.py"}
+    if (package / "LICENSE").is_file():
+        expected.add("LICENSE")
+    for name in COPILOT_SKILLS:
+        rel = f".github/skills/{name}/SKILL.md"
+        expected.update((rel, f".github/skills/{name}/scripts/{name.replace('-', '_')}.py"))
+        path = package / rel
+        if path.is_file():
+            try:
+                metadata, _ = skill_metadata(path.read_text(encoding="utf-8"))
+                if metadata["name"] != name or len(metadata["description"]) > 1024:
+                    errors.append(f"{rel}: invalid name/description loader metadata")
+            except ValueError as exc:
+                errors.append(f"{rel}: {exc}")
+    actual = set(_file_map(package))
+    errors.extend(f"missing required file: {rel}" for rel in sorted(expected - actual))
+    errors.extend(f"excluded/unexpected file: {rel}" for rel in sorted(actual - expected))
+    return errors
 
 
 def _is_relative_to(path: Path, parent: Path) -> bool:
@@ -159,6 +346,46 @@ def build_codex_package(source_root: Path, hosts_root: Path) -> int:
     return 0
 
 
+def build_copilot_package(source_root: Path, hosts_root: Path) -> int:
+    output = hosts_root / "copilot"
+    try:
+        manifest = json.loads((source_root / ".claude-plugin/plugin.json").read_text(encoding="utf-8"))
+        if not isinstance(manifest, dict) or manifest.get("name") != PLUGIN_NAME:
+            raise ValueError("invalid canonical Shaper manifest")
+        if not isinstance(manifest.get("version"), str) or not re.fullmatch(r"\d+\.\d+\.\d+", manifest["version"]):
+            raise ValueError("missing/invalid canonical version")
+        rendered = {
+            name: render_copilot_skill_md((source_root / f"skills/{name}/SKILL.md").read_text(encoding="utf-8"))
+            for name in COPILOT_SKILLS
+        }
+        manifest = {**manifest, "description": "Release shaping before implementation starts for Copilot CLI",
+                    "skills": ".github/skills"}
+        if output.exists():
+            shutil.rmtree(output)
+        (output / ".plugin").mkdir(parents=True)
+        (output / ".plugin/plugin.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+        for name in OPTIONAL_ROOT_FILES:
+            _copy_optional_file(source_root, output, name)
+        runtime = output / ".github"
+        for name, text in rendered.items():
+            skill = runtime / "skills" / name
+            (skill / "scripts").mkdir(parents=True)
+            (skill / "SKILL.md").write_text(text, encoding="utf-8")
+            helper = f"{name.replace('-', '_')}.py"
+            (skill / "scripts" / helper).write_bytes((source_root / "skills" / name / "scripts" / helper).read_bytes())
+        (runtime / "templates").mkdir()
+        (runtime / "templates/release-plan.md").write_bytes((source_root / "templates/release-plan.md").read_bytes())
+        (runtime / "scripts").mkdir()
+        (runtime / "scripts/shaper_root.py").write_bytes((source_root / "scripts/shaper_root.py").read_bytes())
+        errors = copilot_package_errors(output)
+        if errors:
+            raise ValueError("; ".join(errors))
+    except (OSError, ValueError) as exc:
+        sys.stderr.write(f"ERROR: Copilot package: {exc}\n")
+        return 1
+    return 0
+
+
 def build_all(source_root: Path, hosts_root: Path, out=None) -> int:
     if out is None:
         out = sys.stdout
@@ -171,11 +398,14 @@ def build_all(source_root: Path, hosts_root: Path, out=None) -> int:
 
     claude_code = build_claude_package(source_root, hosts_root)
     codex_code = build_codex_package(source_root, hosts_root)
+    copilot_code = build_copilot_package(source_root, hosts_root)
     if claude_code == 0:
         out.write(f"OK: built Claude package at {hosts_root / 'claude'}\n")
     if codex_code == 0:
         out.write(f"OK: built Codex package at {hosts_root / 'codex'}\n")
-    return claude_code or codex_code
+    if copilot_code == 0:
+        out.write(f"OK: built Copilot package at {hosts_root / 'copilot'}\n")
+    return claude_code or codex_code or copilot_code
 
 
 def _is_ephemeral(rel: Path) -> bool:

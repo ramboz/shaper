@@ -153,7 +153,7 @@ work to JIG.
   `/Users/ramboz/Projects/misc/jig` and `/Users/ramboz/Projects/misc/servo`.
 - **Platform commitments:**
   - Cloud target: none for the initial product.
-  - Deployment shape: plugin surfaces for Claude Code and Codex where practical.
+  - Deployment shape: plugin surfaces for Claude Code, Codex, and Copilot CLI.
   - Package manager: none yet; standard-library Python is enough for the
     current helper surface.
   - Database: none; repo-native Markdown first.
@@ -180,8 +180,8 @@ work to JIG.
    plan; JIG owns the implementation workflow.
 7. Risk retirement before implementation: research spikes and architecture
    decisions should happen early when they unblock the release path.
-8. Cross-host from the start: support both Claude Code and Codex plugin
-   surfaces where practical.
+8. Cross-host from the start: support Claude Code, Codex, and Copilot CLI plugin
+   surfaces, preserving shared product behavior.
 9. Soft coupling to JIG and servo: detect them if present, degrade gracefully if
    not.
 

@@ -57,3 +57,7 @@
 **Resolved for release-please:** Spec 004 slice 004-02 adds release-please config, the release workflow, a seeded changelog, and a dry-run/documented release PR flow. Release-please updates all versioned root and committed host-package plugin manifests together.
 **Resolved for archives:** Spec 004 slice 004-03 adds a release-created package job that checks host-package drift, builds and smoke-tests both host-explicit zips, uploads them to the GitHub release, and appends install-artifact notes.
 **Resolution:** [Spec 004 slice 004-01](specs/004-release-automation/slice-01-ci-and-conventional-commit-gate.md), [Spec 004 slice 004-02](specs/004-release-automation/slice-02-release-please-pipeline.md), and [Spec 004 slice 004-03](specs/004-release-automation/slice-03-host-explicit-release-zips.md).
+### Decision: Copilot runtime-root policy consolidation
+**Deferred:** The self-contained data-only skill bootstrap and standalone shaper_root.py mirror the small identity/completeness/selection policy. Tests now execute both entry points; introspective code generation is not introduced for this port.
+**Resolution trigger:** A future change to the runtime inventory or installation-selection policy must update both and decide whether canonical bootstrap generation reduces maintenance without executing untrusted installed code.
+**Source:** Spec 009-01 architecture review and reconciliation.

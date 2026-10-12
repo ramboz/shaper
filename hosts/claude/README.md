@@ -1,6 +1,6 @@
 ![shaper](./shaper.jpg)
 
-> A Codex and Claude Code plugin for shaping release-sized work before
+> A Codex, Claude Code, and Copilot CLI plugin for shaping release-sized work before
 > implementation starts.
 
 **shaper** turns rough product intent into a small, buildable release plan:
@@ -109,7 +109,8 @@ For live per-slice state, see the
 ADR-0001 and ADR-0002 align shaper with the sibling plugin release model:
 
 - canonical source at the repository root;
-- committed host packages under `hosts/claude/` and `hosts/codex/`;
+- committed host packages under `hosts/claude/`, `hosts/codex/`, and
+  `hosts/copilot/` (ADR-0006);
 - a drift guard so host packages stay generated from source;
 - release-please-managed versions, changelog entries, tags, and GitHub
   releases;
@@ -131,6 +132,63 @@ Current host install semantics:
   `hosts/codex/.agents/plugins/marketplace.json` points at
   `./plugins/shaper` and includes `policy.installation`,
   `policy.authentication`, and `category`.
+- Copilot CLI reads the native root `.github/plugin/marketplace.json` string
+  source `./hosts/copilot`. Its generated `.plugin/plugin.json` explicitly
+  declares `.github/skills`; the five skills, Python helpers, root locator,
+  and template live together under the installed `.github` runtime.
+
+### Install and verify in Copilot CLI
+
+Supported: **Copilot CLI** and Python 3 for helpers. Initial probes used
+1.0.93-1; the final repaired package passed installed discovery/helper checks
+and an authenticated skill workflow on 1.0.96-2.
+This makes no IDE or cloud-agent parity claim and installs no hooks, agents,
+project instructions, or JIG runtime.
+
+From your consuming repository, add the marketplace and install:
+
+```bash
+copilot plugin marketplace add ramboz/shaper
+copilot plugin install shaper@shaper
+copilot skill list --json
+```
+
+Alternatively, install the committed repository subdirectory directly (no
+marketplace registration or local build required):
+
+```bash
+copilot plugin install ramboz/shaper:hosts/copilot
+copilot skill list --json
+```
+
+For a local checkout, use `copilot plugin marketplace add "/absolute/path/to/shaper"`
+then `copilot plugin install shaper@shaper`, or
+`copilot plugin install "/absolute/path/to/shaper/hosts/copilot"`.
+Run discovery from a **separate consumer directory**, not the Shaper checkout.
+Verify that `shape-release`, `cutline`, `release-slate`, `scope-audit`, and
+`release-check` are loaded with plugin skill paths. `plugin list` alone is
+not proof of skill discovery.
+
+Each installed skill explains how to resolve and quote `$SHAPER_ROOT` in the
+same shell as its helper. The disclosed active skill directory takes precedence;
+otherwise the locator searches `${COPILOT_HOME:-$HOME/.copilot}/installed-plugins`.
+Consumer `docs/` paths stay relative to your repository. Missing runtime is an
+explicit error, not a fallback to consumer-relative scripts.
+
+To reproduce isolated discovery/helper verification without modifying your normal
+Copilot configuration, run the optional local probe (not required by CI):
+
+```bash
+python3 scripts/smoke_copilot_install.py --copilot /absolute/path/to/copilot
+```
+
+It uses a disposable `COPILOT_HOME`, installs the local marketplace/package,
+lists skills from a separate consumer, runs all five documented helpers, and
+checks JIG/servo files are unchanged. It prints JSON evidence and the retained
+fixture paths. Authenticated live skill use is a separate verification step;
+the deterministic probe does not claim to perform it. Copilot release archives
+and release-please integration are the follow-up Spec 009-02, not this install
+slice.
 
 Regenerate committed host packages after changing plugin source:
 
@@ -219,13 +277,15 @@ The current product layout:
 shaper/
 |-- .claude-plugin/              # Claude source manifest + marketplace pointer
 |-- .codex-plugin/               # Codex source manifest
+|-- .github/plugin/              # Copilot native marketplace pointer
 |-- docs/
 |   |-- releases/                # Release plans and compact release slate
 |   |-- specs/                   # Spec-driven implementation docs and board
 |   `-- decisions/               # ADRs for hard-to-reverse decisions
 |-- hosts/
 |   |-- claude/                  # Committed Claude Code plugin package
-|   `-- codex/                   # Committed Codex marketplace package
+|   |-- codex/                   # Committed Codex marketplace package
+|   `-- copilot/                 # Committed Copilot CLI plugin package
 |-- skills/
 |   |-- shape-release/
 |   |-- release-slate/

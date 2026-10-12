@@ -1,0 +1,13 @@
+{
+  "name": "shaper",
+  "owner": {
+    "name": "ramboz"
+  },
+  "plugins": [
+    {
+      "name": "shaper",
+      "source": "./hosts/copilot",
+      "description": "Release shaping before implementation starts"
+    }
+  ]
+}

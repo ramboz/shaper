@@ -185,6 +185,7 @@ class ManifestValidatorTests(unittest.TestCase):
         self.tmp = Path(tempfile.mkdtemp(prefix="shaper-manifests-"))
         shutil.copytree(ROOT / ".claude-plugin", self.tmp / ".claude-plugin")
         shutil.copytree(ROOT / ".codex-plugin", self.tmp / ".codex-plugin")
+        shutil.copytree(ROOT / ".github/plugin", self.tmp / ".github/plugin")
         shutil.copytree(ROOT / "hosts", self.tmp / "hosts")
 
     def tearDown(self):
@@ -269,7 +270,7 @@ class ManifestValidatorTests(unittest.TestCase):
         code = validate_manifests.validate(root=self.tmp, out=out)
 
         self.assertNotEqual(code, 0)
-        self.assertIn("5/6 manifest(s) valid", out.getvalue())
+        self.assertIn("7/8 manifest(s) valid", out.getvalue())
 
 
 if __name__ == "__main__":

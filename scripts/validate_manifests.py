@@ -9,6 +9,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from build_host_packages import copilot_package_errors
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -44,6 +45,14 @@ MANIFESTS = (
         "hosts/codex/plugins/shaper/.codex-plugin/plugin.json",
         ("name", "version", "description", "interface.displayName", "interface.category"),
     ),
+    ManifestSpec(
+        ".github/plugin/marketplace.json",
+        ("name", "owner.name", "plugins"),
+    ),
+    ManifestSpec(
+        "hosts/copilot/.plugin/plugin.json",
+        ("name", "version", "description", "author.name", "skills"),
+    ),
 )
 
 
@@ -74,6 +83,8 @@ def _check_required(data: dict[str, Any], spec: ManifestSpec) -> list[str]:
         value = _get_field(data, field)
         if value is None or value == "":
             errors.append(f"missing required field '{field}'")
+        elif field != "plugins" and not isinstance(value, str):
+            errors.append(f"invalid required field '{field}': must be a string")
     return errors
 
 
@@ -83,11 +94,12 @@ def _versions_match(manifests: dict[str, dict[str, Any]]) -> list[str]:
         ".codex-plugin/plugin.json",
         "hosts/claude/.claude-plugin/plugin.json",
         "hosts/codex/plugins/shaper/.codex-plugin/plugin.json",
+        "hosts/copilot/.plugin/plugin.json",
     )
     versions = {
         path: manifests[path]["version"]
         for path in version_paths
-        if path in manifests and "version" in manifests[path]
+        if path in manifests and isinstance(manifests[path].get("version"), str)
     }
     if len(set(versions.values())) <= 1:
         return []
@@ -99,6 +111,7 @@ def _check_marketplaces(manifests: dict[str, dict[str, Any]]) -> list[str]:
     errors: list[str] = []
     claude = manifests.get(".claude-plugin/marketplace.json")
     codex = manifests.get("hosts/codex/.agents/plugins/marketplace.json")
+    copilot = manifests.get(".github/plugin/marketplace.json")
 
     if claude:
         plugins = claude.get("plugins")
@@ -125,6 +138,14 @@ def _check_marketplaces(manifests: dict[str, dict[str, Any]]) -> list[str]:
                     errors.append(
                         "hosts/codex/.agents/plugins/marketplace.json: first plugin source.path must be ./plugins/shaper"
                     )
+    if copilot:
+        if copilot.get("name") != "shaper":
+            errors.append(".github/plugin/marketplace.json: name must be shaper")
+        plugins = copilot.get("plugins")
+        if not isinstance(plugins, list) or len(plugins) != 1 or not isinstance(plugins[0], dict):
+            errors.append(".github/plugin/marketplace.json: plugins must declare one Shaper object")
+        elif plugins[0].get("name") != "shaper" or plugins[0].get("source") != "./hosts/copilot":
+            errors.append(".github/plugin/marketplace.json: Shaper source must be the string ./hosts/copilot")
     return errors
 
 
@@ -151,6 +172,7 @@ def validate(root: Path = ROOT, out=None) -> int:
 
     errors.extend(_versions_match(manifests))
     errors.extend(_check_marketplaces(manifests))
+    errors.extend(f"hosts/copilot: {error}" for error in copilot_package_errors(root / "hosts/copilot"))
 
     if errors:
         for error in errors:
