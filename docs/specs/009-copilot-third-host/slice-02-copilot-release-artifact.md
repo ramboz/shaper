@@ -1,10 +1,9 @@
 ---
-status: RECONCILED
+status: DONE
 dependencies: [009-01, adr-0006]
 last_verified: 2026-10-12
 arch_review: true
 frame_review: true
-claimed_by: copilot-third-host
 ---
 
 ## Slice 009-02 - copilot-release-artifact
@@ -60,8 +59,8 @@ user can extract, install, and use with the same skill behavior.
 
 ### Close-out (post-DONE)
 
-- [ ] Status board regenerated and audited.
-- [ ] Active-spec primer compressed after both slices DONE.
+- [x] Status board regenerated and audited.
+- [x] Active-spec primer compressed after both slices DONE.
 
 **Anti-horizontal-phasing check:** A user can download/extract/install the
 release artifact and run Shaper, completing the released distribution path.

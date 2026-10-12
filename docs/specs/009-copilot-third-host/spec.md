@@ -1,5 +1,5 @@
 ---
-status: IN_PROGRESS
+status: DONE
 skill: build-host-packages
 use_cases: [UC-7, UC-8]
 ---

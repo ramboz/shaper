@@ -25,7 +25,7 @@
 | [008-vertical-scope-shaping](008-vertical-scope-shaping/spec.md) | 008-01 — vertical-scope-outline | **DONE** |  |
 | [008-vertical-scope-shaping](008-vertical-scope-shaping/spec.md) | 008-02 — architecture-appetite-handoff | **DONE** |  |
 | [009-copilot-third-host](009-copilot-third-host/spec.md) | 009-01 - installed-copilot-skills | **DONE** |  |
-| [009-copilot-third-host](009-copilot-third-host/spec.md) | 009-02 - copilot-release-artifact | RECONCILED (copilot-third-host) |  |
+| [009-copilot-third-host](009-copilot-third-host/spec.md) | 009-02 - copilot-release-artifact | **DONE** |  |
 
 ## Richer-skill selection audit (spec 096-05)
 

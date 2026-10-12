@@ -19,10 +19,10 @@
 - [x] Implement archive, version, and release workflow integration.
 - [x] Prove extracted-package discovery and helper behavior.
 - [x] Run compliance, craft, architecture, and reconciliation reviews.
-- [ ] Reconcile documentation/memory and close slice DONE.
+- [x] Reconcile documentation/memory and close slice DONE.
 
 ## Landing
 
-- [ ] Full unit suite, syntax, manifests, package drift, board and ADR index pass.
-- [ ] Provisional numbers remain free on fetched origin/main.
+- [x] Full unit suite, syntax, manifests, package drift, board and ADR index pass.
+- [x] Provisional numbers remain free on fetched origin/main.
 - [ ] Scoped commits pushed and PR opened; remote head and CI state recorded.
