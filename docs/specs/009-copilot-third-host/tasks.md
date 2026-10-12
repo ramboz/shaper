@@ -26,19 +26,19 @@
 - [x] Full unit suite, syntax, manifests, package drift, board and ADR index pass.
 - [x] Provisional numbers remain free on fetched origin/main.
 - [x] Scoped commits pushed; remote feature-branch head verified.
-- [ ] PR opened and interpreter-matrix CI state recorded.
+- [x] PR opened and interpreter-matrix CI state recorded.
 
-### Landing blocker
+### Landing result
 
-The app's native PR creation failed with GitHub HTTP 403: its Enterprise
-Managed User connection cannot access `ramboz/shaper`. The personal CLI account
-is already `ramboz`, and no PR exists for `copilot-third-host`. The implementation
-and all JIG slice gates are complete and pushed; app GitHub identity selection
-must be corrected before native PR creation and PR-triggered CI can finish.
+[PR #6](https://github.com/ramboz/shaper/pull/6) is open against `main`.
+Native PR creation succeeded on the resumed attempt after earlier HTTP 403
+account failures. No global CLI account switch or browser login was performed.
+The initial published head, `9538c18b345fdb1e5071d3a1e1d6feaed17bdeed`,
+passed both GitHub CI interpreter jobs and the conventional-commit title gate.
+See `evidence/pr-ci.json` for check URLs and timestamps.
 
 Post-closeout checks also passed all 134 tests and local gates on actual
 session-isolated Python 3.11.14 and 3.12.12, without changing global interpreters.
-See `evidence/post-closeout-python-matrix.json`. The browser route required login.
-A documented SDK session-only personal-identity override was verified and then
-restored, but the app's native PR API still used its Enterprise Managed User
-connection. This requires an app-level account selection, not a CLI auth switch.
+See `evidence/post-closeout-python-matrix.json`. The final landing-record commit
+is checked again after push. The PR is intentionally not merged; release-please
+still owns subsequent versioning and publication.

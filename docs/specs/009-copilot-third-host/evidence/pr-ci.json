@@ -1,0 +1,32 @@
+{
+  "pull_request": "https://github.com/ramboz/shaper/pull/6",
+  "state": "OPEN",
+  "draft": false,
+  "base": "main",
+  "verified_head": "9538c18b345fdb1e5071d3a1e1d6feaed17bdeed",
+  "verified_at": "2026-10-12T19:10:17Z",
+  "checks": [
+    {
+      "name": "test (3.11)",
+      "workflow": "CI",
+      "conclusion": "SUCCESS",
+      "completed_at": "2026-10-12T19:10:11Z",
+      "url": "https://github.com/ramboz/shaper/actions/runs/38295808815/job/114966479527"
+    },
+    {
+      "name": "test (3.12)",
+      "workflow": "CI",
+      "conclusion": "SUCCESS",
+      "completed_at": "2026-10-12T19:10:17Z",
+      "url": "https://github.com/ramboz/shaper/actions/runs/38295808815/job/114966479850"
+    },
+    {
+      "name": "conventional-commit",
+      "workflow": "PR Title",
+      "conclusion": "SUCCESS",
+      "completed_at": "2026-10-12T19:10:03Z",
+      "url": "https://github.com/ramboz/shaper/actions/runs/38295808862/job/114966483120"
+    }
+  ],
+  "verification_boundary": "These checks grade the recorded implementation head. The subsequent landing-record-only commit is rechecked after push; no merge or release publication is claimed."
+}
